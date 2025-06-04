@@ -2,8 +2,13 @@
 
 ## APIer som används
 
-Appen använder inga mikrotjänster.
-Frontend använder [AI-backend (Proxy)](https://github.com/Sundsvallskommun/web-app-intric-backend)
+Dessa APIer används i projektet, applikationsanvändaren i WSO2 måste prenumerera på dessa. Systemet utgår ifrån /backend/api-config.ts där dessa står specificerade.
+
+| API             | Version |
+| --------------- | ------: |
+| SimulatorServer |     2.0 |
+
+Frontend använder dessutom [AI-backend (Proxy)](https://github.com/Sundsvallskommun/web-app-intric-backend)
 
 ## Utveckling
 
