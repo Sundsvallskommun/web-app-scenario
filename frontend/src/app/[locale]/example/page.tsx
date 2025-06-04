@@ -8,10 +8,14 @@ import { useTranslation } from 'react-i18next';
 import NextLink from 'next/link';
 import { capitalize } from 'underscore.string';
 import { useShallow } from 'zustand/react/shallow';
+import { useAssistantStore } from '@sk-web-gui/ai';
 
 const Exempelsida: React.FC = () => {
   const user = useUserStore(useShallow((s) => s.user));
   const { t } = useTranslation();
+  const apiBaseUrl = useAssistantStore((state) => state.apiBaseUrl);
+
+  console.log(apiBaseUrl);
   console.log('user', user);
   return (
     <DefaultLayout>

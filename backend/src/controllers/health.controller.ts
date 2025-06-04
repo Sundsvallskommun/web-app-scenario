@@ -1,6 +1,6 @@
 import ApiService from '@/services/api.service';
 import { logger } from '@/utils/logger';
-import { Controller, Get } from 'routing-controllers';
+import { Controller, Get, HttpError } from 'routing-controllers';
 import { OpenAPI } from 'routing-controllers-openapi';
 import { APIS } from '@config';
 
@@ -12,6 +12,10 @@ export class HealthController {
   @Get('/health/up')
   @OpenAPI({ summary: 'Return health check' })
   async up() {
+    if (!this.api) {
+      throw new HttpError(500, 'Internal server error');
+    }
+
     const url = `${this.api.name}/${this.api.version}/simulations/response?status=200%20OK`;
     const data = {
       status: 'OK',
