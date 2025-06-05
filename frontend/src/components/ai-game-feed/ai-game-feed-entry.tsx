@@ -1,14 +1,10 @@
 'use client';
 
-import {
-  ChatHistoryEntry,
-  MarkdownRendered,
-  TypingSequence,
-} from '@sk-web-gui/ai';
+import { ChatHistoryEntry, TypingSequence } from '@sk-web-gui/ai';
 import { cx } from '@sk-web-gui/utils';
 import { useLocalStorage } from '@utils/use-localstorage.hook';
 import React from 'react';
-import { MegaButton } from '../mega-button/mega-button.component';
+import { AIGameFeedEntryTextComponent } from './ai-game-feed-entry-text';
 
 interface AIGameFeedEntryProps extends React.ComponentPropsWithoutRef<'li'> {
   entry: ChatHistoryEntry;
@@ -80,30 +76,6 @@ export const AIGameFeedEntry = React.forwardRef<
     }
   };
 
-  const TextComponent: React.FC<{ entry: ChatHistoryEntry }> = ({ entry }) => {
-    return asButton ?
-        <MegaButton
-          as="span"
-          role="none"
-          color={background === 'tertiary' ? 'primary' : background}
-          rounded
-          className="cursor-default"
-        >
-          <MarkdownRendered
-            text={entry.text}
-            messageId={entry.id}
-            hideElements={!entry.done}
-            tabbable={tabbable}
-          />
-        </MegaButton>
-      : <MarkdownRendered
-          text={entry.text}
-          messageId={entry.id}
-          hideElements={!entry.done}
-          tabbable={tabbable}
-        />;
-  };
-
   return (
     <>
       <li
@@ -139,7 +111,13 @@ export const AIGameFeedEntry = React.forwardRef<
           >
             {!done && !entry.text ?
               <>{loadingComponent}</>
-            : <TextComponent entry={entry} />}
+            : <AIGameFeedEntryTextComponent
+                entry={entry}
+                asButton={asButton}
+                background={background}
+                tabbable={tabbable}
+              />
+            }
           </div>
         </div>
       </li>
