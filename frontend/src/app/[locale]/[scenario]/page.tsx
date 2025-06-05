@@ -79,5 +79,3 @@ export default function Scenario() {
     </DefaultLayout>
   );
 }
-
-// export default Scenario;

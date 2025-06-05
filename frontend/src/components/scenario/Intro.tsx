@@ -12,7 +12,10 @@ interface IntroProps extends WizardPageProps {
    */
   transitionDuration?: number;
 }
-export const Intro: React.FC<IntroProps> = ({ onNext, transitionDuration = 1000 }) => {
+export const Intro: React.FC<IntroProps> = ({
+  onNext,
+  transitionDuration = 1000,
+}) => {
   const { t } = useTranslation('intro');
 
   const [opacity, setOpacity] = useState<number>(0);
@@ -29,17 +32,33 @@ export const Intro: React.FC<IntroProps> = ({ onNext, transitionDuration = 1000 
     { text: t('intro:6'), duration: 7000 },
   ];
 
+  const goToNext = () => {
+    setTimeout(() => {
+      if (currentTextIndex === texts.length - 1) {
+        onNext?.();
+      } else {
+        setCurrentTextIndex(currentTextIndex + 1);
+      }
+    }, transitionDuration);
+  };
+
+  const handleNextSlide = () => {
+    setTimeout(() => {
+      if (currentTextIndex === texts.length - 1) {
+        setMainOpacity(0);
+      } else {
+        setOpacity(0);
+      }
+      goToNext();
+    }, texts[currentTextIndex].duration);
+  };
+
   useEffect(() => {
     setCurrentTextIndex(0);
     setMainOpacity(1);
     setTimeout(() => {
       setOpacity(1);
-      setTimeout(() => {
-        setOpacity(0);
-        setTimeout(() => {
-          setCurrentTextIndex(1);
-        }, transitionDuration);
-      }, texts[0].duration);
+      handleNextSlide();
     }, transitionDuration * 2);
     //eslint-disable-next-line
   }, []);
@@ -47,20 +66,7 @@ export const Intro: React.FC<IntroProps> = ({ onNext, transitionDuration = 1000 
   useEffect(() => {
     setTimeout(() => {
       setOpacity(1);
-      setTimeout(() => {
-        if (currentTextIndex === texts.length - 1) {
-          setMainOpacity(0);
-        } else {
-          setOpacity(0);
-        }
-        setTimeout(() => {
-          if (currentTextIndex === texts.length - 1) {
-            onNext?.();
-          } else {
-            setCurrentTextIndex(currentTextIndex + 1);
-          }
-        }, transitionDuration);
-      }, texts[currentTextIndex].duration);
+      handleNextSlide();
     }, transitionDuration);
     //eslint-disable-next-line
   }, [currentTextIndex]);
@@ -74,7 +80,12 @@ export const Intro: React.FC<IntroProps> = ({ onNext, transitionDuration = 1000 
           transitionDuration: `${transitionDuration}ms`,
         }}
       >
-        <Button size="sm" variant="tertiary" onClick={onNext} leftIcon={<Icon icon={<FastForward />} />}>
+        <Button
+          size="sm"
+          variant="tertiary"
+          onClick={onNext}
+          leftIcon={<Icon icon={<FastForward />} />}
+        >
           {t('common:skip_intro')}
         </Button>
       </div>

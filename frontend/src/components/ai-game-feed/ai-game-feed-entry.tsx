@@ -1,6 +1,10 @@
 'use client';
 
-import { ChatHistoryEntry, MarkdownRendered, TypingSequence } from '@sk-web-gui/ai';
+import {
+  ChatHistoryEntry,
+  MarkdownRendered,
+  TypingSequence,
+} from '@sk-web-gui/ai';
 import { cx } from '@sk-web-gui/utils';
 import { useLocalStorage } from '@utils/use-localstorage.hook';
 import React from 'react';
@@ -20,7 +24,10 @@ interface AIGameFeedEntryProps extends React.ComponentPropsWithoutRef<'li'> {
   size?: 'sm' | 'lg';
 }
 
-export const AIGameFeedEntry = React.forwardRef<HTMLLIElement, AIGameFeedEntryProps>((props, ref) => {
+export const AIGameFeedEntry = React.forwardRef<
+  HTMLLIElement,
+  AIGameFeedEntryProps
+>((props, ref) => {
   const {
     entry,
     className,
@@ -49,31 +56,55 @@ export const AIGameFeedEntry = React.forwardRef<HTMLLIElement, AIGameFeedEntryPr
     }
   }, [done]);
 
+  const getBackgroundColor = () => {
+    if (asButton) {
+      return 'bg-transparent';
+    }
+    if (highcontrast) {
+      return 'bg-background-content text-dark-primary';
+    }
+
+    switch (background) {
+      case 'tertiary':
+        return 'dark:bg-primitives-overlay-darken-8 bg-primitives-overlay-lighten-8 text-dark-primary';
+      case 'vattjom':
+        return 'bg-vattjom-surface-primary text-vattjom-text-secondary';
+      case 'juniskar':
+        return 'bg-juniskar-surface-primary text-juniskar-text-secondary';
+      case 'gronsta':
+        return 'bg-gronsta-surface-primary text-gronsta-text-secondary';
+      case 'bjornstigen':
+        return 'bg-bjornstigen-surface-primary text-bjornstigen-text-secondary';
+      default:
+        return 'bg-transparent';
+    }
+  };
+
   return (
     <>
       <li
         ref={ref}
-        className={cx('w-full flex', align === 'left' ? 'flex-row' : 'flex-row-reverse', className)}
+        className={cx(
+          'w-full flex',
+          align === 'left' ? 'flex-row' : 'flex-row-reverse',
+          className
+        )}
         data-origin={entry.origin}
         data-size={size}
         {...rest}
       >
         <div
           className={cx(
-            (!done && !entry.text) || entry.origin === 'user' ? 'w-fit' : 'w-full',
+            (!done && !entry.text) || entry.origin === 'user' ?
+              'w-fit'
+            : 'w-full',
             'rounded-cards px-24 py-20',
-            asButton ? 'bg-transparent'
-            : highcontrast ? 'bg-background-content text-dark-primary'
-            : background === 'tertiary' ?
-              'dark:bg-primitives-overlay-darken-8 bg-primitives-overlay-lighten-8 text-dark-primary'
-            : background === 'vattjom' ? 'bg-vattjom-surface-primary text-vattjom-text-secondary'
-            : background === 'juniskar' ? 'bg-juniskar-surface-primary text-juniskar-text-secondary'
-            : background === 'gronsta' ? 'bg-gronsta-surface-primary text-gronsta-text-secondary'
-            : background === 'bjornstigen' ? 'bg-bjornstigen-surface-primary text-bjornstigen-text-secondary'
-            : 'bg-transparent',
+            getBackgroundColor(),
             {
-              ['font-bold']: asButton || (background && background !== 'tertiary'),
-              ['border-2 border-divider']: highcontrast && !asButton && !!background,
+              ['font-bold']:
+                asButton || (background && background !== 'tertiary'),
+              ['border-2 border-divider']:
+                highcontrast && !asButton && !!background,
             }
           )}
         >
@@ -99,14 +130,12 @@ export const AIGameFeedEntry = React.forwardRef<HTMLLIElement, AIGameFeedEntryPr
                   tabbable={tabbable}
                 />
               </MegaButton>
-            : <>
-                <MarkdownRendered
-                  text={entry.text}
-                  messageId={entry.id}
-                  hideElements={!entry.done}
-                  tabbable={tabbable}
-                />
-              </>
+            : <MarkdownRendered
+                text={entry.text}
+                messageId={entry.id}
+                hideElements={!entry.done}
+                tabbable={tabbable}
+              />
             }
           </div>
         </div>

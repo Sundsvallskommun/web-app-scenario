@@ -35,11 +35,8 @@ export const SettingsMenu: React.FC = () => {
   }, []);
 
   const handleInstall = () => {
-    if (installRef?.current && installRef?.current?.prompt) {
-      installRef.current.prompt();
-    }
+    installRef?.current?.prompt?.();
   };
-
   return (
     <div className="absolute m-24 top-0 right-0">
       <PopupMenu position="under" align="end">

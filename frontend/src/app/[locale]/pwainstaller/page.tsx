@@ -64,9 +64,7 @@ export default function PwaInstaller() {
   }, [pwaSupported, installRef, loading, mounted]);
 
   const handleInstall = () => {
-    if (installRef?.current && installRef.current?.prompt) {
-      installRef.current.prompt();
-    }
+    installRef?.current?.prompt?.();
   };
 
   return (

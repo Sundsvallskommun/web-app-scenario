@@ -13,9 +13,29 @@ interface DefaultLayoutProps extends React.ComponentPropsWithoutRef<'div'> {
 }
 
 export const DefaultLayout: React.FC<DefaultLayoutProps> = (props) => {
-  const { className, showBackground, transitionDuration = 1000, ...rest } = props;
+  const {
+    className,
+    showBackground,
+    transitionDuration = 1000,
+    ...rest
+  } = props;
   const highcontrast = useLocalStorage((state) => state.highcontrast);
   const backgroundSrc = process.env.NEXT_PUBLIC_BACKGROUND_IMAGE;
+
+  const getOpacity = () => {
+    if (!showBackground) {
+      return 0;
+    }
+
+    switch (highcontrast) {
+      case true:
+        return 0.25;
+      case false:
+        return 0.75;
+      default:
+        return 0.75;
+    }
+  };
 
   return (
     <div className="w-dvw h-dvh portrait:max-h-dvh bg-background-content text-dark-primary overflow-hidden relative">
@@ -26,16 +46,18 @@ export const DefaultLayout: React.FC<DefaultLayoutProps> = (props) => {
         )}
         style={{
           backgroundImage: backgroundSrc ? `url(${backgroundSrc})` : undefined,
-          opacity:
-            showBackground ?
-              highcontrast ? 0.25
-              : 0.75
-            : 0,
+          opacity: getOpacity(),
           transitionDuration: `${transitionDuration}ms`,
         }}
       ></div>
       <div className="flex flex-col w-full h-full overflow-hidden absolute top-0 left-0 right-0 bottom-0 z-10">
-        <div className={cx('grow shrink overflow-hidden flex w-full justify-center pb-24', className)} {...rest} />
+        <div
+          className={cx(
+            'grow shrink overflow-hidden flex w-full justify-center pb-24',
+            className
+          )}
+          {...rest}
+        />
       </div>
     </div>
   );
