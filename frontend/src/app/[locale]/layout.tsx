@@ -1,16 +1,17 @@
-import { ReactNode } from 'react';
-import { headers } from 'next/headers';
 import LocalizationProvider from '@components/localization-provider/localization-provider';
+import { headers } from 'next/headers';
+import { ReactNode } from 'react';
 import initLocalization from '../i18n';
 
-interface LocaleLayoutProps {
+export interface LocaleLayoutProps {
   children: ReactNode;
   params: Promise<{ locale: string }>;
 }
 
-const namespaces = ['common', 'paths', 'layout', 'login', 'example'];
+const namespaces = ['common', 'paths', 'intro', 'login'];
 
-const LocaleLayout = async ({ children, params }: LocaleLayoutProps) => {
+const LocaleLayout = async (props: LocaleLayoutProps) => {
+  const { params, children } = props;
   const { locale } = await params;
   const { resources } = await initLocalization(locale, namespaces);
 
@@ -36,9 +37,7 @@ export const generateMetadata = async ({ params }: LocaleLayoutProps) => {
     ); // Comma separate sections
 
   const title =
-    path ?
-      `${process.env.NEXT_PUBLIC_APP_NAME} - ${t(`paths:${path}.title`, { defaultValue: pathName })}`
-    : process.env.NEXT_PUBLIC_APP_NAME;
+    path ? `${t('common:app_name')} - ${t(`paths:${path}.title`, { defaultValue: pathName })}` : t('common:app_name');
   const description = t(`paths:${path}.description`, { defaultValue: '' });
 
   return {

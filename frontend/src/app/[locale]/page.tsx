@@ -1,23 +1,25 @@
 'use client';
 
 import LoaderFullScreen from '@components/loader/loader-fullscreen';
-import { useAssistantStore } from '@sk-web-gui/ai';
+import { useSessionStorage } from '@utils/use-sessionstorage.hook';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import { shallow } from 'zustand/shallow';
 
 const Index = () => {
-  const [apiBaseUrl, setApiBaseUrl] = useAssistantStore((state) => [state.apiBaseUrl, state.setApiBaseUrl]);
+  const [webMode, pwa] = useSessionStorage((state) => [state.webMode, state.pwa], shallow);
 
-  useEffect(() => {
-    if (!apiBaseUrl) {
-      setApiBaseUrl(process.env.NEXT_PUBLIC_INTRIC_API_URL ?? '');
-    }
-  }, [apiBaseUrl]);
   const router = useRouter();
 
+  const showInstaller = !webMode && !pwa;
+
   useEffect(() => {
-    router.push('/example');
-  }, [router]);
+    if (showInstaller) {
+      router.push('/pwainstaller');
+    } else {
+      router.push('/start');
+    }
+  }, [router, showInstaller]);
 
   return <LoaderFullScreen />;
 };
