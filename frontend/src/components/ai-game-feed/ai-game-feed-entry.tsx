@@ -80,6 +80,30 @@ export const AIGameFeedEntry = React.forwardRef<
     }
   };
 
+  const TextComponent: React.FC<{ entry: ChatHistoryEntry }> = ({ entry }) => {
+    return asButton ?
+        <MegaButton
+          as="span"
+          role="none"
+          color={background === 'tertiary' ? 'primary' : background}
+          rounded
+          className="cursor-default"
+        >
+          <MarkdownRendered
+            text={entry.text}
+            messageId={entry.id}
+            hideElements={!entry.done}
+            tabbable={tabbable}
+          />
+        </MegaButton>
+      : <MarkdownRendered
+          text={entry.text}
+          messageId={entry.id}
+          hideElements={!entry.done}
+          tabbable={tabbable}
+        />;
+  };
+
   return (
     <>
       <li
@@ -115,28 +139,7 @@ export const AIGameFeedEntry = React.forwardRef<
           >
             {!done && !entry.text ?
               <>{loadingComponent}</>
-            : asButton ?
-              <MegaButton
-                as="span"
-                role="none"
-                color={background === 'tertiary' ? 'primary' : background}
-                rounded
-                className="cursor-default"
-              >
-                <MarkdownRendered
-                  text={entry.text}
-                  messageId={entry.id}
-                  hideElements={!entry.done}
-                  tabbable={tabbable}
-                />
-              </MegaButton>
-            : <MarkdownRendered
-                text={entry.text}
-                messageId={entry.id}
-                hideElements={!entry.done}
-                tabbable={tabbable}
-              />
-            }
+            : <TextComponent entry={entry} />}
           </div>
         </div>
       </li>
