@@ -8,11 +8,11 @@ module.exports = {
     './node_modules/@sk-web-gui/*/dist/**/*.js',
   ],
   theme: {
-    // extend: {
-    // if you want to override max content width
-    // maxWidth: {
-    //   content: screens['desktop-max'], // default in core is based on screens
-    // },
+    extend: {
+      transitionProperty: {
+        opacity: 'opacity',
+      },
+    },
   },
   darkMode: 'class', // or 'media' or 'class'
   presets: [require('@sk-web-gui/core').preset()],

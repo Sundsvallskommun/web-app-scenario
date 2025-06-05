@@ -3,7 +3,7 @@ import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { __DEV__ } from '@sk-web-gui/react';
 import { emptyUser } from './defaults';
-import { ServiceResponse } from '@interfaces/services';
+import { ServiceResponse } from '@interfaces/services.interface';
 import { User } from '@data-contracts/backend/data-contracts';
 
 const handleSetUserResponse: (res: ApiResponse<User>) => User = (res) => ({

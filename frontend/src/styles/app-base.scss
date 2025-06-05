@@ -21,3 +21,8 @@ body {
 .main-container {
   flex: 1 0 auto;
 }
+
+.hidden-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}

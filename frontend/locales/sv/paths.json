@@ -3,8 +3,12 @@
     "title": "Inloggningssida",
     "description": "Beskrivning utav inloggningssidan"
   },
-  "/example": {
-    "title": "Exempelsida",
-    "description": "Beskrivning utav exempelsidan"
+  "/start": {
+    "title": "Med livet som insats",
+    "description": "Scenariouppspelare. Ett stöd för dialog med unga om vägval och dess konsekvenser"
+  },
+  "/1": {
+    "title": "Bara en liten tjänst",
+    "description": "Scenario 1 -  Bara en liten tjänst"
   }
 }
