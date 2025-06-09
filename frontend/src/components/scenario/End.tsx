@@ -49,7 +49,10 @@ export const End: React.FC<EndProps> = ({
       className="flex flex-col justify-between items-center grow transition-opacity"
       style={{ opacity, transitionDuration: `${transitionDuration}ms` }}
     >
-      <header className="flex flex-col items-center text-center py-80">
+      <header
+        className="flex flex-col items-center text-center py-80"
+        data-cy="end-header"
+      >
         <h1 className="text-display-1-sm md:text-display-1-md xl:text-display-1-lg">
           {t('common:app_name')}
         </h1>

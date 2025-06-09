@@ -8,10 +8,20 @@ interface IntroductionModalProps {
   open: boolean;
 }
 
-export const IntroductionModal: React.FC<IntroductionModalProps> = ({ onClose, open }) => {
+export const IntroductionModal: React.FC<IntroductionModalProps> = ({
+  onClose,
+  open,
+}) => {
   const { t } = useTranslation(['common', 'intro']);
   return (
-    <Modal show={open} onClose={onClose} label={t('common:introduction')} labelAs="h1" className="w-[78rem]">
+    <Modal
+      data-cy="instruction-modal"
+      show={open}
+      onClose={onClose}
+      label={t('common:introduction')}
+      labelAs="h1"
+      className="w-[78rem]"
+    >
       <Modal.Content>
         <h2>{t('common:app_name')}</h2>
         <p>{t('intro:1')}</p>
