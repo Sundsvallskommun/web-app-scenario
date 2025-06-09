@@ -17,20 +17,8 @@ export default defineConfig({
     screenshotOnRunFailure: false,
     chromeWebSecurity: false,
     defaultCommandTimeout: 10000,
-    setupNodeEvents(on, config) {
-      codeCoverageTask(on, config);
-      // It's IMPORTANT to return the config object
-      // with any changed environment variables
-      return config;
-    },
-  },
+    experimentalRunAllSpecs: true,
 
-  component: {
-    devServer: {
-      framework: 'next',
-      bundler: 'webpack',
-    },
-    chromeWebSecurity: false,
     setupNodeEvents(on, config) {
       codeCoverageTask(on, config);
       // It's IMPORTANT to return the config object

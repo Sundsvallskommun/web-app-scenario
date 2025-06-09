@@ -35,3 +35,5 @@ export const AIGameFeedEntryTextComponent: React.FC<
         tabbable={tabbable}
       />;
 };
+
+export default AIGameFeedEntryTextComponent;

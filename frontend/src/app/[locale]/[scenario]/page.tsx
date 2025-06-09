@@ -1,7 +1,7 @@
 'use client';
 
 import DefaultLayout from '@layouts/default-layout/default-layout.component';
-import { ChatHistoryEntry, useChat } from '@sk-web-gui/ai';
+import { ChatHistoryEntry, useAssistantStore, useChat } from '@sk-web-gui/ai';
 import { useSessionStorage } from '@utils/use-sessionstorage.hook';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -10,6 +10,7 @@ import { Chat } from '@components/scenario/Chat';
 import { End } from '@components/scenario/End';
 import { Intro } from '@components/scenario/Intro';
 import { ScenarioStart } from '@components/scenario/ScenarioStart';
+import { useTranslation } from 'react-i18next';
 
 interface Page {
   component: React.JSX.Element;
@@ -18,7 +19,12 @@ interface Page {
 export default function Scenario() {
   const [page, setPage] = useState<number>(0);
   const router = useRouter();
-  const [webMode, pwa] = useSessionStorage((state) => [state.webMode, state.pwa], shallow);
+  const { t } = useTranslation();
+  const setInfo = useAssistantStore((state) => state.setInfo);
+  const [webMode, pwa] = useSessionStorage(
+    (state) => [state.webMode, state.pwa],
+    shallow
+  );
 
   const transitionDuration = 1000;
 
@@ -38,22 +44,44 @@ export default function Scenario() {
     newSession();
   }, [newSession]);
 
-  const lastAssistantEntry = history.filter((entry: ChatHistoryEntry) => entry.origin === 'assistant').at(-1);
+  useEffect(() => {
+    //NOTE: Set info according to assisten from BE
+    setInfo({
+      name: t('common:assistant_name'),
+      id: process.env.NEXT_PUBLIC_ASSISTANT_ID ?? '',
+    });
+  }, [setInfo]);
+
+  const lastAssistantEntry = history
+    .filter((entry: ChatHistoryEntry) => entry.origin === 'assistant')
+    .at(-1);
 
   const pages: Page[] = [
     {
-      component: <Intro transitionDuration={transitionDuration} onNext={() => setPage(1)} />,
+      component: (
+        <Intro
+          transitionDuration={transitionDuration}
+          onNext={() => setPage(1)}
+        />
+      ),
       showBackground: false,
     },
     {
-      component: <ScenarioStart onNext={() => handleStartScenario()} onRestart={() => handleRestart()} />,
+      component: (
+        <ScenarioStart
+          onNext={() => handleStartScenario()}
+          onRestart={() => handleRestart()}
+        />
+      ),
       showBackground: true,
     },
     {
       component: (
         <Chat
           history={history}
-          sendQuery={(q, add) => sendQuery(q, [], { question: add ?? true, answer: true })}
+          sendQuery={(q, add) =>
+            sendQuery(q, [], { question: add ?? true, answer: true })
+          }
           done={done || lastAssistantEntry?.done}
           onNext={() => setPage(3)}
         />
@@ -61,7 +89,13 @@ export default function Scenario() {
       showBackground: true,
     },
     {
-      component: <End history={history} transitionDuration={transitionDuration} onRestart={() => handleRestart()} />,
+      component: (
+        <End
+          history={history}
+          transitionDuration={transitionDuration}
+          onRestart={() => handleRestart()}
+        />
+      ),
       showBackground: true,
     },
   ];
