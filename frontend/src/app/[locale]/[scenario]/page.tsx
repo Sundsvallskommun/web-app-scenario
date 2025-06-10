@@ -50,7 +50,7 @@ export default function Scenario() {
       name: t('common:assistant_name'),
       id: process.env.NEXT_PUBLIC_ASSISTANT_ID ?? '',
     });
-  }, [setInfo]);
+  }, [setInfo, t]);
 
   const lastAssistantEntry = history
     .filter((entry: ChatHistoryEntry) => entry.origin === 'assistant')

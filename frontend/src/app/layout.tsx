@@ -8,10 +8,12 @@ interface RootLayoutProps {
   params: Promise<{ locale: string }>;
 }
 
-export const generateStaticParams = () => i18nConfig.locales.map((locale) => ({ locale }));
+export const generateStaticParams = () =>
+  i18nConfig.locales.map((locale) => ({ locale }));
 
 const RootLayout = async ({ children, params }: RootLayoutProps) => {
   const { locale } = await params;
+
   return (
     <html lang={locale}>
       <body>

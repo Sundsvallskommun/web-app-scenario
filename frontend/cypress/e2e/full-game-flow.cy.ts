@@ -1,22 +1,24 @@
 import { answer } from '../fixtures/answers';
+import { getMe } from '../fixtures/getMe';
 
 describe('Full game flow', () => {
   beforeEach(() => {
+    cy.intercept('GET', '**/api/me', getMe).as('Login');
     cy.intercept('POST', '**/api/assistants/**/sessions/?stream=false', {
       fixture: 'scenario-base',
     });
     cy.intercept(
       'POST',
       '**/api/assistants/**/sessions/12345?stream=false',
+
       (req) => {
         const data = JSON.parse(req.body);
         const body = answer(data.body);
-        req.continue((res) => {
-          res.body = body;
-        });
+        req.reply(body);
       }
     );
     cy.visit('/start');
+    cy.wait('@Login');
   });
 
   it('shows the scenario intro', () => {

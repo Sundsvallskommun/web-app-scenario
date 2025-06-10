@@ -6,12 +6,12 @@ import {
   NODE_ENV,
   ORIGIN,
   PORT,
-  SAML_AUDIENCE,
   SAML_CALLBACK_URL,
   SAML_ENTRY_SSO,
   SAML_FAILURE_REDIRECT,
   SAML_IDP_PUBLIC_CERT,
   SAML_ISSUER,
+  SAML_LOGIN_REDIRECT,
   SAML_LOGOUT_CALLBACK_URL,
   SAML_PRIVATE_KEY,
   SAML_PUBLIC_KEY,
@@ -29,7 +29,7 @@ import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express from 'express';
-import session from 'express-session';
+import session, { Store } from 'express-session';
 import { existsSync, mkdirSync } from 'fs';
 import helmet from 'helmet';
 import hpp from 'hpp';
@@ -47,13 +47,16 @@ import { Profile } from './interfaces/profile.interface';
 import { User } from './interfaces/users.interface';
 import { additionalConverters } from './utils/custom-validation-classes';
 import { isValidUrl } from './utils/util';
+import { ADRole } from './interfaces/auth.interface';
 
 const corsWhitelist = ORIGIN?.split(',');
-
+const defaultRedirect = SAML_LOGIN_REDIRECT ?? '/';
 const SessionStoreCreate = SESSION_MEMORY ? createMemoryStore(session) : createFileStore(session);
 const sessionTTL = 4 * 24 * 60 * 60;
 // NOTE: memory uses ms while file uses seconds
-const sessionStore = new SessionStoreCreate(SESSION_MEMORY ? { checkPeriod: sessionTTL * 1000 } : { ttl: sessionTTL, path: './data/sessions' });
+const sessionStore = new SessionStoreCreate(
+  SESSION_MEMORY ? { checkPeriod: sessionTTL * 1000 } : { ttl: sessionTTL, path: './data/sessions' },
+) as Store;
 
 // const prisma = new PrismaClient();
 // const apiService = new ApiService();
@@ -89,39 +92,43 @@ const samlStrategy = new Strategy(
         message: 'Missing SAML profile',
       });
     }
-    const { givenName, surname, citizenIdentifier, username } = profile;
+    const {
+      givenName,
+      surname,
+      citizenIdentifier,
+      username,
+      attributes: { groups },
+    } = profile;
 
-    if (!givenName || !surname || !citizenIdentifier) {
+    if (!givenName || !surname || !citizenIdentifier || !groups) {
       return done({
         name: 'SAML_MISSING_ATTRIBUTES',
         message: 'Missing profile attributes',
       });
     }
 
-    //   const groupList: ADRole[] =
-    //   groups !== undefined
-    //     ? (groups
-    //         .split(',')
-    //         .map(x => x.toLowerCase())
-    //         .filter(x => x.includes('sg_appl_app_')) as ADRole[])
-    //     : [];
+    const groupList: ADRole[] =
+      groups !== undefined
+        ? (groups
+            .split(',')
+            .map(x => x.toLowerCase())
+            .filter(x => x.includes('sg_x_scenarioverktyg')) as ADRole[])
+        : [];
 
-    // const appGroups: ADRole[] = groupList.length > 0 ? groupList : groupList.concat('sg_appl_app_read');
+    const authenticated = groupList?.includes('sg_x_scenarioverktyg');
+
+    if (!authenticated) {
+      done(
+        {
+          name: 'SAML_MISSING_GROUP',
+          message: 'Missing authenticated group',
+        },
+        null,
+      );
+    }
 
     try {
-      // const personNumber = profile.citizenIdentifier;
-      // const citizenResult = await apiService.get<any>({ url: `citizen/2.0/${personNumber}/guid` });
-      // const { data: personId } = citizenResult;
-
-      // if (!personId) {
-      //   return done({
-      //     name: 'SAML_CITIZEN_FAILED',
-      //     message: 'Failed to fetch user from Citizen API',
-      //   });
-      // }
-
       const findUser: User = {
-        // personId: personId,
         username: username,
         name: `${givenName} ${surname}`,
         givenName: givenName,
@@ -222,14 +229,17 @@ class App {
     this.app.get(
       `${BASE_URL_PREFIX}/saml/login`,
       (req, res, next) => {
+        let relayState = defaultRedirect;
         if (req.session.returnTo) {
-          req.query.RelayState = req.session.returnTo;
-        } else if (req.query.successRedirect) {
-          req.query.RelayState = req.query.successRedirect;
+          relayState = req.session.returnTo;
+        }
+        if (req.query.successRedirect) {
+          relayState = `${req.query.successRedirect}`;
         }
         if (req.query.failureRedirect) {
-          req.query.RelayState = `${req.query.RelayState},${req.query.failureRedirect}`;
+          relayState = `${relayState},${req.query.failureRedirect}`;
         }
+        req.url = `${req.path}?RelayState=${relayState}`;
         next();
       },
       (req, res, next) => {
@@ -248,15 +258,21 @@ class App {
     this.app.get(
       `${BASE_URL_PREFIX}/saml/logout`,
       (req, res, next) => {
+        let relayState = defaultRedirect;
         if (req.session.returnTo) {
-          req.query.RelayState = req.session.returnTo;
-        } else if (req.query.successRedirect) {
-          req.query.RelayState = req.query.successRedirect;
+          relayState = req.session.returnTo;
         }
+        if (req.query.successRedirect) {
+          relayState = `${req.query.successRedirect}`;
+        }
+        if (req.query.failureRedirect) {
+          relayState = `${relayState},${req.query.failureRedirect}`;
+        }
+        req.url = `${req.path}?RelayState=${relayState}`;
         next();
       },
       (req, res, next) => {
-        const successRedirect = req.query.successRedirect;
+        const successRedirect = req.query.successRedirect ?? req.query.RelayState;
         samlStrategy.logout(req as any, () => {
           req.logout(err => {
             if (err) {

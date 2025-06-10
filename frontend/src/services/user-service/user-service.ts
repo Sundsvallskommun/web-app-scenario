@@ -1,25 +1,28 @@
-import { ApiResponse, apiService } from '../api-service';
+import { User } from '@data-contracts/backend/data-contracts';
+import { ServiceResponse } from '@interfaces/services.interface';
+import { __DEV__ } from '@sk-web-gui/react';
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
-import { __DEV__ } from '@sk-web-gui/react';
+import { ApiResponse, apiService } from '../api-service';
 import { emptyUser } from './defaults';
-import { ServiceResponse } from '@interfaces/services.interface';
-import { User } from '@data-contracts/backend/data-contracts';
+import Error from 'next/error';
 
 const handleSetUserResponse: (res: ApiResponse<User>) => User = (res) => ({
   name: res.data.name,
   username: res.data.username,
-  // permissions: res.data.permissions,
 });
 
 const getMe: () => Promise<ServiceResponse<User>> = () => {
   return apiService
     .get<ApiResponse<User>>('me')
     .then((res) => ({ data: handleSetUserResponse(res.data) }))
-    .catch((e) => ({
-      message: e.response?.data.message,
-      error: e.response?.status ?? 'UNKNOWN ERROR',
-    }));
+    .catch((e) => {
+      throw new Error({
+        statusCode: e.statusCode,
+        message: e.response?.data.message,
+        error: e.response?.status ?? 'UNKNOWN ERROR',
+      });
+    });
 };
 
 interface State {
@@ -40,14 +43,15 @@ export const useUserStore = create<State & Actions>()(
     (set, get) => ({
       ...initialState,
       setUser: (user) => set(() => ({ user })),
-      getMe: async () => {
+      getMe: () => {
         let user = get().user;
-        const res = await getMe();
-        if (!res.error && res.data) {
-          user = res.data;
-          set(() => ({ user: user }));
-        }
-        return { data: user };
+        return getMe().then((res) => {
+          if (!res.error && res.data) {
+            user = res.data;
+            set(() => ({ user }));
+          }
+          return { data: user };
+        });
       },
       reset: () => {
         set(initialState);

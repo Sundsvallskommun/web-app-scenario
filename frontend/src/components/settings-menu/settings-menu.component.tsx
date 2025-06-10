@@ -10,13 +10,17 @@ import {
 } from '@sk-web-gui/react';
 import { useLocalStorage } from '@utils/use-localstorage.hook';
 import { useSessionStorage } from '@utils/use-sessionstorage.hook';
-import { MonitorDown, Settings2 } from 'lucide-react';
+import { LogOut, MonitorDown, Settings2 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useShallow } from 'zustand/shallow';
+import { capitalize } from 'underscore.string';
+import { useRouter } from 'next/navigation';
 
 export const SettingsMenu: React.FC = () => {
   const { t } = useTranslation();
+  const router = useRouter();
+
   const [highcontrast, setHighcontrast, colorScheme, setColorScheme] =
     useLocalStorage(
       useShallow((state) => [
@@ -99,6 +103,17 @@ export const SettingsMenu: React.FC = () => {
                 </PopupMenu.Item>
               </PopupMenu.Group>
             )}
+            <PopupMenu.Group>
+              <PopupMenu.Item>
+                <Button
+                  leftIcon={<Icon icon={<LogOut />} />}
+                  onClick={() => router.push('/logout')}
+                  data-cy="settings-logout"
+                >
+                  {capitalize(t('common:logout'))}
+                </Button>
+              </PopupMenu.Item>
+            </PopupMenu.Group>
           </PopupMenu.Items>
         </PopupMenu.Panel>
       </PopupMenu>

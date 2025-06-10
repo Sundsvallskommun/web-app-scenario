@@ -41,7 +41,7 @@ export default function PwaInstaller() {
     setOpacity(0);
     setWebMode(true);
     setTimeout(() => {
-      router.push('/');
+      router.push('/start');
     }, transitionDuration);
   };
 
@@ -76,7 +76,9 @@ export default function PwaInstaller() {
           style={{ opacity, transitionDuration: `${transitionDuration}ms` }}
         >
           <div className="flex grow flex-col gap-24 text-center justify-center items-center transition-opacity">
-            <h1 className="text-display-1-sm md:text-display-1-md xl:text-display-1-lg m-0">{t('common:app_name')}</h1>
+            <h1 className="text-display-1-sm md:text-display-1-md xl:text-display-1-lg m-0">
+              {t('common:app_name')}
+            </h1>
             <p className="text-display-3-sm md:text-display-3-md xl:text-display-3-lg mb-24">
               {t('common:pwa_installation')}
             </p>

@@ -2,23 +2,28 @@ import LocalizationProvider from '@components/localization-provider/localization
 import { headers } from 'next/headers';
 import { ReactNode } from 'react';
 import initLocalization from '../i18n';
+import { LocaleLayout } from '@layouts/locale/locale-layout.component';
 
-export interface LocaleLayoutProps {
+export interface LocalizationLayoutProps {
   children: ReactNode;
   params: Promise<{ locale: string }>;
 }
 
 const namespaces = ['common', 'paths', 'intro', 'login'];
 
-const LocaleLayout = async (props: LocaleLayoutProps) => {
+const LocalizationLayout = async (props: LocalizationLayoutProps) => {
   const { params, children } = props;
   const { locale } = await params;
   const { resources } = await initLocalization(locale, namespaces);
 
-  return <LocalizationProvider {...{ locale, resources, namespaces }}>{children}</LocalizationProvider>;
+  return (
+    <LocalizationProvider {...{ locale, resources, namespaces }}>
+      <LocaleLayout>{children}</LocaleLayout>
+    </LocalizationProvider>
+  );
 };
 
-export const generateMetadata = async ({ params }: LocaleLayoutProps) => {
+export const generateMetadata = async ({ params }: LocalizationLayoutProps) => {
   const { locale } = await params;
   const { t } = await initLocalization(locale, namespaces);
   const path = (await headers()).get('x-path');
@@ -36,14 +41,19 @@ export const generateMetadata = async ({ params }: LocaleLayoutProps) => {
         .join(', ')
     ); // Comma separate sections
 
-  const title =
-    path ? `${t('common:app_name')} - ${t(`paths:${path}.title`, { defaultValue: pathName })}` : t('common:app_name');
+  const getTitle = () => {
+    if (path) {
+      return `${t('common:app_name')} - ${t(`paths:${path}.title`, { defaultValue: pathName })}`;
+    }
+    return t('common:app_name');
+  };
+
   const description = t(`paths:${path}.description`, { defaultValue: '' });
 
   return {
-    title,
+    title: getTitle(),
     description,
   };
 };
 
-export default LocaleLayout;
+export default LocalizationLayout;

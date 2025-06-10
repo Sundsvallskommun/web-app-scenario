@@ -7,8 +7,10 @@ import { useEffect } from 'react';
 import { shallow } from 'zustand/shallow';
 
 const Index = () => {
-  const [webMode, pwa] = useSessionStorage((state) => [state.webMode, state.pwa], shallow);
-
+  const [webMode, pwa] = useSessionStorage(
+    (state) => [state.webMode, state.pwa],
+    shallow
+  );
   const router = useRouter();
 
   const showInstaller = !webMode && !pwa;

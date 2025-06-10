@@ -26,7 +26,7 @@ export interface Permissions {
 }
 
 /** AD roles */
-export type ADRole = 'sg_appl_app_admin' | 'sg_appl_app_read';
+export type ADRole = 'sg_x_scenarioverktyg';
 
 /** Internal roles */
 export type InternalRole = 'app_admin' | 'app_read';

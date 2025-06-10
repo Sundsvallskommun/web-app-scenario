@@ -9,6 +9,8 @@
     "**/*.cy.ts",
     "**/*.cy.tsx",
     "cypress/fixtures/*.ts",
-    "src/components/**/*.tsx"
+    "src/components/**/*.tsx",
+    "src/data-contracts/**/*.ts",
+    "src/services/**/*.ts"
   ]
 }
