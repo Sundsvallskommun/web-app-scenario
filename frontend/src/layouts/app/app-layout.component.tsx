@@ -10,6 +10,7 @@ import 'dayjs/locale/sv';
 import updateLocale from 'dayjs/plugin/updateLocale';
 import utc from 'dayjs/plugin/utc';
 import 'dotenv';
+import { usePathname, useRouter } from 'next/navigation';
 import { ReactNode, useEffect, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 
@@ -53,7 +54,10 @@ interface ClientApplicationProps {
 
 const AppLayout = ({ children }: ClientApplicationProps) => {
   const colorScheme = useLocalStorage(useShallow((state) => state.colorScheme));
-  const getMe = useUserStore((state) => state.getMe);
+  const router = useRouter();
+  const path = usePathname();
+  const getMe = useUserStore(useShallow((state) => state.getMe));
+
   const [mounted, setMounted] = useState(false);
   const [apiBaseUrl, setApiBaseUrl, setApiKey, setSettings, setStream] =
     useAssistantStore(
@@ -91,9 +95,22 @@ const AppLayout = ({ children }: ClientApplicationProps) => {
   }, []);
 
   useEffect(() => {
-    getMe();
+    if (path !== '/logout' && path !== '/login') {
+      getMe()
+        .then((res) => {
+          if (!res.data?.name || !res.data?.username) {
+            router.push(`/login?path=${path}`);
+          }
+        })
+        .catch((err) => {
+          router.push(`/login?failMessage=${err?.props?.message}&path=${path}`);
+        });
+    }
+  }, [getMe, path, router]);
+
+  useEffect(() => {
     setMounted(true);
-  }, [getMe, setMounted]);
+  }, [setMounted]);
 
   if (!mounted || !apiBaseUrl) {
     return <LoaderFullScreen />;

@@ -30,8 +30,7 @@ type RoleADMapping = {
   [key in ADRole]: InternalRole;
 };
 const roleADMapping: RoleADMapping = {
-  sg_appl_app_read: 'app_read',
-  sg_appl_app_admin: 'app_admin',
+  sg_x_scenarioverktyg: 'app_read',
 };
 
 /**

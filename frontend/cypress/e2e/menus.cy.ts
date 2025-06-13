@@ -1,7 +1,9 @@
 import { answer } from '../fixtures/answers';
+import { getMe } from '../fixtures/getMe';
 
 describe('Menues', () => {
   beforeEach(() => {
+    cy.intercept('GET', '**/api/me', getMe).as('Login');
     cy.intercept('POST', '**/api/assistants/**/sessions/?stream=false', {
       fixture: 'scenario-base',
     });
@@ -17,6 +19,7 @@ describe('Menues', () => {
       }
     );
     cy.visit('/start');
+    cy.wait('@Login');
   });
 
   it('uses the settings menu', () => {

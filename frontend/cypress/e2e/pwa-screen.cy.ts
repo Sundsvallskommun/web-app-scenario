@@ -1,5 +1,8 @@
+import { getMe } from '../fixtures/getMe';
+
 describe('PWA screen', () => {
   beforeEach(() => {
+    cy.intercept('GET', '**/api/me', getMe);
     cy.visit('/');
   });
 
