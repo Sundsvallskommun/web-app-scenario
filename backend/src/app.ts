@@ -118,13 +118,10 @@ const samlStrategy = new Strategy(
     const authenticated = groupList?.includes('sg_x_scenarioverktyg');
 
     if (!authenticated) {
-      done(
-        {
-          name: 'SAML_MISSING_GROUP',
-          message: 'Missing authenticated group',
-        },
-        null,
-      );
+      return done({
+        name: 'SAML_MISSING_GROUP',
+        message: 'Missing authenticated group',
+      });
     }
 
     try {
