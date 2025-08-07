@@ -11,7 +11,7 @@ import {
   SAML_FAILURE_REDIRECT,
   SAML_IDP_PUBLIC_CERT,
   SAML_ISSUER,
-  SAML_LOGIN_REDIRECT,
+  SAML_SUCCESS_REDIRECT,
   SAML_LOGOUT_CALLBACK_URL,
   SAML_PRIVATE_KEY,
   SAML_PUBLIC_KEY,
@@ -48,9 +48,10 @@ import { User } from './interfaces/users.interface';
 import { additionalConverters } from './utils/custom-validation-classes';
 import { isValidUrl } from './utils/util';
 import { ADRole } from './interfaces/auth.interface';
+import { isValidOrigin } from './utils/isValidOrigin';
 
 const corsWhitelist = ORIGIN?.split(',');
-const defaultRedirect = SAML_LOGIN_REDIRECT ?? '/';
+const defaultRedirect = SAML_SUCCESS_REDIRECT ?? '/';
 const SessionStoreCreate = SESSION_MEMORY ? createMemoryStore(session) : createFileStore(session);
 const sessionTTL = 4 * 24 * 60 * 60;
 // NOTE: memory uses ms while file uses seconds
@@ -269,7 +270,12 @@ class App {
         next();
       },
       (req, res, next) => {
-        const successRedirect = req.query.successRedirect ?? req.query.RelayState;
+        let successRedirect = SAML_SUCCESS_REDIRECT;
+        const providedRedirect = req.query.successRedirect ?? req.query.RelayState;
+        if (typeof providedRedirect === 'string' && isValidUrl(providedRedirect) && isValidOrigin(providedRedirect)) {
+          successRedirect = providedRedirect;
+        }
+
         samlStrategy.logout(req as any, () => {
           req.logout(err => {
             if (err) {
@@ -290,9 +296,13 @@ class App {
         let successRedirect: URL, failureRedirect: URL;
         const urls = req?.body?.RelayState.split(',');
 
-        successRedirect = new URL(urls[0] ?? '');
+        if (isValidUrl(urls[0]) && isValidOrigin(urls[0])) {
+          successRedirect = new URL(urls[0]);
+        } else {
+          successRedirect = new URL(defaultRedirect);
+        }
 
-        if (isValidUrl(urls[1])) {
+        if (isValidUrl(urls[1]) && isValidOrigin(urls[1])) {
           failureRedirect = new URL(urls[1]);
         } else {
           failureRedirect = successRedirect;
@@ -319,10 +329,12 @@ class App {
 
       let urls = req?.body?.RelayState.split(',');
 
-      if (isValidUrl(urls[0])) {
+      if (isValidUrl(urls[0]) && isValidOrigin(urls[0])) {
         successRedirect = new URL(urls[0]);
+      } else {
+        successRedirect = new URL(defaultRedirect);
       }
-      if (isValidUrl(urls[1])) {
+      if (isValidUrl(urls[1]) && isValidOrigin(urls[1])) {
         failureRedirect = new URL(urls[1]);
       } else {
         failureRedirect = new URL(urls[0]);
