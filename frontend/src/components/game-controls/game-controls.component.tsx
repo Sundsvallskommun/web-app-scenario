@@ -12,7 +12,10 @@ interface GameControlsProps {
   disabled?: boolean;
 }
 
-export const GameControls: React.FC<GameControlsProps> = ({ onReact, disabled }) => {
+export const GameControls: React.FC<GameControlsProps> = ({
+  onReact,
+  disabled,
+}) => {
   const [showInput, setShowInput] = useState(false);
   const [value, setValue] = useState<string>('');
 
@@ -23,6 +26,7 @@ export const GameControls: React.FC<GameControlsProps> = ({ onReact, disabled })
     if (value) {
       onReact?.(value);
       setValue('');
+      setShowInput(false);
     }
   };
 
@@ -39,23 +43,47 @@ export const GameControls: React.FC<GameControlsProps> = ({ onReact, disabled })
               leftIcon={<Icon icon={<ArrowLeft />} />}
               onClick={() => setShowInput(false)}
             />
-            <InputSection.Input value={value} disabled={disabled} onChange={(e) => setValue(e.target.value)} />
+            <InputSection.Input
+              value={value}
+              disabled={disabled}
+              onChange={(e) => setValue(e.target.value)}
+            />
             <InputSection.Button type="submit" disabled={disabled}>
               {t('common:send')}
             </InputSection.Button>
           </InputSection.Wrapper>
         </form>
       : <>
-          <MegaButton color="vattjom" rounded onClick={() => onReact?.('A')} disabled={disabled}>
+          <MegaButton
+            color="vattjom"
+            rounded
+            onClick={() => onReact?.('A')}
+            disabled={disabled}
+          >
             A
           </MegaButton>
-          <MegaButton color="juniskar" rounded onClick={() => onReact?.('B')} disabled={disabled}>
+          <MegaButton
+            color="juniskar"
+            rounded
+            onClick={() => onReact?.('B')}
+            disabled={disabled}
+          >
             B
           </MegaButton>
-          <MegaButton color="gronsta" rounded onClick={() => onReact?.('C')} disabled={disabled}>
+          <MegaButton
+            color="gronsta"
+            rounded
+            onClick={() => onReact?.('C')}
+            disabled={disabled}
+          >
             C
           </MegaButton>
-          <MegaButton color="bjornstigen" rounded disabled={disabled} onClick={() => setShowInput(true)}>
+          <MegaButton
+            color="bjornstigen"
+            rounded
+            disabled={disabled}
+            onClick={() => setShowInput(true)}
+          >
             {`D: ${t('common:other')}`}
           </MegaButton>
         </>

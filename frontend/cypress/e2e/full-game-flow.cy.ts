@@ -72,6 +72,7 @@ describe('Full game flow', () => {
     cy.get('[data-cy="feed-entry-2"]').should('contain.text', 'Du frågade: A');
     cy.get('button').contains('D: Annat').click();
     cy.get('.sk-ai-inputsection-input').type('Uppföljning').type('{enter}');
+    cy.get('.sk-ai-inputsection-input').should('not.exist');
     cy.get('[data-cy="feed-entry-3"]').should('contain.text', 'Uppföljning');
     cy.get('[data-cy="feed-entry-4"]').should(
       'contain.text',
