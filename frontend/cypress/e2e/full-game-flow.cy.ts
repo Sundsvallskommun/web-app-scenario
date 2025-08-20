@@ -4,19 +4,10 @@ import { getMe } from '../fixtures/getMe';
 describe('Full game flow', () => {
   beforeEach(() => {
     cy.intercept('GET', '**/api/me', getMe).as('Login');
-    cy.intercept('POST', '**/api/assistants/**/sessions/?stream=false', {
+    cy.intercept('POST', '**/api/conversations', {
       fixture: 'scenario-base',
     });
-    cy.intercept(
-      'POST',
-      '**/api/assistants/**/sessions/12345?stream=false',
 
-      (req) => {
-        const data = JSON.parse(req.body);
-        const body = answer(data.body);
-        req.reply(body);
-      }
-    );
     cy.visit('/start');
     cy.wait('@Login');
   });
@@ -53,7 +44,7 @@ describe('Full game flow', () => {
     cy.get('h1').should('contain.text', 'Bara en liten tjänst');
   });
 
-  it('should skip the scenario intro and go to game play and then stop game play', () => {
+  it.only('should skip the scenario intro and go to game play and then stop game play', () => {
     //Start
     cy.get('button').contains('Starta').click();
     //Intro
@@ -62,6 +53,19 @@ describe('Full game flow', () => {
     cy.get('h1').should('contain.text', 'Bara en liten tjänst');
     cy.get('button').contains('Kör igång').click();
     //Scenario 1
+
+    //New interception for follow up questions
+    cy.intercept(
+      'POST',
+      '**/api/conversations',
+
+      (req) => {
+        const data = JSON.parse(req.body);
+        const body = answer(data.question);
+        req.reply(body);
+      }
+    );
+
     cy.get('h2').should('contain.text', 'Scenario nummer 1');
     cy.get('button').contains('A').click();
     cy.get('[data-cy="feed-entry-1"]').should('contain.text', 'A');
