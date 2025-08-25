@@ -5,7 +5,7 @@ import i18nConfig from './i18nConfig';
 
 interface RootLayoutProps {
   children: ReactNode;
-  params: Promise<{ locale: string }>;
+  params: Promise<{ locale?: string }>;
 }
 
 export const generateStaticParams = () =>
