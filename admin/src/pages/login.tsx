@@ -11,7 +11,7 @@ import { GetServerSideProps } from 'next';
 import { capitalize } from 'underscore.string';
 
 // Turn on/off automatic login
-const autoLogin = true;
+const autoLogin = false;
 
 export default function Start() {
   const router = useRouter();

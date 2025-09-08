@@ -18,3 +18,16 @@ export interface UserApiResponse {
   data: User;
   message: string;
 }
+
+export interface AdminUser {
+  name: string;
+  username: string;
+  givenName: string;
+  surname: string;
+  role: 'app_read' | 'app_admin';
+}
+
+export interface AdminUserApiResponse {
+  data: AdminUser;
+  message: string;
+}
