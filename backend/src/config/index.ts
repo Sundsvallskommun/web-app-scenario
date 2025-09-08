@@ -34,4 +34,6 @@ export const {
   SAML_IDP_PUBLIC_CERT,
   SAML_PRIVATE_KEY,
   SAML_PUBLIC_KEY,
+  AD_ADMINGROUP,
+  AD_GROUPS,
 } = process.env;
