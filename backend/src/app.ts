@@ -1,4 +1,6 @@
 import {
+  AD_ADMINGROUP,
+  AD_GROUPS,
   APP_NAME,
   BASE_URL_PREFIX,
   CREDENTIALS,
@@ -11,10 +13,10 @@ import {
   SAML_FAILURE_REDIRECT,
   SAML_IDP_PUBLIC_CERT,
   SAML_ISSUER,
-  SAML_SUCCESS_REDIRECT,
   SAML_LOGOUT_CALLBACK_URL,
   SAML_PRIVATE_KEY,
   SAML_PUBLIC_KEY,
+  SAML_SUCCESS_REDIRECT,
   SECRET_KEY,
   SESSION_MEMORY,
   SWAGGER_ENABLED,
@@ -43,12 +45,12 @@ import { routingControllersToSpec } from 'routing-controllers-openapi';
 import createFileStore from 'session-file-store';
 import swaggerUi from 'swagger-ui-express';
 import { HttpException } from './exceptions/HttpException';
+import { InternalRoleEnum } from './interfaces/auth.interface';
 import { Profile } from './interfaces/profile.interface';
 import { User } from './interfaces/users.interface';
 import { additionalConverters } from './utils/custom-validation-classes';
-import { isValidUrl } from './utils/util';
-import { ADRole } from './interfaces/auth.interface';
 import { isValidOrigin } from './utils/isValidOrigin';
+import { isValidUrl } from './utils/util';
 
 const corsWhitelist = ORIGIN?.split(',');
 const defaultRedirect = SAML_SUCCESS_REDIRECT ?? '/';
@@ -108,15 +110,10 @@ const samlStrategy = new Strategy(
       });
     }
 
-    const groupList: ADRole[] =
-      groups !== undefined
-        ? (groups
-            .split(',')
-            .map(x => x.toLowerCase())
-            .filter(x => x.includes('sg_x_scenarioverktyg')) as ADRole[])
-        : [];
-
-    const authenticated = groupList?.includes('sg_x_scenarioverktyg');
+    const groupList: string[] = groups !== undefined ? groups.split(',').map(group => group.toLowerCase().trim()) : [];
+    const authenticatedGroups = AD_GROUPS.split(',').map(group => group.toLowerCase().trim());
+    const authenticated = groupList?.some(group => authenticatedGroups.includes(group));
+    const admin = groupList?.includes(AD_ADMINGROUP);
 
     if (!authenticated) {
       return done({
@@ -131,6 +128,7 @@ const samlStrategy = new Strategy(
         name: `${givenName} ${surname}`,
         givenName: givenName,
         surname: surname,
+        role: admin ? InternalRoleEnum.app_admin : InternalRoleEnum.app_read,
       };
 
       done(null, findUser);
