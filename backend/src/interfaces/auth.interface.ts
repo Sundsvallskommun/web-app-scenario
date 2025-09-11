@@ -21,6 +21,6 @@ export interface Permissions {
 /** Internal roles */
 export type InternalRole = 'app_admin' | 'app_read';
 export enum InternalRoleEnum {
-  'app_read',
-  'app_admin',
+  Read = 'app_read',
+  Admin = 'app_admin',
 }

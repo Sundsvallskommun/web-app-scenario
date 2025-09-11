@@ -9,7 +9,7 @@
  * ---------------------------------------------------------------
  */
 
-import { UserApiResponse } from './data-contracts';
+import { AdminUserApiResponse, UserApiResponse } from './data-contracts';
 import { HttpClient, RequestParams } from './http-client';
 
 export class Api<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
@@ -52,6 +52,20 @@ export class Api<SecurityDataType = unknown> extends HttpClient<SecurityDataType
   healthControllerUp = (params: RequestParams = {}) =>
     this.request<void, any>({
       path: `/api/health/up`,
+      method: 'GET',
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags Admin User
+   * @name AdminUserControllerGetUser
+   * @summary Return current user
+   * @request GET:/api/admin/me
+   */
+  adminUserControllerGetUser = (params: RequestParams = {}) =>
+    this.request<AdminUserApiResponse, any>({
+      path: `/api/admin/me`,
       method: 'GET',
       ...params,
     });

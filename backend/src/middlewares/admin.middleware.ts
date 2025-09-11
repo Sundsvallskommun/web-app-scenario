@@ -5,10 +5,10 @@ import { NextFunction, Response } from 'express';
 
 const adminMiddleware = async (req: RequestWithUser, res: Response, next: NextFunction) => {
   try {
-    if (req.isAuthenticated() && req.user.role === InternalRoleEnum.app_admin) {
+    if (req.user.role === InternalRoleEnum.Admin) {
       next();
     } else {
-      next(new HttpException(401, 'NOT_AUTHORIZED'));
+      next(new HttpException(401, 'MISSING_PERMISSIONS'));
     }
   } catch (error) {
     logger.error('Error in admin middleware', error);

@@ -128,7 +128,7 @@ const samlStrategy = new Strategy(
         name: `${givenName} ${surname}`,
         givenName: givenName,
         surname: surname,
-        role: admin ? InternalRoleEnum.app_admin : InternalRoleEnum.app_read,
+        role: admin ? InternalRoleEnum.Admin : InternalRoleEnum.Read,
       };
 
       done(null, findUser);
