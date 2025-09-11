@@ -66,3 +66,11 @@ export const isValidUrl = (string: string) => {
   }
   return url.protocol === 'http:' || url.protocol === 'https:';
 };
+export const dataPath = (path?: string): string => {
+  const fullpath = path ? `/${path}` : '';
+  return '/files' + fullpath;
+};
+
+export const dataDir = (path: string): string => {
+  return __dirname + '/../../data/' + path;
+};

@@ -50,7 +50,8 @@ import { Profile } from './interfaces/profile.interface';
 import { User } from './interfaces/users.interface';
 import { additionalConverters } from './utils/custom-validation-classes';
 import { isValidOrigin } from './utils/isValidOrigin';
-import { isValidUrl } from './utils/util';
+import { dataDir, dataPath, isValidUrl } from './utils/util';
+import rateLimit from 'express-rate-limit';
 
 const corsWhitelist = ORIGIN?.split(',');
 const defaultRedirect = SAML_SUCCESS_REDIRECT ?? '/';
@@ -61,8 +62,12 @@ const sessionStore = new SessionStoreCreate(
   SESSION_MEMORY ? { checkPeriod: sessionTTL * 1000 } : { ttl: sessionTTL, path: './data/sessions' },
 ) as Store;
 
-// const prisma = new PrismaClient();
-// const apiService = new ApiService();
+// Rate limiter for sensitive endpoints, e.g., SAML login callback
+const samlLoginRateLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 10, // limit each IP to 10 requests per windowMs
+  message: 'Too many login attempts from this IP, please try again after a minute',
+});
 
 passport.serializeUser(function (user: Express.User, done) {
   done(null, user);
@@ -192,6 +197,8 @@ class App {
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(cookieParser());
 
+    this.app.use(`${BASE_URL_PREFIX}${dataPath()}`, express.static(dataDir('uploads')));
+
     this.app.use(
       session({
         secret: SECRET_KEY ?? '',
@@ -285,87 +292,96 @@ class App {
       },
     );
 
-    this.app.get(`${BASE_URL_PREFIX}/saml/logout/callback`, bodyParser.urlencoded({ extended: false }), (req, res, next) => {
-      req.logout(err => {
-        if (err) {
-          return next(err);
-        }
+    this.app.get(
+      `${BASE_URL_PREFIX}/saml/logout/callback`,
+      bodyParser.urlencoded({ extended: false }),
+      (req, res, next) => {
+        req.logout(err => {
+          if (err) {
+            return next(err);
+          }
 
+          let successRedirect: URL, failureRedirect: URL;
+          const urls = req?.body?.RelayState.split(',');
+
+          if (isValidUrl(urls[0]) && isValidOrigin(urls[0])) {
+            successRedirect = new URL(urls[0]);
+          } else {
+            successRedirect = new URL(defaultRedirect);
+          }
+
+          if (isValidUrl(urls[1]) && isValidOrigin(urls[1])) {
+            failureRedirect = new URL(urls[1]);
+          } else {
+            failureRedirect = successRedirect;
+          }
+
+          const queries = new URLSearchParams(failureRedirect.searchParams);
+
+          if (req.session.messages?.length > 0) {
+            queries.append('failMessage', req.session.messages[0]);
+          } else {
+            queries.append('failMessage', 'SAML_UNKNOWN_ERROR');
+          }
+
+          if (failureRedirect) {
+            res.redirect(failureRedirect.toString());
+          } else {
+            res.redirect(successRedirect.toString());
+          }
+        });
+      },
+    );
+
+    this.app.post(
+      `${BASE_URL_PREFIX}/saml/login/callback`,
+      bodyParser.urlencoded({ extended: false }),
+      samlLoginRateLimiter,
+      (req, res, next) => {
         let successRedirect: URL, failureRedirect: URL;
-        const urls = req?.body?.RelayState.split(',');
+
+        let urls = req?.body?.RelayState.split(',');
 
         if (isValidUrl(urls[0]) && isValidOrigin(urls[0])) {
           successRedirect = new URL(urls[0]);
         } else {
           successRedirect = new URL(defaultRedirect);
         }
-
         if (isValidUrl(urls[1]) && isValidOrigin(urls[1])) {
           failureRedirect = new URL(urls[1]);
         } else {
-          failureRedirect = successRedirect;
+          failureRedirect = new URL(urls[0]);
         }
 
-        const queries = new URLSearchParams(failureRedirect.searchParams);
-
-        if (req.session.messages?.length > 0) {
-          queries.append('failMessage', req.session.messages[0]);
-        } else {
-          queries.append('failMessage', 'SAML_UNKNOWN_ERROR');
-        }
-
-        if (failureRedirect) {
-          res.redirect(failureRedirect.toString());
-        } else {
-          res.redirect(successRedirect.toString());
-        }
-      });
-    });
-
-    this.app.post(`${BASE_URL_PREFIX}/saml/login/callback`, bodyParser.urlencoded({ extended: false }), (req, res, next) => {
-      let successRedirect: URL, failureRedirect: URL;
-
-      let urls = req?.body?.RelayState.split(',');
-
-      if (isValidUrl(urls[0]) && isValidOrigin(urls[0])) {
-        successRedirect = new URL(urls[0]);
-      } else {
-        successRedirect = new URL(defaultRedirect);
-      }
-      if (isValidUrl(urls[1]) && isValidOrigin(urls[1])) {
-        failureRedirect = new URL(urls[1]);
-      } else {
-        failureRedirect = new URL(urls[0]);
-      }
-
-      passport.authenticate('saml', (err: Error, user: Express.User) => {
-        if (err) {
-          const queries = new URLSearchParams(failureRedirect.searchParams);
-          if (err?.name) {
-            queries.append('failMessage', err.name);
-          } else {
-            queries.append('failMessage', 'SAML_UNKNOWN_ERROR');
-          }
-          failureRedirect.search = queries.toString();
-          res.redirect(failureRedirect.toString());
-        } else if (!user) {
-          const failMessage = new URLSearchParams(failureRedirect.searchParams);
-          failMessage.append('failMessage', 'NO_USER');
-          failureRedirect.search = failMessage.toString();
-          res.redirect(failureRedirect.toString());
-        } else {
-          req.login(user, loginErr => {
-            if (loginErr) {
-              const failMessage = new URLSearchParams(failureRedirect.searchParams);
-              failMessage.append('failMessage', 'SAML_UNKNOWN_ERROR');
-              failureRedirect.search = failMessage.toString();
-              res.redirect(failureRedirect.toString());
+        passport.authenticate('saml', (err: Error, user: Express.User) => {
+          if (err) {
+            const queries = new URLSearchParams(failureRedirect.searchParams);
+            if (err?.name) {
+              queries.append('failMessage', err.name);
+            } else {
+              queries.append('failMessage', 'SAML_UNKNOWN_ERROR');
             }
-            return res.redirect(successRedirect.toString());
-          });
-        }
-      })(req, res, next);
-    });
+            failureRedirect.search = queries.toString();
+            res.redirect(failureRedirect.toString());
+          } else if (!user) {
+            const failMessage = new URLSearchParams(failureRedirect.searchParams);
+            failMessage.append('failMessage', 'NO_USER');
+            failureRedirect.search = failMessage.toString();
+            res.redirect(failureRedirect.toString());
+          } else {
+            req.login(user, loginErr => {
+              if (loginErr) {
+                const failMessage = new URLSearchParams(failureRedirect.searchParams);
+                failMessage.append('failMessage', 'SAML_UNKNOWN_ERROR');
+                failureRedirect.search = failMessage.toString();
+                res.redirect(failureRedirect.toString());
+              }
+              return res.redirect(successRedirect.toString());
+            });
+          }
+        })(req, res, next);
+      },
+    );
   }
 
   private initializeRoutes(controllers: Function[]) {
