@@ -48,7 +48,7 @@ export class AdminImageController {
     } catch (error) {
       logger.error('Error getting images', error);
 
-      throw new HttpException(error?.code ?? 500, error?.message ?? 'Internal Server Error');
+      throw new HttpException(error?.status ?? 500, error?.message ?? 'Internal Server Error');
     }
   }
 
@@ -66,13 +66,14 @@ export class AdminImageController {
     try {
       const data = await prisma.image.findFirst({
         where: { id },
+        include: { scenarios: true },
       });
 
       return response.send({ data, message: 'success' });
     } catch (error) {
       logger.error('Error getting image', error);
 
-      throw new HttpException(error?.code ?? 500, error?.message ?? 'Internal Server Error');
+      throw new HttpException(error?.status ?? 500, error?.message ?? 'Internal Server Error');
     }
   }
 
@@ -98,7 +99,7 @@ export class AdminImageController {
       return response.send({ message: 'success', data: imageResponse });
     } catch (error) {
       logger.error('Error saving image', error);
-      throw new HttpException(error?.code ?? 500, error?.message ?? 'Internal Server Error');
+      throw new HttpException(error?.status ?? 500, error?.message ?? 'Internal Server Error');
     }
   }
 
@@ -125,7 +126,7 @@ export class AdminImageController {
       return response.send({ message: 'success', data });
     } catch (error) {
       logger.error('Error updating image', error);
-      throw new HttpException(error?.code ?? 500, error?.message ?? 'Internal Server Error');
+      throw new HttpException(error?.status ?? 500, error?.message ?? 'Internal Server Error');
     }
   }
 
@@ -143,7 +144,12 @@ export class AdminImageController {
     try {
       const image = await prisma.image.findFirst({
         where: { id },
+        include: { scenarios: true },
       });
+
+      if (image.scenarios && image.scenarios.length > 0) {
+        throw new HttpException(409, 'Image is in use');
+      }
 
       unlink(`${dataDir('uploads')}/${image.filename}`, err => {
         if (err) {
@@ -159,7 +165,7 @@ export class AdminImageController {
       return response.send({ data: true, message: 'success' });
     } catch (error) {
       logger.error('Error deleting image', error);
-      throw new HttpException(error?.code ?? 500, error?.message ?? 'Internal Server Error');
+      throw new HttpException(error?.status ?? 500, error?.message ?? 'Internal Server Error');
     }
   }
 }

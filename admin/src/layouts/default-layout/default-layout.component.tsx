@@ -31,7 +31,7 @@ export default function DefaultLayout({ title, postTitle, headerSubtitle, childr
     contentElement?.focus();
   };
 
-  const colorSchemeIcons: Record<ColorSchemeMode, JSX.Element> = {
+  const colorSchemeIcons: Record<ColorSchemeMode, React.JSX.Element> = {
     light: <Sun />,
     dark: <Moon />,
     system: <Monitor />,
@@ -40,14 +40,12 @@ export default function DefaultLayout({ title, postTitle, headerSubtitle, childr
   return (
     <div className="DefaultLayout full-page-layout">
       <Head>
-        <title>{title ? title : fullTitle}</title>
+        <title>{capitalize(title ? title : fullTitle)}</title>
         <meta name="description" content={`${process.env.NEXT_PUBLIC_APP_NAME} admin`} />
       </Head>
 
-      <NextLink href="#content" legacyBehavior passHref>
-        <a onClick={setFocusToMain} accessKey="s" className="next-link-a" data-cy="systemMessage-a">
-          {t('layout:header.goto_content')}
-        </a>
+      <NextLink href="#content" onClick={setFocusToMain} className="next-link-a" data-cy="systemMessage-a">
+        {t('layout:header.goto_content')}
       </NextLink>
 
       <div className="flex w-full min-h-screen h-full">

@@ -1,0 +1,20 @@
+{
+  "name_zero": "bilder",
+  "name_one": "bild",
+  "name_many": "bilder",
+  "name_other": "bilder",
+  "the_name": "bilden",
+  "the_name_one": "bilden",
+  "the_name_many": "bilderna",
+  "the_name_other": "bilderna",
+  "properties": {
+    "id": "Id",
+    "name": "Namn",
+    "url": "Sökväg",
+    "createdAt": "Skapad",
+    "updatedAt": "Senast uppdaterad"
+  },
+  "preview": "Granska",
+  "save_and_select": "Spara och välj",
+  "used_by": "Används av"
+}

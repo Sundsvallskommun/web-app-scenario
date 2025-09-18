@@ -1,5 +1,5 @@
 import LoginGuard from '@components/login-guard/login-guard';
-import { GuiProvider } from '@sk-web-gui/react';
+import { ConfirmationDialogContextProvider, GuiProvider } from '@sk-web-gui/react';
 import { useLocalStorage } from '@utils/use-localstorage.hook';
 import 'dayjs/locale/sv';
 import type { AppProps } from 'next/app';
@@ -10,9 +10,11 @@ export function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <GuiProvider colorScheme={colorScheme}>
-      <LoginGuard>
-        <Component {...pageProps} />
-      </LoginGuard>
+      <ConfirmationDialogContextProvider>
+        <LoginGuard>
+          <Component {...pageProps} />
+        </LoginGuard>
+      </ConfirmationDialogContextProvider>
     </GuiProvider>
   );
 }
