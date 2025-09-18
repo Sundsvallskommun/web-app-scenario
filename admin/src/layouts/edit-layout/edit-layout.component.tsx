@@ -30,6 +30,7 @@ export const EditLayout: React.FC<EditLayoutProps> = (props) => {
               <Link
                 href={backLink}
                 className="sk-btn sk-btn-lg sk-btn-tertiary"
+                data-cy="goback"
                 data-icon="true"
                 data-rounded="true"
                 data-background="false"

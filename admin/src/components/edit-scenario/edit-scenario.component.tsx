@@ -47,18 +47,29 @@ export const EditScenario: React.FC<EditScenarioProps> = ({ isNew }) => {
   return (
     <>
       <div className="flex flex-col gap-32 grow mb-32 max-w-[60rem]">
-        <EditResourceInput property="name" required label={capitalize(t(`${resource}:properties.name`))} />
+        <EditResourceInput
+          data-cy="edit-scenarios-name"
+          property="name"
+          required
+          label={capitalize(t(`${resource}:properties.name`))}
+        />
         <EditResourceTextarea
           rows={5}
+          data-cy="edit-scenarios-description"
           property="description"
           label={capitalize(t(`${resource}:properties.description`))}
         />
         <EditResourceInput
           property="assistantId"
+          data-cy="edit-scenarios-assistantId"
           required
           label={capitalize(t(`${resource}:properties.assistantId`))}
         />
-        <EditResourceInput property="published" label={capitalize(t(`${resource}:properties.published`))} />
+        <EditResourceInput
+          data-cy="edit-scenarios-published"
+          property="published"
+          label={capitalize(t(`${resource}:properties.published`))}
+        />
       </div>
       <div className="flex flex-col gap-32 grow mb-32">
         <h3 className="text-h4-sm md:text-h4-md xl:text-h4-lg">{capitalize(t(`${resource}:properties.image`))}</h3>
@@ -72,12 +83,23 @@ export const EditScenario: React.FC<EditScenarioProps> = ({ isNew }) => {
               variant="primary"
               color="error"
               iconButton
+              data-cy="resource-image-remove-button"
             >
               <Icon color="error" icon={<X />} />
             </Button>
-            <NextImage src={apiURL(imageUrl)} width="500" height="500" alt={''} className="h-auto w-full max-w-full" />
+            <NextImage
+              data-cy="resource-image"
+              src={apiURL(imageUrl)}
+              width="500"
+              height="500"
+              alt={''}
+              className="h-auto w-full max-w-full"
+            />
           </div>
-        : <Button onClick={() => setShowAddImage(true)}>{capitalize(t(`common:add_image`))}</Button>}
+        : <Button data-cy="resource-image-add-button" onClick={() => setShowAddImage(true)}>
+            {capitalize(t(`common:add_image`))}
+          </Button>
+        }
         <AddImageModal open={showAddImage} onClose={handleCloseAddImage} />
       </div>
     </>

@@ -39,7 +39,13 @@ export const EditImage: React.FC<EditImageProps> = ({ isNew }) => {
     <div className="flex flex-col gap-32 grow mb-32 max-w-[60rem]">
       {isNew ?
         <EditResourceImage property="image" label={capitalize(t('images:name_one'))} />
-      : <EditResourceInput property="name" required label={capitalize(t(`${resource}:properties.name`))} />}
+      : <EditResourceInput
+          data-cy="edit-images-name"
+          property="name"
+          required
+          label={capitalize(t(`${resource}:properties.name`))}
+        />
+      }
       {url && (
         <>
           <h3>{t('images:preview')}</h3>

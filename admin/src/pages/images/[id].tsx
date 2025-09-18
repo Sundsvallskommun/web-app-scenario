@@ -151,7 +151,7 @@ export const ImagePage: React.FC = () => {
               <h3 className="text-h4-sm md:text-h4-md xl:text-h4-lg" id="resourcelist">
                 {t('images:used_by')}
               </h3>
-              <List aria-labelledby="resourcelist">
+              <List aria-labelledby="resourcelist" data-cy="image-scenario-list">
                 {formdata.scenarios.map((scenario: Scenario) => (
                   <List.Item key={`image-scenario-${scenario.id}`}>
                     <List.Text>
@@ -170,7 +170,7 @@ export const ImagePage: React.FC = () => {
 
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => ({
   props: {
-    ...(await serverSideTranslations(locale, ['common', 'crud', 'layout', ...Object.keys(resources)])),
+    ...(await serverSideTranslations(locale as string, ['common', 'crud', 'layout', ...Object.keys(resources)])),
   },
 });
 

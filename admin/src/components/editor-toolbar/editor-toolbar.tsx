@@ -56,6 +56,7 @@ export const EditorToolbar: React.FC<ToolbarProps> = ({ resource, isDirty, id })
         type="submit"
         color="vattjom"
         size="sm"
+        data-cy="edit-toolbar-save"
         showBackground={false}
         leftIcon={<Save />}
         disabled={!isDirty}
@@ -69,6 +70,7 @@ export const EditorToolbar: React.FC<ToolbarProps> = ({ resource, isDirty, id })
             variant="tertiary"
             color="error"
             showBackground={false}
+            data-cy="edit-toolbar-delete"
             iconButton
             aria-label={capitalize(t('common:remove', { resource: t(`${resource}:name_one`) }))}
             size="sm"

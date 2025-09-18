@@ -71,6 +71,7 @@ export const ListToolbar: React.FC<ListToolbarProps> = ({ resource, properties }
         <span className="relative">
           <PopupMenu position="under" align="end">
             <PopupMenu.Button
+              data-cy="table-settings-button"
               variant="tertiary"
               showBackground={false}
               size="sm"
@@ -78,7 +79,7 @@ export const ListToolbar: React.FC<ListToolbarProps> = ({ resource, properties }
               leftIcon={<Settings />}
             ></PopupMenu.Button>
             <PopupMenu.Panel>
-              <PopupMenu.Items>
+              <PopupMenu.Items data-cy="table-settings-panel">
                 {properties.map((prop, index) => (
                   <PopupMenu.Item key={`tab-prop-${index}`}>
                     <Checkbox labelPosition="left" value={prop} {...register('headers')}>
