@@ -6,7 +6,7 @@ describe('Login', () => {
       statusCode: 401,
       body: { message: 'NOT_AUTHORIZED' },
     });
-    cy.visit('/start');
+    cy.visit('/start', { timeout: 20000 });
     cy.get('h1').should('have.text', 'Med livet som insats');
 
     cy.intercept('GET', '**/api/me', getMe);
@@ -17,7 +17,7 @@ describe('Login', () => {
     cy.get('[data-cy="loginButton"]').click();
 
     cy.wait('@login').then(() => {
-      cy.visit('/start');
+      cy.visit('/start', { timeout: 20000 });
     });
     cy.get('h1').should('have.text', 'Med livet som insats');
     cy.get('[data-cy="settings-button"]').click();

@@ -49,7 +49,7 @@ export const End: React.FC<EndProps> = ({
     <>
       <SettingsMenu />
       <div
-        className="flex flex-col justify-between items-center grow transition-opacity"
+        className="flex flex-col justify-between items-center grow transition-opacity overflow-y-auto"
         style={{ opacity, transitionDuration: `${transitionDuration}ms` }}
       >
         <header

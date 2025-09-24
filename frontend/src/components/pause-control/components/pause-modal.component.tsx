@@ -15,6 +15,7 @@ import { useTranslation } from 'react-i18next';
 import { IntroductionModal } from './introduction-modal.component';
 import { useLocalStorage } from '@utils/use-localstorage.hook';
 import { useShallow } from 'zustand/shallow';
+import { useAssistantStore } from '@sk-web-gui/ai';
 
 interface PauseModalProps {
   open: boolean;
@@ -40,7 +41,7 @@ export const PauseModal: React.FC<PauseModalProps> = ({
         state.setColorScheme,
       ])
     );
-
+  const info = useAssistantStore((state) => state.info);
   return (
     <>
       <IntroductionModal
@@ -58,7 +59,7 @@ export const PauseModal: React.FC<PauseModalProps> = ({
         <Modal.Content>
           <h2>{t('common:app_name')}</h2>
           <span className="flex justify-between items-center w-full">
-            <p>{t('common:scenario_name')}</p>
+            <p>{info?.name}</p>
             <Button
               variant="tertiary"
               size="sm"
