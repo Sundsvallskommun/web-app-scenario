@@ -3,6 +3,7 @@ import resources from '@config/resources';
 import { ResourceName } from '@interfaces/resource-name';
 import { Button, Checkbox, Icon, PopupMenu } from '@sk-web-gui/react';
 import { useLocalStorage } from '@utils/use-localstorage.hook';
+import { useResource } from '@utils/use-resource';
 import { FilePlus2, RefreshCcw, Settings } from 'lucide-react';
 import Link from 'next/link';
 import React, { useEffect } from 'react';
@@ -13,11 +14,10 @@ import { useShallow } from 'zustand/react/shallow';
 
 interface ListToolbarProps {
   resource: ResourceName;
-  onRefresh?: () => void;
   properties?: string[];
 }
 
-export const ListToolbar: React.FC<ListToolbarProps> = ({ onRefresh, resource, properties }) => {
+export const ListToolbar: React.FC<ListToolbarProps> = ({ resource, properties }) => {
   const { t } = useTranslation();
   const [{ [resource]: headers }, setHeaders] = useLocalStorage(
     useShallow((state) => [state.headers, state.setHeaders])
@@ -27,6 +27,7 @@ export const ListToolbar: React.FC<ListToolbarProps> = ({ onRefresh, resource, p
 
   const selectedHeaders = watch('headers');
 
+  const { refresh } = useResource(resource);
   useEffect(() => {
     reset({ headers });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -61,8 +62,8 @@ export const ListToolbar: React.FC<ListToolbarProps> = ({ onRefresh, resource, p
           <Icon icon={<FilePlus2 />} />
         </Link>
       )}
-      {!!onRefresh && (
-        <Button iconButton variant="tertiary" aria-label={capitalize(t('common:refresh'))} onClick={() => onRefresh()}>
+      {!!refresh && (
+        <Button iconButton variant="tertiary" aria-label={capitalize(t('common:refresh'))} onClick={() => refresh()}>
           <Icon icon={<RefreshCcw />} />
         </Button>
       )}

@@ -15,10 +15,10 @@
   },
   "dependencies": {
     "@headlessui/react": "^2.2.7",
-    "@hookform/resolvers": "^3.10.0",
+    "@hookform/resolvers": "^5.2.1",
     "@next/bundle-analyzer": "^15.5.2",
-    "@sk-web-gui/core": "^3.14.0",
-    "@sk-web-gui/react": "^2.0.1",
+    "@sk-web-gui/core": "^3.16.1",
+    "@sk-web-gui/react": "^2.0.3",
     "axios": "^1.11.0",
     "dayjs": "^1.11.18",
     "dotenv-cli": "^10.0.0",
@@ -48,11 +48,11 @@
     "@types/react": "19.1.12",
     "@types/react-dom": "19.1.9",
     "@types/underscore.string": "^0.0.41",
-    "@typescript-eslint/eslint-plugin": "^8.42.0",
+    "@typescript-eslint/eslint-plugin": "^8.43.0",
     "autoprefixer": "^10.4.21",
     "babel-jest": "^30.1.2",
     "cross-env": "^10.0.0",
-    "cypress": "^15.1.0",
+    "cypress": "^15.2.0",
     "envalid": "^8.1.0",
     "eslint": "^9.35.0",
     "eslint-config-next": "15.5.2",
@@ -70,7 +70,7 @@
     "swagger-typescript-api": "^13.0.23",
     "tailwindcss": "^3.4.17",
     "typescript": "5.7.3",
-    "typescript-eslint": "^8.42.0"
+    "typescript-eslint": "^8.43.0"
   },
   "browserslist": [
     "defaults and fully supports es6-module",

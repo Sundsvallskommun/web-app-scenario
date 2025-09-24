@@ -1,3 +1,5 @@
+'use client';
+
 import resources from '@config/resources';
 import { ResourceName } from '@interfaces/resource-name';
 import { Button, Icon, useConfirm } from '@sk-web-gui/react';
@@ -34,7 +36,7 @@ export const EditorToolbar: React.FC<ToolbarProps> = ({ resource, isDirty, id })
         )
         .then((confirm) => {
           if (confirm) {
-            handleRemove(remove(id)).then((res) => {
+            handleRemove(() => remove?.(id)).then((res) => {
               if (res) {
                 reset();
                 router.push(parentPath);

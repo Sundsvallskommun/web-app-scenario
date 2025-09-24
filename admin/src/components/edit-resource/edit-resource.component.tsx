@@ -17,7 +17,8 @@ interface EditResourceProps {
 
 export const EditResource: React.FC<EditResourceProps> = ({ resource }) => {
   const { t } = useTranslation();
-  const { requiredFields } = resources[resource];
+  //eslint-disable-next-line implicit-any
+  const { requiredFields } = resources[resource] as any;
 
   type CreateType = Parameters<NonNullable<Resource<FieldValues>['create']>>[0];
   type UpdateType = Parameters<NonNullable<Resource<FieldValues>['update']>>[1];
@@ -38,7 +39,6 @@ export const EditResource: React.FC<EditResourceProps> = ({ resource }) => {
               <Fragment key={`formc-${index}`}>
                 <EditResourceInput
                   property={key}
-                  index={index}
                   required={isRequired}
                   label={capitalize(t(`${resource}:properties.${key}`))}
                 />

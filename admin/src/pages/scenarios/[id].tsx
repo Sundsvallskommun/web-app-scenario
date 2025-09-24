@@ -1,14 +1,13 @@
-import { EditResource } from '@components/edit-resource/edit-resource.component';
+import { EditScenario } from '@components/edit-scenario/edit-scenario.component';
 import { EditorToolbar } from '@components/editor-toolbar/editor-toolbar';
 import LoaderFullScreen from '@components/loader/loader-fullscreen';
 import { defaultInformationFields } from '@config/defaults';
 import resources from '@config/resources';
+import { CreateScenarioDto, UpdateScenarioDto } from '@data-contracts/backend/data-contracts';
 import { Resource, ResourceResponse } from '@interfaces/resource';
-import { ResourceName } from '@interfaces/resource-name';
 import EditLayout from '@layouts/edit-layout/edit-layout.component';
 import { getFormattedFields } from '@utils/formatted-field';
 import { useRouteGuard } from '@utils/routeguard.hook';
-import { stringToResourceName } from '@utils/stringToResourceName';
 import { useCrudHelper } from '@utils/use-crud-helpers';
 import { useResource } from '@utils/use-resource';
 import { GetServerSideProps } from 'next';
@@ -20,23 +19,20 @@ import { useEffect, useState } from 'react';
 import { FieldValues, FormProvider, useForm } from 'react-hook-form';
 import { capitalize } from 'underscore.string';
 
-export const ResourcePage: React.FC = () => {
+export const AssistantPage: React.FC = () => {
   const { t } = useTranslation();
   const router = useRouter();
 
-  const { resource: _resource, id: _id } = useParams();
-  const resource = stringToResourceName(typeof _resource === 'object' ? _resource[0] : (_resource ?? ''));
-  if (!resource) {
-    router.push('/');
-  }
+  const { id: _id } = useParams();
+  const resource = 'scenarios';
 
-  const { create, update, getOne, defaultValues } = resources[resource as ResourceName];
-  const { refresh } = useResource(resource as ResourceName);
+  const { create, update, getOne, defaultValues } = resources[resource];
+  const { refresh } = useResource(resource);
 
-  const { handleGetOne, handleCreate, handleUpdate } = useCrudHelper(resource as ResourceName);
+  const { handleGetOne, handleCreate, handleUpdate } = useCrudHelper(resource);
 
-  type CreateType = Parameters<NonNullable<Resource<FieldValues>['create']>>[0];
-  type UpdateType = Parameters<NonNullable<Resource<FieldValues>['update']>>[1];
+  type CreateType = CreateScenarioDto;
+  type UpdateType = UpdateScenarioDto;
   type DataType = CreateType | UpdateType;
 
   const form = useForm<DataType>({
@@ -68,8 +64,7 @@ export const ResourcePage: React.FC = () => {
 
   useEffect(() => {
     if (id) {
-      // eslint-disable-next-line implicit-any
-      handleGetOne<any>(() => getOne(id)).then((res) => {
+      handleGetOne(() => getOne(id)).then((res) => {
         reset(res);
         setIsNew(false);
         setLoaded(true);
@@ -144,7 +139,7 @@ export const ResourcePage: React.FC = () => {
         <FormProvider {...form}>
           <form className="flex flex-row gap-32 justify-between grow flex-wrap" onSubmit={handleSubmit(onSubmit)}>
             <EditorToolbar resource={resource} isDirty={isDirty} id={id} />
-            <EditResource resource={resource} isNew={isNew} />
+            <EditScenario isNew={isNew} />
           </form>
         </FormProvider>
       </EditLayout>;
@@ -156,4 +151,4 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => ({
   },
 });
 
-export default ResourcePage;
+export default AssistantPage;

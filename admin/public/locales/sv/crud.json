@@ -15,6 +15,7 @@
   },
   "remove": {
     "success": "Tog bort {{resource}}",
-    "error": "Kunde inte ta bort {{resource}}"
+    "error": "Kunde inte ta bort {{resource}}",
+    "error_in_use": "{{resource}} används och kan därför inte tas bort."
   }
 }

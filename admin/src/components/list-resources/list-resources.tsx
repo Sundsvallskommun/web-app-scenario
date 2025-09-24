@@ -12,12 +12,13 @@ import { capitalize } from 'underscore.string';
 import { useShallow } from 'zustand/react/shallow';
 
 interface ListResourcesProps {
+  properties?: string[];
   resource: ResourceName;
   headers?: AutoTableHeader[];
   data?: Array<Record<string, unknown>>;
 }
 
-export const ListResources: React.FC<ListResourcesProps> = ({ resource, headers: _headers, data }) => {
+export const ListResources: React.FC<ListResourcesProps> = ({ properties, resource, headers: _headers, data }) => {
   const { update } = resources[resource];
   const { t } = useTranslation();
   const [{ [resource]: storeHeaders }, setHeaders] = useLocalStorage(
@@ -26,11 +27,12 @@ export const ListResources: React.FC<ListResourcesProps> = ({ resource, headers:
 
   useEffect(() => {
     if (!storeHeaders && data) {
+      const newHeaders = [
+        ...(data?.[0] ? Object.keys(data[0]).filter((field) => typeof data[0][field] !== 'object') : []),
+        ...(defaultInformationFields || ['id']),
+      ].filter((header) => (properties ? properties.includes(header) : true));
       setHeaders({
-        [resource]: [
-          ...(defaultInformationFields || ['id']),
-          ...(data?.[0] ? Object.keys(data[0]).filter((field) => typeof data[0][field] !== 'object') : []),
-        ],
+        [resource]: newHeaders,
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -115,13 +117,17 @@ export const ListResources: React.FC<ListResourcesProps> = ({ resource, headers:
 
   const formattedData = useMemo(() => data?.map((row) => getFormattedFields(row)), [data]);
 
+  const autoHeaders = [...translatedHeaders, ...(update ? [editHeader] : [])];
+
   return (
     <div>
       {formattedData && formattedData?.length > 0 ?
         <AutoTable
           pageSize={15}
           autodata={formattedData}
-          autoheaders={[...translatedHeaders, ...(update ? [editHeader] : [])]}
+          autoheaders={autoHeaders.filter(
+            (header, index) => autoHeaders.map((head) => head.label).indexOf(header.label) === index
+          )}
         />
       : <h3>{capitalize(t('common:no_resources', { resources: t(`${resource}:name_zero`) }))}</h3>}
     </div>

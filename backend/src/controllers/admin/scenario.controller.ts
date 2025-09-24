@@ -39,7 +39,7 @@ export class AdminScenarioController {
     } catch (error) {
       logger.error('Error getting scenarios', error);
 
-      throw new HttpException(error?.code ?? 500, error?.message ?? 'Internal Server Error');
+      throw new HttpException(error?.status ?? 500, error?.message ?? 'Internal Server Error');
     }
   }
 
@@ -64,7 +64,7 @@ export class AdminScenarioController {
     } catch (error) {
       logger.error('Error getting scenario', error);
 
-      throw new HttpException(error?.code ?? 500, error?.message ?? 'Internal Server Error');
+      throw new HttpException(error?.status ?? 500, error?.message ?? 'Internal Server Error');
     }
   }
 
@@ -101,7 +101,7 @@ export class AdminScenarioController {
       return response.send({ message: 'success', data: scenarioResponse });
     } catch (error) {
       logger.error('Error creating scenario', error);
-      throw new HttpException(error?.code ?? 500, error?.message ?? 'Internal Server Error');
+      throw new HttpException(error?.status ?? 500, error?.message ?? 'Internal Server Error');
     }
   }
   @Patch('/admin/scenarios/:id')
@@ -129,7 +129,7 @@ export class AdminScenarioController {
               ? {
                   connect: { id: body.imageId },
                 }
-              : undefined,
+              : { disconnect: true },
         },
         include: {
           image: true,
@@ -139,7 +139,7 @@ export class AdminScenarioController {
       return response.send({ message: 'success', data: scenarioResponse });
     } catch (error) {
       logger.error('Error updating scenario', error);
-      throw new HttpException(error?.code ?? 500, error?.message ?? 'Internal Server Error');
+      throw new HttpException(error?.status ?? 500, error?.message ?? 'Internal Server Error');
     }
   }
 
@@ -163,7 +163,7 @@ export class AdminScenarioController {
     } catch (error) {
       logger.error('Error deleting scenario', error);
 
-      throw new HttpException(error?.code ?? 500, error?.message ?? 'Internal Server Error');
+      throw new HttpException(error?.status ?? 500, error?.message ?? 'Internal Server Error');
     }
   }
 }
