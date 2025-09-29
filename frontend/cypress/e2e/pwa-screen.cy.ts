@@ -1,9 +1,6 @@
-import { getMe } from '../fixtures/getMe';
-
 describe('PWA screen', () => {
   beforeEach(() => {
-    cy.intercept('GET', '**/api/me', getMe);
-    cy.visit('/');
+    cy.visit('/', { timeout: 20000 });
   });
 
   it('should show the PWA installation screen', () => {

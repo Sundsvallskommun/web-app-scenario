@@ -15,7 +15,7 @@ jobs:
     runs-on: windows-latest
     defaults:
       run:
-        working-directory: admin
+        working-directory: frontend
     name: E2E in Edge on windows-latest
     steps:
       - name: Checkout
@@ -27,21 +27,23 @@ jobs:
           working-directory: frontend
           install-command: yarn --frozen-lockfile --silent --network-timeout 1000000
           browser: edge
-          build: yarn build
+          build: yarn build:test
           start: yarn start
-          wait-on: "http://localhost:3000"
+          wait-on: http://localhost:3002
           spec: cypress/e2e/**/*.cy.ts
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NEXT_PUBLIC_APP_NAME: Scenarios
-          NEXT_PUBLIC_API_URL: http://localhost:3001
-          NEXT_PUBLIC_API_PATH: /api
-          NEXT_PUBLIC_INTRIC_API_URL: http://localhost:3002/api
+          NEXT_PUBLIC_API_URL: http://localhost:3001/api
+          NEXT_PUBLIC_INTRIC_API_URL: http://localhost:3009/api
           DOMAIN_NAME: localhost
+          BASE_PATH: ""
+          NEXT_PUBLIC_BASE_PATH: ""
+          ADMIN_URL: http://localhost:3003/
           NEXT_PUBLIC_PROTECTED_ROUTES: ""
           HEALTH_AUTH: false
           HEALTH_USERNAME: ""
           HEALTH_PASSWORD: ""
-          NEXT_PUBLIC_BACKGROUND_IMAGE: "/images/background.png"
+          NEXT_PUBLIC_BACKGROUND_IMAGE: /images/background.png
           NEXT_PUBLIC_ASSISTANT_ID: test123
           NEXT_PUBLIC_ASSISTANT_APIKEY: testkey
+          PORT: 3002

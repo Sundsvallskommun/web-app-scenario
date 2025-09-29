@@ -6,6 +6,7 @@ import { HealthController } from './controllers/health.controller';
 import { AdminUserController } from './controllers/admin/user.controller';
 import { AdminScenarioController } from './controllers/admin/scenario.controller';
 import { AdminImageController } from './controllers/admin/image.controller';
+import { ScenarioController } from './controllers/scenario.controller';
 
 validateEnv();
 
@@ -16,6 +17,7 @@ const app = new App([
   AdminUserController,
   AdminScenarioController,
   AdminImageController,
+  ScenarioController,
 ]);
 
 app.listen();

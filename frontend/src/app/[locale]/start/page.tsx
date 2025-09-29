@@ -33,14 +33,18 @@ export default function Start() {
   };
 
   return (
-    <DefaultLayout transitionDuration={transitionDuration} showBackground={showBackground}>
+    <DefaultLayout
+      transitionDuration={transitionDuration}
+      showBackground={showBackground}
+    >
       <SettingsMenu />
       <div
         className="flex flex-col gap-24 text-center justify-center items-center transition-opacity"
         style={{ opacity, transitionDuration: `${transitionDuration}ms` }}
       >
-        <h1 className="text-display-1-sm md:text-display-1-md xl:text-display-1-lg m-0">{t('common:app_name')}</h1>
-        <p className="text-display-3-sm md:text-display-3-md xl:text-display-3-lg mb-24">{t('common:scenario_name')}</p>
+        <h1 className="text-display-1-sm md:text-display-1-md xl:text-display-1-lg m-0">
+          {t('common:app_name')}
+        </h1>
         <Button size="lg" rounded onClick={handleNext}>
           {t('common:start')}
         </Button>

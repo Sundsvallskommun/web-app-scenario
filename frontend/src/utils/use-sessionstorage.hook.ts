@@ -1,3 +1,4 @@
+import { PublicScenario } from '@data-contracts/backend/data-contracts';
 import 'dotenv';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import { createWithEqualityFn } from 'zustand/traditional';
@@ -9,6 +10,8 @@ interface SessionStorage {
   setWebMode: (webMode: boolean) => void;
   pwa: boolean;
   setPwa: (pwa: boolean) => void;
+  scenario?: PublicScenario;
+  setScenario: (scenario: PublicScenario) => void;
 }
 
 export const useSessionStorage = createWithEqualityFn(
@@ -20,6 +23,8 @@ export const useSessionStorage = createWithEqualityFn(
       setWebMode: (webMode) => set(() => ({ webMode })),
       pwa: false,
       setPwa: (pwa) => set(() => ({ pwa })),
+      scenario: undefined,
+      setScenario: (scenario) => set(() => ({ scenario })),
     }),
     {
       name: `${process.env.NEXT_PUBLIC_APP_NAME}-store`,
