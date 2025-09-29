@@ -34,14 +34,14 @@ export const Images: React.FC = () => {
 
   return (
     <ListLayout resource="images" properties={properties}>
-      {loaded && <ListResources resource="images" data={data} headers={headers} />}
+      {loaded && <ListResources resource="images" data={data} headers={headers} properties={properties} />}
     </ListLayout>
   );
 };
 
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => ({
   props: {
-    ...(await serverSideTranslations(locale, ['common', 'layout', 'crud', ...Object.keys(resources)])),
+    ...(await serverSideTranslations(locale as string, ['common', 'layout', 'crud', ...Object.keys(resources)])),
   },
 });
 

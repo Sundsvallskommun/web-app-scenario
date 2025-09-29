@@ -49,13 +49,19 @@ export const AddImageModal: React.FC<AddImageModalProps> = ({ open, onClose }) =
   };
 
   return (
-    <Modal show={open} onClose={onClose} label={capitalize(t('common:add_image'))} className="w-[80rem] max-w-[95vw]">
+    <Modal
+      data-cy="add-image-modal"
+      show={open}
+      onClose={onClose}
+      label={capitalize(t('common:add_image'))}
+      className="w-[80rem] max-w-[95vw]"
+    >
       <Modal.Content>
-        <Tabs>
+        <Tabs data-cy="tabs">
           <Tabs.Item>
             <Tabs.Button>{capitalize(t('common:browse'))}</Tabs.Button>
             <Tabs.Content>
-              <div className="grid grid-cols-6 gap-8">
+              <div className="grid grid-cols-6 gap-8" data-cy="images-list">
                 {images?.map((image) => (
                   <button
                     type="button"

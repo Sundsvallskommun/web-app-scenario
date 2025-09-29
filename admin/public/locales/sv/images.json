@@ -12,7 +12,8 @@
     "name": "Namn",
     "url": "Sökväg",
     "createdAt": "Skapad",
-    "updatedAt": "Senast uppdaterad"
+    "updatedAt": "Senast uppdaterad",
+    "image": "Bild"
   },
   "preview": "Granska",
   "save_and_select": "Spara och välj",

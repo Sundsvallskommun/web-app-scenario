@@ -1,6 +1,5 @@
 import { ResourceResponse } from '@interfaces/resource';
 import { useSnackbar } from '@sk-web-gui/react';
-import axios from 'axios';
 import { useTranslation } from 'react-i18next';
 import { capitalize } from 'underscore.string';
 
@@ -58,26 +57,14 @@ export const useCrudHelper = (resource: string) => {
 
   const handleRemove = async <TData = unknown>(remove: () => ResourceResponse<TData>): Promise<TData | undefined> => {
     const name = t(`${resource}:name_one`);
-    const the_name = t(`${resource}:the_name_one`);
-    if (remove) {
-      try {
-        const result = await remove();
-        if (result) {
-          message({ message: capitalize(t('crud:remove.success', { resource: name })), status: 'success' });
-          return Promise.resolve(result.data.data);
-        }
-      } catch (error) {
-        if (axios.isAxiosError(error)) {
-          if (error?.status === 409) {
-            message({
-              message: `${capitalize(t('crud:remove.error_in_use', { resource: the_name }))}`,
-              status: 'error',
-            });
-            return;
-          }
-        }
-        message({ message: capitalize(t('crud:remove.error', { resource: name })), status: 'error' });
+    try {
+      const result = await remove();
+      if (result) {
+        message({ message: capitalize(t('crud:remove.success', { resource: name })), status: 'success' });
+        return Promise.resolve(result.data.data);
       }
+    } catch {
+      message({ message: capitalize(t('crud:remove.error', { resource: name })), status: 'error' });
     }
   };
 

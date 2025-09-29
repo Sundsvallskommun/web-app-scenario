@@ -4,7 +4,7 @@ import LoaderFullScreen from '@components/loader/loader-fullscreen';
 import { defaultInformationFields } from '@config/defaults';
 import resources from '@config/resources';
 import { CreateScenarioDto, UpdateScenarioDto } from '@data-contracts/backend/data-contracts';
-import { Resource, ResourceResponse } from '@interfaces/resource';
+import { ResourceResponse } from '@interfaces/resource';
 import EditLayout from '@layouts/edit-layout/edit-layout.component';
 import { getFormattedFields } from '@utils/formatted-field';
 import { useRouteGuard } from '@utils/routeguard.hook';
@@ -91,16 +91,17 @@ export const AssistantPage: React.FC = () => {
   }, [formdata?.id, isNew, isDirty]);
 
   const onSubmit = (data: DataType) => {
-    const createFunc: (data: DataType) => ReturnType<NonNullable<Resource<FieldValues>['create']>> =
-      create as unknown as NonNullable<Resource<FieldValues>['create']>;
     switch (isNew) {
       case true:
-        handleCreate(() => createFunc(data as CreateType)).then((res) => {
-          if (res) {
-            reset(res);
-            refresh();
-          }
-        });
+        if (create) {
+          handleCreate(() => create(data as CreateType)).then((res) => {
+            if (res) {
+              reset(res);
+              setIsNew(false);
+              refresh();
+            }
+          });
+        }
 
         break;
       case false:
@@ -147,7 +148,7 @@ export const AssistantPage: React.FC = () => {
 
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => ({
   props: {
-    ...(await serverSideTranslations(locale, ['common', 'crud', 'layout', ...Object.keys(resources)])),
+    ...(await serverSideTranslations(locale as string, ['common', 'crud', 'layout', ...Object.keys(resources)])),
   },
 });
 
