@@ -116,3 +116,7 @@ module.exports = {
 ```
 
 Som hjälp i VSCode rekommenderas [i18n Ally](https://marketplace.visualstudio.com/items?itemName=Lokalise.i18n-ally).
+
+### Testning av frontend med Cypress
+För testning av frontend används Cypress. När du ska skriva tester i denna app krävs det att frontend startas med
+`yarn dev:test`
