@@ -9,7 +9,7 @@ export interface LocalizationLayoutProps {
   params: Promise<{ locale: string }>;
 }
 
-const namespaces = ['common', 'paths', 'intro', 'login'];
+const namespaces = ['common', 'paths', 'intro', 'login', 'scenario'];
 
 const LocalizationLayout = async (props: LocalizationLayoutProps) => {
   const { params, children } = props;

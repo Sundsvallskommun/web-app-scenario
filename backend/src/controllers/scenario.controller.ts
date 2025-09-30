@@ -23,6 +23,7 @@ export class ScenarioController {
 
     try {
       const data = await prisma.scenario.findMany({
+        where: { published: true },
         select: { id: true, name: true, description: true, assistantId: true, image: { select: { url: true } } },
       });
 
