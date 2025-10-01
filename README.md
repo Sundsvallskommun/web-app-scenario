@@ -7,8 +7,7 @@ Dessa APIer används i projektet, applikationsanvändaren i WSO2 måste prenumer
 | API             | Version |
 | --------------- | ------: |
 | SimulatorServer |     2.0 |
-
-Frontend använder dessutom [AI-backend (Proxy)](https://github.com/Sundsvallskommun/web-app-intric-backend)
+| Eneo-Sundsvall  |     1.0 |
 
 ## Utveckling
 
@@ -27,7 +26,7 @@ cd <web-app-projektnamn>
 git init
 ```
 
-2. Installera dependencies för både `backend` och `frontend`
+2. Installera dependencies för både `backend`, `frontend` och `admin`
 
 ```
 cd frontend
@@ -35,9 +34,10 @@ yarn install
 
 cd backend
 yarn install
-```
 
-Om du behöver ett administrationsgränssnitt, se [Dokumentation om Admin](./admin/README.md).
+cd admin
+yarn install
+```
 
 3. Skapa .env-fil för `frontend`
 
@@ -48,7 +48,16 @@ cp .env-example .env
 
 Redigera `.env` för behov, för utveckling bör exempelvärdet fungera.
 
-4. Skapa .env-fil för `backend`
+3. Skapa .env-fil för `admin`
+
+```
+cd admin
+cp .env-example .env
+```
+
+Redigera `.env` för behov, för utveckling bör exempelvärdet fungera.
+
+5. Skapa .env-fil för `backend`
 
 ```
 cd backend
@@ -58,11 +67,13 @@ cp .env.example.local .env.test.local
 
 redigera `.env.development.local` för behov. URLer, nycklar och cert behöver fyllas i korrekt.
 
+- `CLIENT_KEY` och `CLIENT_SECRET` behövs för att prata med api gateway
+- `AZURE_REGION` och `AZURE_SUBSCRIPTION_KEY` behövs för att använda talsyntes
 - `SAML_ENTRY_SSO` behöver pekas till en SAML IDP
 - `SAML_IDP_PUBLIC_CERT` ska stämma överens med IDPens cert
 - `SAML_PRIVATE_KEY` och `SAML_PUBLIC_KEY` behöver bara fyllas i korrekt om man kör mot en riktig IDP
 
-5. Initiera eventuell databas för backend
+6. Initiera databas för backend
 
 ```
 cd backend
@@ -70,7 +81,7 @@ yarn prisma:generate
 yarn prisma:migrate
 ```
 
-6. Synca datamodeller för api:er
+7. Synca datamodeller för api:er
 
    Se till att README och /backend/src/config/api-config.ts matchar och justera utefter de api:er som önskas användas.
 

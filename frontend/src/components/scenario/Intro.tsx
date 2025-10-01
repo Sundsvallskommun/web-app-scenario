@@ -4,7 +4,7 @@ import { Button, Icon } from '@sk-web-gui/react';
 import { FastForward } from 'lucide-react';
 import { WizardPageProps } from '@interfaces/wizard-page-props.interface';
 import { IntroText } from '@interfaces/intro-text.interface';
-import { textToSpeech } from "@sk-web-gui/ai";
+import { textToSpeech } from '@sk-web-gui/ai';
 
 interface IntroProps extends WizardPageProps {
   /**

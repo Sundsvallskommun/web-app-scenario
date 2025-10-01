@@ -1,4 +1,6 @@
 name: Cypress Tests frontend
+permissions:
+  contents: read
 
 on:
   workflow_dispatch:
@@ -12,11 +14,11 @@ on:
 
 jobs:
   install:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: frontend
-    name: E2E in Edge on windows-latest
+    name: E2E in Chrome on ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -26,7 +28,7 @@ jobs:
         with:
           working-directory: frontend
           install-command: yarn --frozen-lockfile --silent --network-timeout 1000000
-          browser: edge
+          browser: chrome
           build: yarn build:test
           start: yarn start
           wait-on: http://localhost:3002
@@ -44,6 +46,4 @@ jobs:
           HEALTH_USERNAME: ""
           HEALTH_PASSWORD: ""
           NEXT_PUBLIC_BACKGROUND_IMAGE: /images/background.png
-          NEXT_PUBLIC_ASSISTANT_ID: test123
-          NEXT_PUBLIC_ASSISTANT_APIKEY: testkey
           PORT: 3002

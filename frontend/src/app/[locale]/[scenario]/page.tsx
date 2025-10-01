@@ -1,19 +1,18 @@
 'use client';
 
-import DefaultLayout from '@layouts/default-layout/default-layout.component';
-import { ChatHistoryEntry, useAssistantStore, useChat } from '@sk-web-gui/ai';
-import { useSessionStorage } from '@utils/use-sessionstorage.hook';
-import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { shallow } from 'zustand/shallow';
+import LoaderFullScreen from '@components/loader/loader-fullscreen';
 import { Chat } from '@components/scenario/Chat';
 import { End } from '@components/scenario/End';
 import { Intro } from '@components/scenario/Intro';
 import { ScenarioStart } from '@components/scenario/ScenarioStart';
-import { useTranslation } from 'react-i18next';
+import DefaultLayout from '@layouts/default-layout/default-layout.component';
 import { useScenario } from '@services/scenario-service/use-scenario.hook';
-import LoaderFullScreen from '@components/loader/loader-fullscreen';
+import { ChatHistoryEntry, useAssistantStore, useChat } from '@sk-web-gui/ai';
 import { apiURL } from '@utils/api-url';
+import { useSessionStorage } from '@utils/use-sessionstorage.hook';
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { shallow, useShallow } from 'zustand/shallow';
 
 interface Page {
   component: React.JSX.Element;
@@ -25,7 +24,10 @@ export default function Scenario() {
   const { scenario } = useParams();
   const { loaded, data } = useScenario(Number(scenario));
   const setScenario = useSessionStorage((state) => state.setScenario);
-  const setInfo = useAssistantStore((state) => state.setInfo);
+  const [settings, setSettings, setInfo] = useAssistantStore(
+    useShallow((state) => [state.settings, state.setSettings, state.setInfo])
+  );
+
   const [webMode, pwa] = useSessionStorage(
     (state) => [state.webMode, state.pwa],
     shallow
@@ -55,6 +57,12 @@ export default function Scenario() {
       setInfo({
         name: data.name,
         id: data.assistantId,
+      });
+      setSettings({
+        ...settings,
+        assistantId: data.assistantId,
+        //NOTE: This is a bug in shared components - hash should not be needed
+        hash: 'undefined',
       });
     }
   }, [setInfo, data, loaded]);
