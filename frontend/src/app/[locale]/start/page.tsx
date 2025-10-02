@@ -1,7 +1,7 @@
 'use client';
 
 import { useTranslation } from 'react-i18next';
-import { Card } from '@sk-web-gui/react';
+import { Card } from '@sk-web-gui/next';
 import React, { useEffect, useState } from 'react';
 import { SettingsMenu } from '@components/settings-menu/settings-menu.component';
 import DefaultLayout from '@layouts/default-layout/default-layout.component';
@@ -9,7 +9,6 @@ import { useScenarios } from '@services/scenario-service/use-scenario.hook';
 import { Carousel } from '@components/carousel/carousel.component';
 import { PickScenarioModal } from '@components/pick-scenario-modal/pick-scenario-modal.component';
 import { apiURL } from '@utils/api-url';
-import Image from 'next/image';
 
 export default function Start() {
   const [opacity, setOpacity] = useState<number>(0);
@@ -60,19 +59,20 @@ export default function Start() {
                 <Card
                   key={scenario.id}
                   onClick={() => handleScenarioPick(scenario.id)}
-                  className="cursor-pointer"
+                  className="cursor-pointer focus-visible:ring"
                   data-cy={`card-${scenario.id}`}
+                  role="button"
+                  tabIndex={0}
                 >
-                  <Image
-                    alt=""
+                  <Card.Image
+                    width={400}
+                    height={300}
                     src={
                       scenario?.image?.url ?
                         apiURL(scenario?.image?.url)
                       : '/images/background.png'
                     }
-                    width={400}
-                    height={300}
-                    className="sk-card-image md:max-h-full md:max-w-[40rem] max-h-[15rem] max-w-[25rem]"
+                    alt=""
                   />
                   <Card.Body>
                     <Card.Header>

@@ -37,7 +37,7 @@ export const Carousel: React.FC<CarouselProps> = ({
       />
 
       <div
-        className="flex flex-row gap-48 overflow-x-scroll hidden-scrollbar scroll-smooth"
+        className="flex flex-row gap-48 overflow-x-scroll hidden-scrollbar scroll-smooth py-8"
         ref={scrollableRef}
       >
         <div className="lg:min-w-[20rem] min-w-[3rem]"></div>
