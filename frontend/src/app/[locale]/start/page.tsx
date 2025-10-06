@@ -59,7 +59,7 @@ export default function Start() {
                 <Card
                   key={scenario.id}
                   onClick={() => handleScenarioPick(scenario.id)}
-                  className="cursor-pointer focus-visible:ring"
+                  className="cursor-pointer focus-visible:ring shrink-0"
                   data-cy={`card-${scenario.id}`}
                   role="button"
                   tabIndex={0}

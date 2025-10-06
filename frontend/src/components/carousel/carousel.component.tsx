@@ -2,6 +2,7 @@ import React, { ReactNode, useRef } from 'react';
 import { Button, Icon, useThemeQueries } from '@sk-web-gui/react';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { Card } from '@sk-web-gui/next';
 
 interface CarouselProps {
   children: ReactNode;
@@ -36,14 +37,14 @@ export const Carousel: React.FC<CarouselProps> = ({
         aria-label={t('scenario:scrollLeft')}
       />
 
-      <div
+      <Card.Wrapper
         className="flex flex-row gap-48 overflow-x-scroll hidden-scrollbar scroll-smooth py-8"
         ref={scrollableRef}
       >
         <div className="lg:min-w-[20rem] min-w-[3rem]"></div>
         {children}
         <div className="lg:min-w-[20rem] min-w-[3rem]"></div>
-      </div>
+      </Card.Wrapper>
 
       <Button
         className="absolute right-24 z-10"
