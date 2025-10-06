@@ -34,6 +34,16 @@ export default function Start() {
     }
   };
 
+  const handleKeyBoardScenarioPick = (
+    scenarioId: number,
+    event: KeyboardEvent
+  ) => {
+    if (event.key === 'Enter' && scenarioId) {
+      setScenarioId(scenarioId);
+      setIsOpen(true);
+    }
+  };
+
   const handleClose = () => {
     setIsOpen(false);
   };
@@ -56,30 +66,34 @@ export default function Start() {
           <Carousel>
             {scenarios?.map((scenario) => {
               return (
-                <Card
-                  key={scenario.id}
-                  onClick={() => handleScenarioPick(scenario.id)}
-                  className="cursor-pointer focus-visible:ring shrink-0"
-                  data-cy={`card-${scenario.id}`}
-                  role="button"
-                  tabIndex={0}
-                >
-                  <Card.Image
-                    width={400}
-                    height={300}
-                    src={
-                      scenario?.image?.url ?
-                        apiURL(scenario?.image?.url)
-                      : '/images/background.png'
+                <Card.Wrapper key={scenario.id} className="shrink-0">
+                  <Card
+                    onClick={() => handleScenarioPick(scenario.id)}
+                    onKeyDown={(event: KeyboardEvent) =>
+                      handleKeyBoardScenarioPick(scenario.id, event)
                     }
-                    alt=""
-                  />
-                  <Card.Body>
-                    <Card.Header>
-                      <h2>{scenario.name}</h2>
-                    </Card.Header>
-                  </Card.Body>
-                </Card>
+                    className="cursor-pointer focus-visible:ring"
+                    data-cy={`card-${scenario.id}`}
+                    role="button"
+                    tabIndex={0}
+                  >
+                    <Card.Image
+                      width={400}
+                      height={300}
+                      src={
+                        scenario?.image?.url ?
+                          apiURL(scenario?.image?.url)
+                        : '/images/background.png'
+                      }
+                      alt=""
+                    />
+                    <Card.Body>
+                      <Card.Header>
+                        <h2>{scenario.name}</h2>
+                      </Card.Header>
+                    </Card.Body>
+                  </Card>
+                </Card.Wrapper>
               );
             })}
           </Carousel>
