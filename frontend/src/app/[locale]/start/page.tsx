@@ -34,16 +34,6 @@ export default function Start() {
     }
   };
 
-  const handleKeyBoardScenarioPick = (
-    scenarioId: number,
-    event: KeyboardEvent
-  ) => {
-    if (event.key === 'Enter' && scenarioId) {
-      setScenarioId(scenarioId);
-      setIsOpen(true);
-    }
-  };
-
   const handleClose = () => {
     setIsOpen(false);
   };
@@ -69,9 +59,11 @@ export default function Start() {
                 <Card.Wrapper key={scenario.id} className="shrink-0">
                   <Card
                     onClick={() => handleScenarioPick(scenario.id)}
-                    onKeyDown={(event: KeyboardEvent) =>
-                      handleKeyBoardScenarioPick(scenario.id, event)
-                    }
+                    onKeyDown={(event: KeyboardEvent) => {
+                      if (event.key === 'Enter') {
+                        handleScenarioPick(scenario.id);
+                      }
+                    }}
                     className="cursor-pointer focus-visible:ring"
                     data-cy={`card-${scenario.id}`}
                     role="button"
