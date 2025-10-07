@@ -59,20 +59,17 @@ const AppLayout = ({ children }: ClientApplicationProps) => {
   const getMe = useUserStore(useShallow((state) => state.getMe));
 
   const [mounted, setMounted] = useState(false);
-  const [apiBaseUrl, setApiBaseUrl, setApiKey, setSettings, setStream] =
-    useAssistantStore(
-      useShallow((state) => [
-        state.apiBaseUrl,
-        state.setApiBaseUrl,
-        state.setApikey,
-        state.setSettings,
-        state.setStream,
-      ])
-    );
+  const [apiBaseUrl, setApiBaseUrl, setStream] = useAssistantStore(
+    useShallow((state) => [
+      state.apiBaseUrl,
+      state.setApiBaseUrl,
+      state.setStream,
+    ])
+  );
 
   useEffect(() => {
     if (!apiBaseUrl) {
-      setApiBaseUrl(process.env.NEXT_PUBLIC_INTRIC_API_URL ?? '');
+      setApiBaseUrl(process.env.NEXT_PUBLIC_API_URL ?? '');
     }
   }, [apiBaseUrl, setApiBaseUrl]);
 
@@ -83,12 +80,6 @@ const AppLayout = ({ children }: ClientApplicationProps) => {
         process.env.NEXT_PUBLIC_STREAM
       : stream
     );
-    setApiKey(process.env.NEXT_PUBLIC_ASSISTANT_APIKEY ?? '');
-    setSettings({
-      app: process.env.NEXT_PUBLIC_ASSISTANT_APP || undefined,
-      hash: process.env.NEXT_PUBLIC_ASSISTANT_HASH || undefined,
-      assistantId: process.env.NEXT_PUBLIC_ASSISTANT_ID ?? '',
-    });
 
     setAssistantStoreName(`sk-assistant-${process.env.NEXT_PUBLIC_APP_NAME}`);
     //eslint-disable-next-line

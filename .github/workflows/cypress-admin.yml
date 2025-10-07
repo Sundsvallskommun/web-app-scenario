@@ -1,4 +1,6 @@
 name: Cypress Tests Admin
+permissions:
+  contents: read
 
 on:
   workflow_dispatch:
@@ -12,11 +14,11 @@ on:
 
 jobs:
   install:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: admin
-    name: E2E in Edge on windows-latest
+    name: E2E in Chrome on ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -26,7 +28,7 @@ jobs:
         with:
           working-directory: admin
           install-command: yarn --frozen-lockfile --silent --network-timeout 1000000
-          browser: edge
+          browser: chrome
           build: yarn build
           start: yarn start
           wait-on: "http://localhost:3002"
