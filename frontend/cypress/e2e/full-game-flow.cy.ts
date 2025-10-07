@@ -6,14 +6,24 @@ describe('Full game flow', () => {
       fixture: 'scenario-base',
     }).as('Start');
 
+    cy.intercept('GET', '**/api/scenarios', { fixture: 'scenarios' }).as(
+      'Scenarios'
+    );
+    cy.intercept('GET', '**/api/scenarios/**', { fixture: 'scenario-1' }).as(
+      'Scenario'
+    );
+
     cy.visit('/start', { timeout: 20000 });
     cy.wait('@getMe');
   });
 
   it('shows the scenario intro', () => {
-    //Start
+    // Pick a scenario
     cy.get('h1').should('contain.text', 'Med livet som insats');
-    cy.get('button').contains('Starta').click();
+    cy.get('[data-cy="card-1"]').contains('Scenario 1').click();
+    cy.get('button').contains('Gå tillbaka').click();
+    cy.get('[data-cy="card-2"]').contains('Scenario 2').click();
+    cy.get('button').contains('Starta scenario').click();
     //Intro
     cy.wait(2000);
     cy.get('h1').should(
@@ -42,8 +52,14 @@ describe('Full game flow', () => {
   });
 
   it('should skip the scenario intro and go to game play and then stop game play', () => {
-    //Start
-    cy.get('button').contains('Starta').click();
+    // Pick a scenario
+    cy.get('h1').should('contain.text', 'Med livet som insats');
+    cy.wait(2000);
+
+    cy.get('[data-cy="card-1"]').contains('Scenario 1').click();
+    cy.get('button').contains('Starta scenario').click();
+    cy.wait(7000);
+
     //Intro
     cy.get('button').contains('Hoppa över').click();
     //Start scenario

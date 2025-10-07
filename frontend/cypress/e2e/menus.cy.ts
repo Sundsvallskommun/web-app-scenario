@@ -5,6 +5,9 @@ describe('Menues', () => {
     cy.intercept('POST', '**/api/assistants/**/sessions/?stream=false', {
       fixture: 'scenario-base',
     });
+    cy.intercept('POST', '**/api/conversations', {
+      fixture: 'scenario-base',
+    }).as('Start');
     cy.intercept(
       'POST',
       '**/api/assistants/**/sessions/12345?stream=false',
@@ -15,6 +18,12 @@ describe('Menues', () => {
           res.body = body;
         });
       }
+    );
+    cy.intercept('GET', '**/api/scenarios', { fixture: 'scenarios' }).as(
+      'Scenarios'
+    );
+    cy.intercept('GET', '**/api/scenarios/**', { fixture: 'scenario-1' }).as(
+      'Scenario'
     );
     cy.visit('/start', { timeout: 20000 });
     cy.wait('@getMe');
@@ -32,7 +41,9 @@ describe('Menues', () => {
 
   it('pauses the game and uses the pause menu', () => {
     //Start
-    cy.get('button').contains('Starta').click();
+    cy.get('h1').should('contain.text', 'Med livet som insats');
+    cy.get('[data-cy="card-1"]').contains('Scenario 1').click();
+    cy.get('button').contains('Starta scenario').click();
     //Intro
     cy.get('button').contains('Hoppa över').click();
     //Start scenario screen + open pause modal

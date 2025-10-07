@@ -4,6 +4,7 @@ import { cx } from '@sk-web-gui/react';
 import { getBackgroundImage } from '@utils/get-background-image.util';
 import { useLocalStorage } from '@utils/use-localstorage.hook';
 import { getImageProps } from 'next/image';
+import React from 'react';
 
 interface DefaultLayoutProps extends React.ComponentPropsWithoutRef<'div'> {
   showBackground?: boolean;
@@ -70,7 +71,7 @@ export const DefaultLayout: React.FC<DefaultLayoutProps> = (props) => {
       <div className="flex flex-col w-full h-full overflow-hidden absolute top-0 left-0 right-0 bottom-0 z-10">
         <div
           className={cx(
-            'grow shrink overflow-hidden flex w-full justify-center pb-24',
+            'grow shrink overflow-hidden flex w-full pb-24',
             className
           )}
           {...rest}
