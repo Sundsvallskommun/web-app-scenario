@@ -7,6 +7,8 @@ import { AdminUserController } from './controllers/admin/user.controller';
 import { AdminScenarioController } from './controllers/admin/scenario.controller';
 import { AdminImageController } from './controllers/admin/image.controller';
 import { ScenarioController } from './controllers/scenario.controller';
+import { ConversationController } from './controllers/conversation.controller';
+import { AzureController } from './controllers/azure.controller';
 
 validateEnv();
 
@@ -18,6 +20,8 @@ const app = new App([
   AdminScenarioController,
   AdminImageController,
   ScenarioController,
+  ConversationController,
+  AzureController,
 ]);
 
 app.listen();

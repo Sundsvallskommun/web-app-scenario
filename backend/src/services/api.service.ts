@@ -38,20 +38,20 @@ class ApiService {
     }
   }
 
-  public async get<T>(config: AxiosRequestConfig): Promise<ApiResponse<T>> {
-    return this.request<T>({ ...config, method: 'GET' });
+  public async get<T>(url: string, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
+    return this.request<T>({ url, ...config, method: 'GET' });
   }
 
-  public async post<T>(config: AxiosRequestConfig): Promise<ApiResponse<T>> {
-    return this.request<T>({ ...config, method: 'POST' });
+  public async post<T, D>(url: string, data: D, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
+    return this.request<T>({ url, data, ...config, method: 'POST' });
   }
 
-  public async patch<T>(config: AxiosRequestConfig): Promise<ApiResponse<T>> {
-    return this.request<T>({ ...config, method: 'PATCH' });
+  public async patch<T, D>(url: string, data: D, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
+    return this.request<T>({ url, data, ...config, method: 'PATCH' });
   }
 
-  public async delete<T>(config: AxiosRequestConfig): Promise<ApiResponse<T>> {
-    return this.request<T>({ ...config, method: 'DELETE' });
+  public async delete<T>(url: string, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
+    return this.request<T>({ url, ...config, method: 'DELETE' });
   }
 }
 

@@ -36,4 +36,7 @@ export const {
   SAML_PUBLIC_KEY,
   AD_ADMINGROUP,
   AD_GROUPS,
+  ENEO_API_KEY,
+  AZURE_REGION,
+  AZURE_SUBSCRIPTION_KEY,
 } = process.env;
