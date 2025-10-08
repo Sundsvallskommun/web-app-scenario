@@ -1,5 +1,6 @@
 import { ResourceName } from '@interfaces/resource-name';
-import { Card, Spinner } from '@sk-web-gui/react';
+import { Card } from '@sk-web-gui/next';
+import { Spinner } from '@sk-web-gui/react';
 import { useResource } from '@utils/use-resource';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
