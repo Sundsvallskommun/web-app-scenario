@@ -17,6 +17,7 @@
     "@hookform/resolvers": "^5.2.2",
     "@next/bundle-analyzer": "^15.5.3",
     "@sk-web-gui/core": "^3.16.1",
+    "@sk-web-gui/next": "^1.2.0",
     "@sk-web-gui/react": "^2.0.3",
     "axios": "^1.12.2",
     "dayjs": "^1.11.18",
