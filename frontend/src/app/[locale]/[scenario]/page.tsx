@@ -65,7 +65,8 @@ export default function Scenario() {
         hash: 'undefined',
       });
     }
-  }, [setInfo, data, loaded]);
+    // eslint-disable-next-line  react-hooks/exhaustive-deps
+  }, [setInfo, data, loaded, setScenario, setSettings]);
 
   const lastAssistantEntry = history
     .filter((entry: ChatHistoryEntry) => entry.origin === 'assistant')
