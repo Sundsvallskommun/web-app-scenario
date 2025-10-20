@@ -51,7 +51,7 @@ export const PickScenarioModal: React.FC<PickScenarioModalProps> = ({
           src={
             data?.image?.url ?
               apiURL(data?.image?.url)
-            : '/images/background.png'
+            : apiURL('/files/default.jpg')
           }
           width={600}
           height={600}

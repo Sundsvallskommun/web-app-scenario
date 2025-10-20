@@ -75,7 +75,7 @@ export default function Start() {
                       src={
                         scenario?.image?.url ?
                           apiURL(scenario?.image?.url)
-                        : '/images/background.png'
+                        : apiURL('/files/default.jpg')
                       }
                       alt=""
                     />

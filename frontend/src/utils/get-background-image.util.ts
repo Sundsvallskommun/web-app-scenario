@@ -1,3 +1,4 @@
+//NOTE: Not used for now. Next Images does not work in prod
 export const getBackgroundImage = (srcSet: string = '') => {
   const imageSet = srcSet
     .split(', ')
