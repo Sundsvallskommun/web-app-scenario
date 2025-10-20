@@ -1,9 +1,8 @@
 'use client';
 
 import { cx } from '@sk-web-gui/react';
-import { getBackgroundImage } from '@utils/get-background-image.util';
+import { apiURL } from '@utils/api-url';
 import { useLocalStorage } from '@utils/use-localstorage.hook';
-import { getImageProps } from 'next/image';
 import React from 'react';
 
 interface DefaultLayoutProps extends React.ComponentPropsWithoutRef<'div'> {
@@ -26,19 +25,9 @@ export const DefaultLayout: React.FC<DefaultLayoutProps> = (props) => {
   } = props;
   const highcontrast = useLocalStorage((state) => state.highcontrast);
 
-  const backgroundSrc =
-    _backgroundSrc || process.env.NEXT_PUBLIC_BACKGROUND_IMAGE;
+  const backgroundSrc = _backgroundSrc ?? apiURL('files/default.jpg');
 
-  const {
-    props: { srcSet },
-  } = getImageProps({
-    alt: '',
-    width: 1280,
-    height: 1280,
-    src: backgroundSrc || '',
-  });
-
-  const backgroundImage = getBackgroundImage(srcSet);
+  const backgroundImage = `url(${backgroundSrc})`;
 
   const getOpacity = () => {
     if (!showBackground) {
