@@ -1,0 +1,48 @@
+name: Cypress Tests frontend
+permissions:
+  contents: read
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - "develop"
+      - "main"
+    paths:
+      - frontend/src/**
+      - frontend/cypress/**
+
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    name: E2E in Chrome on ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cypress run
+        uses: cypress-io/github-action@6c143abc292aa835d827652c2ea025d098311070
+        with:
+          working-directory: frontend
+          install-command: yarn --frozen-lockfile --silent --network-timeout 1000000
+          browser: chrome
+          build: yarn build:test
+          start: yarn start
+          wait-on: http://localhost:3002
+          spec: cypress/e2e/**/*.cy.ts
+        env:
+          NEXT_PUBLIC_APP_NAME: Scenarios
+          NEXT_PUBLIC_API_URL: http://localhost:3001/api
+          NEXT_PUBLIC_INTRIC_API_URL: http://localhost:3009/api
+          DOMAIN_NAME: localhost
+          BASE_PATH: ""
+          NEXT_PUBLIC_BASE_PATH: ""
+          ADMIN_URL: http://localhost:3003/
+          NEXT_PUBLIC_PROTECTED_ROUTES: ""
+          HEALTH_AUTH: false
+          HEALTH_USERNAME: ""
+          HEALTH_PASSWORD: ""
+          PORT: 3002

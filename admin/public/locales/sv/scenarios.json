@@ -1,0 +1,20 @@
+{
+  "name_zero": "scenario",
+  "name_one": "scenario",
+  "name_many": "scenarion",
+  "name_other": "scenarion",
+  "the_name": "scenariot",
+  "the_name_one": "scenariot",
+  "the_name_many": "scenariona",
+  "the_name_other": "scenariona",
+  "properties": {
+    "id": "Id",
+    "name": "Namn",
+    "description": "Beskrivning",
+    "assistantId": "Assistant-id",
+    "published": "Publicerad",
+    "image": "Bakgrundsbild",
+    "createdAt": "Skapad",
+    "updatedAt": "Senast uppdaterad"
+  }
+}

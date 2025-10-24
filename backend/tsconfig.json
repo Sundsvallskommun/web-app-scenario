@@ -1,8 +1,8 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "target": "es2017",
-    "lib": ["es2017", "dom", "esnext.asynciterable"],
+    "target": "es2021",
+    "lib": ["es2021", "dom", "esnext.asynciterable"],
     "typeRoots": ["./src/types", "node_modules/@types"],
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,

@@ -3,8 +3,8 @@
 import { Button, Icon } from '@sk-web-gui/react';
 import { Pause } from 'lucide-react';
 import { useState } from 'react';
-import { PauseModal } from './components/pause-modal.component';
 import { useTranslation } from 'react-i18next';
+import { PauseModal } from './components/pause-modal.component';
 
 interface PauseControlProps {
   onQuit: () => void;

@@ -26,7 +26,8 @@ export const localApi = (...parts: string[]): string => {
 
 export const apiURL = (...parts: string[]): string => {
   const urlParts = [API_BASE_URL, ...parts];
-  return urlParts.map(pathPart => pathPart?.replace(/(^\/|\/$)/g, '')).join('/');
+  const trailingSlash = urlParts.at(-1).endsWith('/') ? '/' : '';
+  return urlParts.map(pathPart => pathPart?.replace(/(^\/|\/$)/g, '')).join('/') + trailingSlash;
 };
 
 export const luhnCheck = (str = ''): boolean => {
@@ -65,4 +66,12 @@ export const isValidUrl = (string: string) => {
     return false;
   }
   return url.protocol === 'http:' || url.protocol === 'https:';
+};
+export const dataPath = (path?: string): string => {
+  const fullpath = path ? `/${path}` : '';
+  return '/files' + fullpath;
+};
+
+export const dataDir = (path: string): string => {
+  return __dirname + '/../../data/' + path;
 };

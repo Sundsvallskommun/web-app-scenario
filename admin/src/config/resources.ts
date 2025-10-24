@@ -1,29 +1,47 @@
 import { Api } from '@data-contracts/backend/Api';
-import { User } from '@data-contracts/backend/data-contracts';
+import {
+  CreateScenarioDto,
+  Image,
+  Scenario,
+  UpdateImageDto,
+  UpdateScenarioDto,
+} from '@data-contracts/backend/data-contracts';
 import { Resource } from '@interfaces/resource';
 
 const apiService = new Api({ baseURL: process.env.NEXT_PUBLIC_API_URL, withCredentials: true });
 
-const users: Resource<User> = {
-  name: 'users',
-  // endpoints
-  /** @ts-expect-error New endpoint must be created and handle the call */
-  getOne: apiService.userControllerGetUser,
-  /** @ts-expect-error New endpoint must be created and handle the call */
-  getMany: apiService.userControllerGetUsers,
-  /** @ts-expect-error New endpoint must be created and handle the call */
-  create: apiService.userControllerCreateUser,
-  /** @ts-expect-error New endpoint must be created and handle the call */
-  update: apiService.userControllerUpdateUser,
-  /** @ts-expect-error New endpoint must be created and handle the call */
-  remove: apiService.userControllerRemoveUser,
+const scenarios: Resource<Scenario, CreateScenarioDto, UpdateScenarioDto> = {
+  name: 'scenarios',
+  getOne: apiService.adminScenarioControllerGetScenario,
+  getMany: apiService.adminScenarioControllerGetScenarios,
+  create: apiService.adminScenarioControllerCreateScenario,
+  update: apiService.adminScenarioControllerUpdateScenario,
+  remove: apiService.adminScenarioControllerDeleteScenario,
 
   defaultValues: {
     name: '',
+    description: '',
+    assistantId: '',
+    published: false,
   },
-  requiredFields: ['name'],
+  requiredFields: ['name', 'assistantId'],
 };
 
-const resources = { users };
+const emptyFile = new File([], '');
+const images: Resource<Image, { image: File }, UpdateImageDto> = {
+  name: 'images',
+  getOne: apiService.adminImageControllerGetImage,
+  getMany: apiService.adminImageControllerGetImages,
+  create: apiService.adminImageControllerCreateImage,
+  update: apiService.adminImageControllerUpdateImage,
+  remove: apiService.adminImageControllerDeleteImage,
+
+  defaultValues: {
+    image: emptyFile,
+  },
+  requiredFields: ['image'],
+};
+
+const resources = { scenarios, images };
 
 export default resources;

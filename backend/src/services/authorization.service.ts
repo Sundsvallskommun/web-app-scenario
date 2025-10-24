@@ -1,5 +1,5 @@
 // import { AUTHORIZED_GROUPS } from '@/config';
-import { Permissions, InternalRole, ADRole } from '@interfaces/auth.interface';
+import { Permissions, InternalRole } from '@interfaces/auth.interface';
 
 // export function authorizeGroups(groups) {
 //   const authorizedGroupsList = AUTHORIZED_GROUPS.split(',');
@@ -27,7 +27,7 @@ const roles = new Map<InternalRole, Partial<Permissions>>([
 ]);
 
 type RoleADMapping = {
-  [key in ADRole]: InternalRole;
+  [ADRole: string]: InternalRole;
 };
 const roleADMapping: RoleADMapping = {
   sg_x_scenarioverktyg: 'app_read',
@@ -39,7 +39,7 @@ const roleADMapping: RoleADMapping = {
  * @param internalGroups Whether to use internal groups or external group-mappings
  * @returns collected permissions for all matching role groups
  */
-export const getPermissions = (groups: InternalRole[] | ADRole[], internalGroups = false): Permissions => {
+export const getPermissions = (groups: InternalRole[] | string[], internalGroups = false): Permissions => {
   const permissions: Permissions = defaultPermissions();
   groups.forEach(group => {
     const groupLower = group.toLowerCase();
@@ -61,7 +61,7 @@ export const getPermissions = (groups: InternalRole[] | ADRole[], internalGroups
  * @param groups List of AD roles
  * @returns role with most permissions
  */
-export const getRole = (groups: ADRole[]) => {
+export const getRole = (groups: string[]) => {
   if (groups.length == 1) return roleADMapping[groups[0]]; // app_read
 
   const roles: InternalRole[] = [];

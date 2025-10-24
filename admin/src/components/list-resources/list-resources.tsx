@@ -12,12 +12,13 @@ import { capitalize } from 'underscore.string';
 import { useShallow } from 'zustand/react/shallow';
 
 interface ListResourcesProps {
+  properties?: string[];
   resource: ResourceName;
   headers?: AutoTableHeader[];
   data?: Array<Record<string, unknown>>;
 }
 
-export const ListResources: React.FC<ListResourcesProps> = ({ resource, headers: _headers, data }) => {
+export const ListResources: React.FC<ListResourcesProps> = ({ properties, resource, headers: _headers, data }) => {
   const { update } = resources[resource];
   const { t } = useTranslation();
   const [{ [resource]: storeHeaders }, setHeaders] = useLocalStorage(
@@ -26,11 +27,12 @@ export const ListResources: React.FC<ListResourcesProps> = ({ resource, headers:
 
   useEffect(() => {
     if (!storeHeaders && data) {
+      const newHeaders = properties ?? [
+        ...(data?.[0] ? Object.keys(data[0]).filter((field) => typeof data[0][field] !== 'object') : []),
+        ...(defaultInformationFields || ['id']),
+      ];
       setHeaders({
-        [resource]: [
-          ...(defaultInformationFields || ['id']),
-          ...(data?.[0] ? Object.keys(data[0]).filter((field) => typeof data[0][field] !== 'object') : []),
-        ],
+        [resource]: newHeaders,
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -38,52 +40,57 @@ export const ListResources: React.FC<ListResourcesProps> = ({ resource, headers:
 
   const headers = useMemo(
     () =>
-      _headers ||
-      storeHeaders?.reduce<AutoTableHeader[]>((headers, key) => {
-        if (data) {
-          const type = typeof data?.[0]?.[key];
-          switch (type) {
-            case 'string':
-              return [
-                ...headers,
-                {
-                  label: capitalize(
-                    t(`${defaultInformationFields.includes(key) ? 'common:' : `${resource}:properties.`}${key}`)
-                  ),
-                  property: key,
-                },
-              ];
-            case 'number':
-              return [
-                ...headers,
-                {
-                  label: capitalize(
-                    t(`${defaultInformationFields.includes(key) ? 'common:' : `${resource}:properties.`}${key}`)
-                  ),
-                  property: key,
-                },
-              ];
-            case 'boolean':
-              return [
-                ...headers,
-                {
-                  label: capitalize(
-                    t(`${defaultInformationFields.includes(key) ? 'common:' : `${resource}:properties.`}${key}`)
-                  ),
-                  property: key,
-                  renderColumn: (value) => (
-                    <span>{value && <Icon.Padded rounded color="success" icon={<Check />} />}</span>
-                  ),
-                  isColumnSortable: false,
-                },
-              ];
-            default:
-              return headers;
+      _headers ?
+        _headers.filter((header) =>
+          typeof header === 'string' ?
+            storeHeaders?.includes(header)
+          : storeHeaders?.includes(header.property as string)
+        )
+      : storeHeaders?.reduce<AutoTableHeader[]>((headers, key) => {
+          if (data) {
+            const type = typeof data?.[0]?.[key];
+            switch (type) {
+              case 'string':
+                return [
+                  ...headers,
+                  {
+                    label: capitalize(
+                      t(`${defaultInformationFields.includes(key) ? 'common:' : `${resource}:properties.`}${key}`)
+                    ),
+                    property: key,
+                  },
+                ];
+              case 'number':
+                return [
+                  ...headers,
+                  {
+                    label: capitalize(
+                      t(`${defaultInformationFields.includes(key) ? 'common:' : `${resource}:properties.`}${key}`)
+                    ),
+                    property: key,
+                  },
+                ];
+              case 'boolean':
+                return [
+                  ...headers,
+                  {
+                    label: capitalize(
+                      t(`${defaultInformationFields.includes(key) ? 'common:' : `${resource}:properties.`}${key}`)
+                    ),
+                    property: key,
+                    renderColumn: (value) => (
+                      <span>{value && <Icon.Padded rounded color="success" icon={<Check />} />}</span>
+                    ),
+                    isColumnSortable: false,
+                  },
+                ];
+              default:
+                return headers;
+            }
+          } else {
+            return headers;
           }
-        } else {
-          return headers;
-        }
-      }, []),
+        }, []),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [storeHeaders, _headers, data]
   );
@@ -96,7 +103,7 @@ export const ListResources: React.FC<ListResourcesProps> = ({ resource, headers:
     sticky: true,
     renderColumn: (value) => (
       <div className="text-right w-full">
-        <NextLink href={`/${resource}/${value}`} aria-label="Redigera">
+        <NextLink data-cy="edit-resource" href={`/${resource}/${value}`} aria-label="Redigera">
           <Icon.Padded icon={<Pencil />} variant="tertiary" className="link-btn" />
         </NextLink>
       </div>
@@ -115,13 +122,18 @@ export const ListResources: React.FC<ListResourcesProps> = ({ resource, headers:
 
   const formattedData = useMemo(() => data?.map((row) => getFormattedFields(row)), [data]);
 
+  const autoHeaders = [...translatedHeaders, ...(update ? [editHeader] : [])];
+
   return (
     <div>
       {formattedData && formattedData?.length > 0 ?
         <AutoTable
+          data-cy="resource-table"
           pageSize={15}
           autodata={formattedData}
-          autoheaders={[...translatedHeaders, ...(update ? [editHeader] : [])]}
+          autoheaders={autoHeaders.filter(
+            (header, index) => autoHeaders.map((head) => head.label).indexOf(header.label) === index
+          )}
         />
       : <h3>{capitalize(t('common:no_resources', { resources: t(`${resource}:name_zero`) }))}</h3>}
     </div>

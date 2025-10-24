@@ -7,7 +7,6 @@ type InputProps = React.ComponentPropsWithoutRef<typeof Input.Component>;
 interface EditResourceInputProps extends Omit<InputProps, 'ref' | 'key'> {
   label: string;
   property: string;
-  index: number;
   required?: boolean;
 }
 
@@ -18,9 +17,9 @@ export const EditResourceInput: React.FC<EditResourceInputProps> = ({ label, pro
 
   return type === 'object' ?
       <></>
-    : <FormControl required={required}>
+    : <FormControl required={required} className="w-full">
         {type === 'boolean' ?
-          <Switch {...register(property)} color="gronsta">
+          <Switch {...register(property)} {...rest} color="gronsta">
             {label}
           </Switch>
         : <>

@@ -1,9 +1,10 @@
 import { useTranslation } from 'react-i18next';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Icon } from '@sk-web-gui/react';
 import { FastForward } from 'lucide-react';
 import { WizardPageProps } from '@interfaces/wizard-page-props.interface';
 import { IntroText } from '@interfaces/intro-text.interface';
+import { textToSpeech } from '@sk-web-gui/ai';
 
 interface IntroProps extends WizardPageProps {
   /**
@@ -67,6 +68,7 @@ export const Intro: React.FC<IntroProps> = ({
     setTimeout(() => {
       setOpacity(1);
       handleNextSlide();
+      textToSpeech(texts[currentTextIndex].text);
     }, transitionDuration);
     //eslint-disable-next-line
   }, [currentTextIndex]);

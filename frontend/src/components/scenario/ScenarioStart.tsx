@@ -5,6 +5,7 @@ import { Button } from '@sk-web-gui/react';
 import { PauseControl } from '@components/pause-control/pause-control.component';
 import { useEffect, useState } from 'react';
 import { WizardPageProps } from '@interfaces/wizard-page-props.interface';
+import { useSessionStorage } from '@utils/use-sessionstorage.hook';
 
 interface ScenarioStartProps extends WizardPageProps {
   /**
@@ -14,7 +15,11 @@ interface ScenarioStartProps extends WizardPageProps {
   transitionDuration?: number;
 }
 
-export const ScenarioStart: React.FC<ScenarioStartProps> = ({ onNext, onRestart, transitionDuration = 1000 }) => {
+export const ScenarioStart: React.FC<ScenarioStartProps> = ({
+  onNext,
+  onRestart,
+  transitionDuration = 1000,
+}) => {
   const [opacity, setOpacity] = useState<number>(0);
   const { t } = useTranslation();
 
@@ -25,16 +30,22 @@ export const ScenarioStart: React.FC<ScenarioStartProps> = ({ onNext, onRestart,
     //eslint-disable-next-line
   }, []);
 
+  const scenario = useSessionStorage((state) => state.scenario);
+
   return (
-    <div
-      className="flex flex-col gap-24 text-center justify-center items-center transition-opacity"
-      style={{ opacity, transitionDuration: `${transitionDuration}ms` }}
-    >
-      <PauseControl onQuit={() => onRestart?.()} />
-      <h1 className="text-display-1-sm md:text-display-1-md xl:text-display-1-lg">{t('common:scenario_name')}</h1>
-      <Button size="lg" rounded onClick={onNext}>
-        {t('common:start_alt')}
-      </Button>
-    </div>
+    !!scenario && (
+      <div
+        className="flex flex-col gap-24 text-center justify-center items-center transition-opacity"
+        style={{ opacity, transitionDuration: `${transitionDuration}ms` }}
+      >
+        <PauseControl onQuit={() => onRestart?.()} />
+        <h1 className="text-display-1-sm md:text-display-1-md xl:text-display-1-lg">
+          {scenario.name}
+        </h1>
+        <Button size="lg" rounded onClick={onNext}>
+          {t('common:start_alt')}
+        </Button>
+      </div>
+    )
   );
 };

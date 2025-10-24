@@ -1,10 +1,13 @@
 'use client';
 
 import { cx } from '@sk-web-gui/react';
+import { apiURL } from '@utils/api-url';
 import { useLocalStorage } from '@utils/use-localstorage.hook';
+import React from 'react';
 
 interface DefaultLayoutProps extends React.ComponentPropsWithoutRef<'div'> {
   showBackground?: boolean;
+  backgroundSrc?: string;
   /**
    * Duration of the transition effect in milliseconds.
    * @default 1000
@@ -16,11 +19,15 @@ export const DefaultLayout: React.FC<DefaultLayoutProps> = (props) => {
   const {
     className,
     showBackground,
+    backgroundSrc: _backgroundSrc,
     transitionDuration = 1000,
     ...rest
   } = props;
   const highcontrast = useLocalStorage((state) => state.highcontrast);
-  const backgroundSrc = process.env.NEXT_PUBLIC_BACKGROUND_IMAGE;
+
+  const backgroundSrc = _backgroundSrc ?? apiURL('files/default.jpg');
+
+  const backgroundImage = `url(${backgroundSrc})`;
 
   const getOpacity = () => {
     if (!showBackground) {
@@ -41,11 +48,11 @@ export const DefaultLayout: React.FC<DefaultLayoutProps> = (props) => {
     <div className="w-dvw h-dvh portrait:max-h-dvh bg-background-content text-dark-primary overflow-hidden relative">
       <div
         className={cx(
-          'w-full h-full overflow-hidden bg-cover absolute top-0 left-0 right-0 bottom-0 z-0 transition-opacity',
+          'w-full h-full overflow-hidden bg-cover bg-center absolute top-0 left-0 right-0 bottom-0 z-0 transition-opacity',
           { ['bg-background-100 bg-blend-multiply']: highcontrast }
         )}
         style={{
-          backgroundImage: backgroundSrc ? `url(${backgroundSrc})` : undefined,
+          backgroundImage: backgroundSrc ? backgroundImage : undefined,
           opacity: getOpacity(),
           transitionDuration: `${transitionDuration}ms`,
         }}
@@ -53,7 +60,7 @@ export const DefaultLayout: React.FC<DefaultLayoutProps> = (props) => {
       <div className="flex flex-col w-full h-full overflow-hidden absolute top-0 left-0 right-0 bottom-0 z-10">
         <div
           className={cx(
-            'grow shrink overflow-hidden flex w-full justify-center pb-24',
+            'grow shrink overflow-hidden flex w-full pb-24',
             className
           )}
           {...rest}

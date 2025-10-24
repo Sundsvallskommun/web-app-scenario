@@ -1,16 +1,18 @@
 'use client';
 
-import DefaultLayout from '@layouts/default-layout/default-layout.component';
-import { ChatHistoryEntry, useAssistantStore, useChat } from '@sk-web-gui/ai';
-import { useSessionStorage } from '@utils/use-sessionstorage.hook';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { shallow } from 'zustand/shallow';
+import LoaderFullScreen from '@components/loader/loader-fullscreen';
 import { Chat } from '@components/scenario/Chat';
 import { End } from '@components/scenario/End';
 import { Intro } from '@components/scenario/Intro';
 import { ScenarioStart } from '@components/scenario/ScenarioStart';
-import { useTranslation } from 'react-i18next';
+import DefaultLayout from '@layouts/default-layout/default-layout.component';
+import { useScenario } from '@services/scenario-service/use-scenario.hook';
+import { ChatHistoryEntry, useAssistantStore, useChat } from '@sk-web-gui/ai';
+import { apiURL } from '@utils/api-url';
+import { useSessionStorage } from '@utils/use-sessionstorage.hook';
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { shallow, useShallow } from 'zustand/shallow';
 
 interface Page {
   component: React.JSX.Element;
@@ -19,8 +21,13 @@ interface Page {
 export default function Scenario() {
   const [page, setPage] = useState<number>(0);
   const router = useRouter();
-  const { t } = useTranslation();
-  const setInfo = useAssistantStore((state) => state.setInfo);
+  const { scenario } = useParams();
+  const { loaded, data } = useScenario(Number(scenario));
+  const setScenario = useSessionStorage((state) => state.setScenario);
+  const [settings, setSettings, setInfo] = useAssistantStore(
+    useShallow((state) => [state.settings, state.setSettings, state.setInfo])
+  );
+
   const [webMode, pwa] = useSessionStorage(
     (state) => [state.webMode, state.pwa],
     shallow
@@ -45,12 +52,21 @@ export default function Scenario() {
   }, [newSession]);
 
   useEffect(() => {
-    //NOTE: Set info according to assisten from BE
-    setInfo({
-      name: t('common:assistant_name'),
-      id: process.env.NEXT_PUBLIC_ASSISTANT_ID ?? '',
-    });
-  }, [setInfo, t]);
+    if (loaded && data) {
+      setScenario(data);
+      setInfo({
+        name: data.name,
+        id: data.assistantId,
+      });
+      setSettings({
+        ...settings,
+        assistantId: data.assistantId,
+        //NOTE: This is a bug in shared components - hash should not be needed
+        hash: 'undefined',
+      });
+    }
+    // eslint-disable-next-line  react-hooks/exhaustive-deps
+  }, [setInfo, data, loaded, setScenario, setSettings]);
 
   const lastAssistantEntry = history
     .filter((entry: ChatHistoryEntry) => entry.origin === 'assistant')
@@ -104,11 +120,12 @@ export default function Scenario() {
 
   return (
     <DefaultLayout
+      backgroundSrc={data?.image?.url ? apiURL(data.image.url) : undefined}
       showBackground={!showInstaller && pages[page].showBackground}
       transitionDuration={transitionDuration}
     >
       <main className="flex w-full overflow-hidden flex-col grow shrink h-full max-h-full justify-center items-center pb-16 gap-16 md:gap-32">
-        {pages[page].component}
+        {loaded && data ? pages[page].component : <LoaderFullScreen />}
       </main>
     </DefaultLayout>
   );

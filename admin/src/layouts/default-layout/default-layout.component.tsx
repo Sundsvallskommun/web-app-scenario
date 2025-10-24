@@ -31,7 +31,7 @@ export default function DefaultLayout({ title, postTitle, headerSubtitle, childr
     contentElement?.focus();
   };
 
-  const colorSchemeIcons: Record<ColorSchemeMode, JSX.Element> = {
+  const colorSchemeIcons: Record<ColorSchemeMode, React.JSX.Element> = {
     light: <Sun />,
     dark: <Moon />,
     system: <Monitor />,
@@ -40,14 +40,12 @@ export default function DefaultLayout({ title, postTitle, headerSubtitle, childr
   return (
     <div className="DefaultLayout full-page-layout">
       <Head>
-        <title>{title ? title : fullTitle}</title>
+        <title>{capitalize(title ? title : fullTitle)}</title>
         <meta name="description" content={`${process.env.NEXT_PUBLIC_APP_NAME} admin`} />
       </Head>
 
-      <NextLink href="#content" legacyBehavior passHref>
-        <a onClick={setFocusToMain} accessKey="s" className="next-link-a" data-cy="systemMessage-a">
-          {t('layout:header.goto_content')}
-        </a>
+      <NextLink href="#content" onClick={setFocusToMain} className="next-link-a" data-cy="systemMessage-a">
+        {t('layout:header.goto_content')}
       </NextLink>
 
       <div className="flex w-full min-h-screen h-full">
@@ -60,7 +58,12 @@ export default function DefaultLayout({ title, postTitle, headerSubtitle, childr
           </div>
           <div className="relative flex flex-col w-full">
             <PopupMenu>
-              <PopupMenu.Button variant="tertiary" showBackground={false} className="justify-start">
+              <PopupMenu.Button
+                data-cy="user-menu-button"
+                variant="tertiary"
+                showBackground={false}
+                className="justify-start"
+              >
                 <Avatar
                   initials={`${user.name
                     .split(' ')
@@ -107,7 +110,9 @@ export default function DefaultLayout({ title, postTitle, headerSubtitle, childr
                     </PopupMenu.Item>
                   </PopupMenu.Group>
                   <PopupMenu.Item>
-                    <NextLink href="/logout">{capitalize(t('common:logout'))}</NextLink>
+                    <NextLink data-cy="logout-button" href="/logout">
+                      {capitalize(t('common:logout'))}
+                    </NextLink>
                   </PopupMenu.Item>
                 </PopupMenu.Items>
               </PopupMenu.Panel>

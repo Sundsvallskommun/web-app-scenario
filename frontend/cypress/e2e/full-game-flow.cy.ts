@@ -1,22 +1,29 @@
 import { answer } from '../fixtures/answers';
-import { getMe } from '../fixtures/getMe';
 
 describe('Full game flow', () => {
   beforeEach(() => {
-    cy.intercept('GET', '**/api/me', getMe).as('Login');
     cy.intercept('POST', '**/api/conversations', {
       fixture: 'scenario-base',
-    });
+    }).as('Start');
 
-    cy.visit('/start');
-    cy.wait('@Login');
+    cy.intercept('GET', '**/api/scenarios', { fixture: 'scenarios' }).as(
+      'Scenarios'
+    );
+    cy.intercept('GET', '**/api/scenarios/**', { fixture: 'scenario-1' }).as(
+      'Scenario'
+    );
+
+    cy.visit('/start', { timeout: 20000 });
+    cy.wait('@getMe');
   });
 
   it('shows the scenario intro', () => {
-    //Start
+    // Pick a scenario
     cy.get('h1').should('contain.text', 'Med livet som insats');
-    cy.get('p').should('contain.text', 'Bara en liten tjänst');
-    cy.get('button').contains('Starta').click();
+    cy.get('[data-cy="card-1"]').contains('Scenario 1').click();
+    cy.get('button').contains('Gå tillbaka').click();
+    cy.get('[data-cy="card-2"]').contains('Scenario 2').click();
+    cy.get('button').contains('Starta scenario').click();
     //Intro
     cy.wait(2000);
     cy.get('h1').should(
@@ -41,18 +48,25 @@ describe('Full game flow', () => {
     cy.get('h1').should('contain.text', 'Vi uppmuntrar dig att reflektera');
     cy.wait(7000);
     //Start scenario
-    cy.get('h1').should('contain.text', 'Bara en liten tjänst');
+    cy.get('h1').should('contain.text', 'Scenario 1');
   });
 
-  it.only('should skip the scenario intro and go to game play and then stop game play', () => {
-    //Start
-    cy.get('button').contains('Starta').click();
+  it('should skip the scenario intro and go to game play and then stop game play', () => {
+    // Pick a scenario
+    cy.get('h1').should('contain.text', 'Med livet som insats');
+    cy.wait(2000);
+
+    cy.get('[data-cy="card-1"]').contains('Scenario 1').click();
+    cy.get('button').contains('Starta scenario').click();
+    cy.wait(7000);
+
     //Intro
     cy.get('button').contains('Hoppa över').click();
     //Start scenario
-    cy.get('h1').should('contain.text', 'Bara en liten tjänst');
+    cy.get('h1').should('contain.text', 'Scenario 1');
     cy.get('button').contains('Kör igång').click();
     //Scenario 1
+    cy.wait('@Start');
 
     //New interception for follow up questions
     cy.intercept(

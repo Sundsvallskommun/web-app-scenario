@@ -1,3 +1,5 @@
+'use client';
+
 import resources from '@config/resources';
 import { ResourceName } from '@interfaces/resource-name';
 import { Button, Icon, useConfirm } from '@sk-web-gui/react';
@@ -34,7 +36,7 @@ export const EditorToolbar: React.FC<ToolbarProps> = ({ resource, isDirty, id })
         )
         .then((confirm) => {
           if (confirm) {
-            handleRemove(remove(id)).then((res) => {
+            handleRemove(() => remove?.(id)).then((res) => {
               if (res) {
                 reset();
                 router.push(parentPath);
@@ -54,6 +56,7 @@ export const EditorToolbar: React.FC<ToolbarProps> = ({ resource, isDirty, id })
         type="submit"
         color="vattjom"
         size="sm"
+        data-cy="edit-toolbar-save"
         showBackground={false}
         leftIcon={<Save />}
         disabled={!isDirty}
@@ -67,6 +70,7 @@ export const EditorToolbar: React.FC<ToolbarProps> = ({ resource, isDirty, id })
             variant="tertiary"
             color="error"
             showBackground={false}
+            data-cy="edit-toolbar-delete"
             iconButton
             aria-label={capitalize(t('common:remove', { resource: t(`${resource}:name_one`) }))}
             size="sm"

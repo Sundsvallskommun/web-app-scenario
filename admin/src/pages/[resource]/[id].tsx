@@ -20,12 +20,12 @@ import { useEffect, useState } from 'react';
 import { FieldValues, FormProvider, useForm } from 'react-hook-form';
 import { capitalize } from 'underscore.string';
 
-export const EditAssistant: React.FC = () => {
+export const ResourcePage: React.FC = () => {
   const { t } = useTranslation();
   const router = useRouter();
 
   const { resource: _resource, id: _id } = useParams();
-  const resource = stringToResourceName(typeof _resource === 'object' ? _resource[0] : _resource);
+  const resource = stringToResourceName(typeof _resource === 'object' ? _resource[0] : (_resource ?? ''));
   if (!resource) {
     router.push('/');
   }
@@ -68,7 +68,8 @@ export const EditAssistant: React.FC = () => {
 
   useEffect(() => {
     if (id) {
-      handleGetOne(() => getOne(id)).then((res) => {
+      // eslint-disable-next-line implicit-any
+      handleGetOne<any>(() => getOne(id)).then((res) => {
         reset(res);
         setIsNew(false);
         setLoaded(true);
@@ -96,7 +97,7 @@ export const EditAssistant: React.FC = () => {
 
   const onSubmit = (data: DataType) => {
     const createFunc: (data: DataType) => ReturnType<NonNullable<Resource<FieldValues>['create']>> =
-      create as NonNullable<Resource<FieldValues>['create']>;
+      create as unknown as NonNullable<Resource<FieldValues>['create']>;
     switch (isNew) {
       case true:
         handleCreate(() => createFunc(data as CreateType)).then((res) => {
@@ -151,8 +152,8 @@ export const EditAssistant: React.FC = () => {
 
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => ({
   props: {
-    ...(await serverSideTranslations(locale, ['common', 'crud', 'layout', ...Object.keys(resources)])),
+    ...(await serverSideTranslations(locale as string, ['common', 'crud', 'layout', ...Object.keys(resources)])),
   },
 });
 
-export default EditAssistant;
+export default ResourcePage;
