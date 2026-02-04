@@ -12,16 +12,16 @@ model Image {
   name        String
   filename    String
   url         String
-  scenarios   Scenario[] 
+  scenarios   Scenario[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
 
 model Scenario {
   id          Int    @id @default(autoincrement())
-  assistantId String 
+  assistantId String
   name        String
-  description String? 
+  description String?
   published   Boolean @default(false)
   imageId     Int?
   image       Image?  @relation(fields: [imageId], references: [id])
@@ -29,3 +29,11 @@ model Scenario {
   updatedAt   DateTime @updatedAt
 }
 
+model ExternalUser {
+  id           Int      @id @default(autoincrement())
+  name         String
+  org          String?
+  personNumber String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
