@@ -19,12 +19,17 @@ export const EditResourceInput: React.FC<EditResourceInputProps> = ({ label, pro
       <></>
     : <FormControl required={required} className="w-full">
         {type === 'boolean' ?
-          <Switch {...register(property)} {...rest} color="gronsta">
+          <Switch {...register(property)} {...rest} color="gronsta" data-cy={`edit-${property}`}>
             {label}
           </Switch>
         : <>
             <FormLabel>{label}</FormLabel>
-            <Input type={type === 'number' ? 'number' : 'text'} {...register(property)} {...rest} />
+            <Input
+              type={type === 'number' ? 'number' : 'text'}
+              {...register(property)}
+              {...rest}
+              data-cy={`edit-${property}`}
+            />
           </>
         }
       </FormControl>;

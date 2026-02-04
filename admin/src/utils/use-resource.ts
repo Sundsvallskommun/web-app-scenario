@@ -5,7 +5,7 @@ import { useCallback, useEffect } from 'react';
 import { useCrudHelper } from './use-crud-helpers';
 import { useLocalStorage } from './use-localstorage.hook';
 import { useShallow } from 'zustand/react/shallow';
-import { Image, Scenario } from '@data-contracts/backend/data-contracts';
+import { ExternalUser, Image, Scenario } from '@data-contracts/backend/data-contracts';
 
 export const useResource = (resource: ResourceName) => {
   const [resourceData, setData, setLoaded, setLoading] = useLocalStorage(
@@ -22,7 +22,7 @@ export const useResource = (resource: ResourceName) => {
   const refresh = useCallback(() => {
     if (getMany) {
       setLoading(resource, true);
-      handleGetMany<Image | Scenario>(() => getMany())
+      handleGetMany<Image | Scenario | ExternalUser>(() => getMany())
         .then((res) => {
           if (res) {
             setData(resource, res);

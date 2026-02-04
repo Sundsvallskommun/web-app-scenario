@@ -1,8 +1,11 @@
 import { Api } from '@data-contracts/backend/Api';
 import {
+  CreateExternalUserDto,
   CreateScenarioDto,
+  ExternalUser,
   Image,
   Scenario,
+  UpdateExternalUserDto,
   UpdateImageDto,
   UpdateScenarioDto,
 } from '@data-contracts/backend/data-contracts';
@@ -42,6 +45,22 @@ const images: Resource<Image, { image: File }, UpdateImageDto> = {
   requiredFields: ['image'],
 };
 
-const resources = { scenarios, images };
+const externalUsers: Resource<ExternalUser, CreateExternalUserDto, UpdateExternalUserDto> = {
+  name: 'externalUsers',
+  getOne: apiService.adminExternalUserControllerGetExternalUser,
+  getMany: apiService.adminExternalUserControllerGetExternalUsers,
+  create: apiService.adminExternalUserControllerAddExternalUser,
+  update: apiService.adminExternalUserControllerUpdateExternalUser,
+  remove: apiService.adminExternalUserControllerDeleteExternalUser,
+
+  defaultValues: {
+    name: '',
+    org: '',
+    personNumber: '',
+  },
+  requiredFields: ['name', 'personNumber'],
+};
+
+const resources = { scenarios, images, externalUsers };
 
 export default resources;

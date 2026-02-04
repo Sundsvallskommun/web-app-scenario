@@ -20,4 +20,5 @@ beforeEach(() => {
   cy.intercept('GET', '**/api/admin/me', me).as('me');
   cy.intercept('GET', '**/api/admin/images', images).as('images');
   cy.intercept('GET', '**/api/admin/scenarios', scenarios).as('scenarios');
+  cy.intercept('GET', '**/api/admin/external-users', scenarios).as('externalUsers');
 });
