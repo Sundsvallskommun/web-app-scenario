@@ -1,0 +1,18 @@
+{
+  "name_zero": "extern användare",
+  "name_one": "extern användare",
+  "name_many": "externa användare",
+  "name_other": "externa användare",
+  "the_name": "externa användaren",
+  "the_name_one": "externa användaren",
+  "the_name_many": "externa användarna",
+  "the_name_other": "externa användarna",
+  "properties": {
+    "id": "Id",
+    "name": "Namn",
+    "personNumber": "Personnummer",
+    "org": "Organisation",
+    "createdAt": "Skapad",
+    "updatedAt": "Senast uppdaterad"
+  }
+}

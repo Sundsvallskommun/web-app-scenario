@@ -1,5 +1,6 @@
 /* eslint-disable */
 /* tslint:disable */
+// @ts-nocheck
 /*
  * ---------------------------------------------------------------
  * ## THIS FILE WAS GENERATED VIA SWAGGER-TYPESCRIPT-API        ##
@@ -24,7 +25,7 @@ export interface AdminUser {
   username: string;
   givenName: string;
   surname: string;
-  role: 'app_read' | 'app_admin';
+  role: "app_read" | "app_admin";
 }
 
 export interface AdminUserApiResponse {
@@ -106,4 +107,86 @@ export interface ScenarioDeleteApiResponse {
 
 export interface UpdateImageDto {
   name?: string;
+}
+
+export interface PublicImage {
+  url: string;
+}
+
+export interface PublicScenario {
+  id: number;
+  name: string;
+  description?: string | null;
+  assistantId: string;
+  image?: PublicImage;
+}
+
+export interface PublicScenariosApiResponse {
+  data: PublicScenario[];
+  message: string;
+}
+
+export interface PublicScenarioApiResponse {
+  data: PublicScenario;
+  message: string;
+}
+
+export interface ConversationRequestDto {
+  assistant_id?: string;
+  group_chat_id?: string;
+  session_id?: string;
+  question: string;
+  stream?: boolean;
+}
+
+export interface AskResponse {
+  session_id: string;
+  question: string;
+  answer: string;
+}
+
+export interface AzureToken {
+  token: string;
+  region: string;
+}
+
+export interface ApiResponseAzureToken {
+  data: AzureToken;
+  message: string;
+}
+
+export interface ExternalUser {
+  id: number;
+  name: string;
+  org?: string;
+  personNumber: string;
+  /** @pattern \d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d.\d+Z? */
+  createdAt: string;
+  /** @pattern \d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d.\d+Z? */
+  updatedAt: string;
+}
+
+export interface ExternalUsersApiResponse {
+  data: ExternalUser[];
+  message: string;
+}
+
+export interface ExternalUserApiResponse {
+  data: ExternalUser;
+  message: string;
+}
+
+export interface ExternalUserDeleteApiResponse {
+  data: boolean;
+  message: string;
+}
+
+export interface CreateExternalUserDto {
+  name: string;
+  org?: string;
+  personNumber: string;
+}
+
+export interface UpdateExternalUserDto {
+  org?: string;
 }

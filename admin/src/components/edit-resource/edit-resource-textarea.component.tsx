@@ -17,6 +17,6 @@ export const EditResourceTextarea: React.FC<EditResourceTextareaProps> = ({ labe
       <></>
     : <FormControl required={required} className="w-full">
         <FormLabel>{label}</FormLabel>
-        <Textarea {...register(property)} className="w-full" {...rest} />
+        <Textarea {...register(property)} className="w-full" {...rest} data-cy={`edit-${property}`} />
       </FormControl>;
 };
