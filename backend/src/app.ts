@@ -52,6 +52,7 @@ import { additionalConverters } from './utils/custom-validation-classes';
 import { isValidOrigin } from './utils/isValidOrigin';
 import { dataDir, dataPath, isValidUrl } from './utils/util';
 import rateLimit from 'express-rate-limit';
+import prisma from '@utils/prisma';
 
 const corsWhitelist = ORIGIN?.split(',');
 const defaultRedirect = SAML_SUCCESS_REDIRECT ?? '/';
@@ -108,7 +109,7 @@ const samlStrategy = new Strategy(
       attributes: { groups },
     } = profile;
 
-    if (!givenName || !surname || !citizenIdentifier || !groups) {
+    if (!givenName || !surname || !citizenIdentifier) {
       return done({
         name: 'SAML_MISSING_ATTRIBUTES',
         message: 'Missing profile attributes',
@@ -121,10 +122,14 @@ const samlStrategy = new Strategy(
     const admin = groupList?.includes(AD_ADMINGROUP);
 
     if (!authenticated) {
-      return done({
-        name: 'SAML_MISSING_GROUP',
-        message: 'Missing authenticated group',
-      });
+      const externalUser = await prisma.externalUser.findFirst({ where: { personNumber: citizenIdentifier } });
+
+      if (!externalUser) {
+        return done({
+          name: 'MISSING_PERMISSIONS',
+          message: 'Missing permissions',
+        });
+      }
     }
 
     try {
