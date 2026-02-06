@@ -126,8 +126,8 @@ const samlStrategy = new Strategy(
 
       if (!externalUser) {
         return done({
-          name: 'EXTERNAL_USER_NOT_FOUND',
-          message: 'External user was not found',
+          name: 'MISSING_PERMISSIONS',
+          message: 'Missing permissions',
         });
       }
     }
