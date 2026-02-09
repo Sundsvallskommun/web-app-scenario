@@ -16,7 +16,7 @@ interface EditScenarioProps {
   isNew?: boolean;
 }
 
-export const EditScenario: React.FC<EditScenarioProps> = ({ isNew }) => {
+export const EditScenario: React.FC<EditScenarioProps> = () => {
   const [showAddImage, setShowAddImage] = useState<boolean>(false);
   const [pickedImage, setPickedImage] = useState<Image | null>(null);
   const { t } = useTranslation();
