@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { shallow } from 'zustand/shallow';
 
-export const Index = () => {
+const Index = () => {
   const [webMode, pwa] = useSessionStorage(
     (state) => [state.webMode, state.pwa],
     shallow
