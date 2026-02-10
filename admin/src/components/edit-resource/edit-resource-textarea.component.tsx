@@ -2,7 +2,8 @@ import { FormControl, FormLabel, Textarea, TextareaProps } from '@sk-web-gui/rea
 import React from 'react';
 import { useFormContext } from 'react-hook-form';
 
-interface EditResourceTextareaProps extends Omit<TextareaProps, 'ref' | 'key'> {
+interface EditResourceTextareaProps
+  extends Omit<React.ComponentPropsWithoutRef<TextareaProps['Component']>, 'ref' | 'key'> {
   label: string;
   property: string;
   required?: boolean;
