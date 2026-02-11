@@ -1,5 +1,8 @@
-/* eslint-disable @typescript-eslint/no-require-imports */
-module.exports = {
+import { preset } from '@sk-web-gui/core';
+import type { Config } from 'tailwindcss';
+
+export default {
+  mode: 'jit',
   content: [
     './src/app/**/*.{js,ts,jsx,tsx}',
     './src/components/**/*.{js,ts,jsx,tsx}',
@@ -15,6 +18,5 @@ module.exports = {
     },
   },
   darkMode: 'class', // or 'media' or 'class'
-  presets: [require('@sk-web-gui/core').preset()],
-  // plugins: [require('@tailwindcss/forms'), require('@sk-web-gui/core')],
-};
+  presets: [preset()],
+} satisfies Config;

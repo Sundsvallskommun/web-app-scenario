@@ -51,10 +51,10 @@ describe('Scenarios', () => {
     cy.contains('Lägg till scenario').click();
     cy.get('h1').should('have.text', 'Lägg till scenario');
     cy.get('[data-cy="edit-toolbar-save"]').should('be.disabled');
-    cy.get('[data-cy="edit-scenarios-name"]').type('Scenario 4');
-    cy.get('[data-cy="edit-scenarios-description"]').type('Detta är en beskrivning');
-    cy.get('[data-cy="edit-scenarios-assistantId"]').type('fff4-2345-3456-4567');
-    cy.get('[data-cy="edit-scenarios-published"]').parent().click();
+    cy.get('[data-cy="edit-name"]').type('Scenario 4');
+    cy.get('[data-cy="edit-description"]').type('Detta är en beskrivning');
+    cy.get('[data-cy="edit-assistantId"]').type('fff4-2345-3456-4567');
+    cy.get('[data-cy="edit-published"]').parent().click();
     cy.get('[data-cy="edit-toolbar-save"]').should('not.be.disabled');
     cy.get('[data-cy="edit-toolbar-delete"]').click();
     cy.get('article.sk-modal-dialog').within(() => {
@@ -86,10 +86,10 @@ describe('Scenarios', () => {
     cy.get('h1').should('have.text', 'Redigera scenario');
     cy.get('header').should('include.text', 'Id: 1');
     cy.get('[data-cy="edit-toolbar-save"]').should('be.disabled');
-    cy.get('[data-cy="edit-scenarios-name"]').should('have.value', 'Scenario 1');
-    cy.get('[data-cy="edit-scenarios-assistantId"]').should('have.value', '1234-2345-3456-4567');
-    cy.get('[data-cy="edit-scenarios-description"]').should('have.value', '');
-    cy.get('[data-cy="edit-scenarios-description"]').type('En beskrivning');
+    cy.get('[data-cy="edit-name"]').should('have.value', 'Scenario 1');
+    cy.get('[data-cy="edit-assistantId"]').should('have.value', '1234-2345-3456-4567');
+    cy.get('[data-cy="edit-description"]').should('have.value', '');
+    cy.get('[data-cy="edit-description"]').type('En beskrivning');
     cy.get('[data-cy="edit-toolbar-save"]').should('not.be.disabled');
     cy.get('[data-cy="edit-toolbar-save"]').click();
     cy.get('[data-cy="edit-toolbar-save"]').should('be.disabled');
