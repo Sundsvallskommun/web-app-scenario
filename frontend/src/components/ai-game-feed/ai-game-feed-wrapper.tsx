@@ -14,7 +14,7 @@ export const AIGameFeedWrapper = React.forwardRef<
       ref={ref}
       role="log"
       aria-live="off"
-      className={cx('sk-ai-feed', className)}
+      className={cx('sk-ai-feed', 'max-h-[unset]', className)}
       {...rest}
     />
   );

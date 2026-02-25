@@ -92,7 +92,7 @@ export default function PwaInstaller() {
               {t('common:install')}
             </Button>
           </div>
-          <p>
+          <p className="pb-36">
             <Button variant="link" onClick={handleContinue}>
               {t('common:continue_on_web')}
             </Button>
