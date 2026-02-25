@@ -1,11 +1,11 @@
 'use client';
 
 import { AIGameFeed } from '@components/ai-game-feed';
+import { GameControls } from '@components/game-controls/game-controls.component';
+import { PauseControl } from '@components/pause-control/pause-control.component';
 import { WizardPageProps } from '@interfaces/wizard-page-props.interface';
 import { ChatHistory } from '@sk-web-gui/ai';
 import { useEffect, useRef } from 'react';
-import { GameControls } from '@components/game-controls/game-controls.component';
-import { PauseControl } from '@components/pause-control/pause-control.component';
 
 interface ChatProps extends WizardPageProps {
   history: ChatHistory;
@@ -13,7 +13,12 @@ interface ChatProps extends WizardPageProps {
   done?: boolean;
 }
 
-export const Chat: React.FC<ChatProps> = ({ history, sendQuery, onNext, done }) => {
+export const Chat: React.FC<ChatProps> = ({
+  history,
+  sendQuery,
+  onNext,
+  done,
+}) => {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const handleSendQuery = (query: string) => {
@@ -37,10 +42,13 @@ export const Chat: React.FC<ChatProps> = ({ history, sendQuery, onNext, done }) 
     <>
       <PauseControl isPlaying onQuit={handleQuit} />
       <div
-        className="overflow-y-auto grow w-full flex flex-col shrink justify-end px-16 hidden-scrollbar"
+        className="h-full max-h-dvh overflow-y-scroll grow w-full shrink-0 px-16 block pb-96 md:pb-[12.8rem]"
         ref={scrollRef}
       >
-        <AIGameFeed history={history} className="w-full max-w-[1000px] mx-auto" />
+        <AIGameFeed
+          history={history}
+          className="w-full max-w-[1000px] mx-auto grow justify-end shrink-0 min-h-full pt-96"
+        />
       </div>
 
       <GameControls onReact={handleSendQuery} disabled={!done} />

@@ -49,7 +49,7 @@ export const End: React.FC<EndProps> = ({
     <>
       <SettingsMenu />
       <div
-        className="flex flex-col justify-between items-center grow transition-opacity overflow-y-auto"
+        className="flex flex-col justify-between gap-42 w-full items-center grow transition-opacity overflow-y-scroll"
         style={{ opacity, transitionDuration: `${transitionDuration}ms` }}
       >
         <header
@@ -64,7 +64,7 @@ export const End: React.FC<EndProps> = ({
           </p>
         </header>
         <div
-          className="overflow-y-auto w-full flex flex-col shrink justify-center items-center px-16 hidden-scrollbar"
+          className="w-full grow flex flex-col shrink justify-center items-center px-16"
           ref={scrollRef}
         >
           {!entry?.done ?
