@@ -124,7 +124,7 @@ export default function Scenario() {
       showBackground={!showInstaller && pages[page].showBackground}
       transitionDuration={transitionDuration}
     >
-      <main className="flex w-full overflow-hidden flex-col grow shrink h-full max-h-full justify-center items-center pb-16 gap-16 md:gap-32">
+      <main className="flex w-full flex-col grow shrink h-full max-h-full overflow-hidden justify-center items-center gap-0">
         {loaded && data ? pages[page].component : <LoaderFullScreen />}
       </main>
     </DefaultLayout>

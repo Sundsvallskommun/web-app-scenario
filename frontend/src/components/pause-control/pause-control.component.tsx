@@ -25,7 +25,7 @@ export const PauseControl: React.FC<PauseControlProps> = ({
         onQuit={onQuit}
         isPlaying={isPlaying}
       />
-      <div className="absolute p-24 top-0 right-0">
+      <div className="fixed p-24 top-0 right-12">
         <Button
           data-cy="pause-button"
           size="sm"

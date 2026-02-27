@@ -31,7 +31,7 @@ export const GameControls: React.FC<GameControlsProps> = ({
   };
 
   return (
-    <div className="flex h-64 w-full max-w-[54rem] justify-between items-center">
+    <div className="flex fixed bottom-0 mb-16 md:mb-32 h-64 w-full max-w-[54rem] justify-between items-center">
       {showInput ?
         <form onSubmit={handleSendQuery} className="w-full">
           <InputSection.Wrapper className="rounded-cards w-full">
