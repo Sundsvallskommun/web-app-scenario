@@ -42,7 +42,7 @@ export const Chat: React.FC<ChatProps> = ({
     <>
       <PauseControl isPlaying onQuit={handleQuit} />
       <div
-        className="h-full max-h-dvh overflow-y-scroll grow w-full shrink-0 px-16 block pb-96 md:pb-[12.8rem]"
+        className="h-full max-h-dvh overflow-y-scroll grow w-full shrink-0 px-16 block pb-[8.8rem] lg:pb-[10.4rem] xl:pb-[12.8rem]"
         ref={scrollRef}
       >
         <AIGameFeed

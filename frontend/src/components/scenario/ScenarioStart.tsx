@@ -1,7 +1,7 @@
 'use client';
 
 import { useTranslation } from 'react-i18next';
-import { Button } from '@sk-web-gui/react';
+import { Button, useThemeQueries } from '@sk-web-gui/react';
 import { PauseControl } from '@components/pause-control/pause-control.component';
 import { useEffect, useState } from 'react';
 import { WizardPageProps } from '@interfaces/wizard-page-props.interface';
@@ -21,6 +21,7 @@ export const ScenarioStart: React.FC<ScenarioStartProps> = ({
   transitionDuration = 1000,
 }) => {
   const [opacity, setOpacity] = useState<number>(0);
+  const { isDesktop } = useThemeQueries();
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -39,10 +40,10 @@ export const ScenarioStart: React.FC<ScenarioStartProps> = ({
         style={{ opacity, transitionDuration: `${transitionDuration}ms` }}
       >
         <PauseControl onQuit={() => onRestart?.()} />
-        <h1 className="text-display-1-sm md:text-display-1-md xl:text-display-1-lg">
+        <h1 className="text-h-1-sm md:text-display-1-sm lg:text-display-1-md xl:text-display-1-lg">
           {scenario.name}
         </h1>
-        <Button size="lg" rounded onClick={onNext}>
+        <Button size={isDesktop ? 'lg' : 'md'} rounded onClick={onNext}>
           {t('common:start_alt')}
         </Button>
       </div>
