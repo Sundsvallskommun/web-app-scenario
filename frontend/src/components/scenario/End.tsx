@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { AIGameFeed } from '@components/ai-game-feed';
 import { useTranslation } from 'react-i18next';
-import { Button, Spinner } from '@sk-web-gui/react';
+import { Button, Spinner, useThemeQueries } from '@sk-web-gui/react';
 import { WizardPageProps } from '@interfaces/wizard-page-props.interface';
 import { ChatHistory, ChatHistoryEntry } from '@sk-web-gui/ai';
 import { SettingsMenu } from '@components/settings-menu/settings-menu.component';
@@ -18,7 +18,7 @@ export const End: React.FC<EndProps> = ({
 }) => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [opacity, setOpacity] = useState<number>(0);
-
+  const { isDesktop } = useThemeQueries();
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -53,13 +53,13 @@ export const End: React.FC<EndProps> = ({
         style={{ opacity, transitionDuration: `${transitionDuration}ms` }}
       >
         <header
-          className="flex flex-col items-center text-center py-80"
+          className="flex flex-col items-center text-center py-32 lg:py-48 xl:py-80"
           data-cy="end-header"
         >
-          <h1 className="text-display-1-sm md:text-display-1-md xl:text-display-1-lg">
+          <h1 className="text-h-1-sm md:text-display-1-sm lg:text-display-1-md xl:text-display-1-lg m-0">
             {t('common:app_name')}
           </h1>
-          <p className="text-display-3-sm md:text-display-3-md xl:text-display-3-lg">
+          <p className="text-h3-sm md:text-h3-md lg:text-display-3-sm xl:text-display-3-lg">
             {t('common:scenario_over')}
           </p>
         </header>
@@ -75,8 +75,12 @@ export const End: React.FC<EndProps> = ({
             />
           }
         </div>
-        <footer className="flex flex-col items-center text-center py-80">
-          <Button size="lg" rounded onClick={handleRestart}>
+        <footer className="flex flex-col items-center text-center py-32 lg:py-48 xl:py-80">
+          <Button
+            size={isDesktop ? 'lg' : 'md'}
+            rounded
+            onClick={handleRestart}
+          >
             {t('common:to_the_beginning')}
           </Button>
         </footer>
