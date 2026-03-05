@@ -14,6 +14,8 @@ import {
   SAML_IDP_PUBLIC_CERT,
   SAML_ISSUER,
   SAML_LOGOUT_CALLBACK_URL,
+  SAML_LOGOUT_REDIRECT,
+  SAML_LOGOUT_URL,
   SAML_PRIVATE_KEY,
   SAML_PUBLIC_KEY,
   SAML_SUCCESS_REDIRECT,
@@ -24,6 +26,7 @@ import {
 import errorMiddleware from '@middlewares/error.middleware';
 import { Strategy, VerifiedCallback } from '@node-saml/passport-saml';
 import { logger, stream } from '@utils/logger';
+import prisma from '@utils/prisma';
 import bodyParser from 'body-parser';
 import { defaultMetadataStorage } from 'class-transformer/cjs/storage';
 import { validationMetadatasToSchemas } from 'class-validator-jsonschema';
@@ -31,6 +34,7 @@ import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express from 'express';
+import rateLimit from 'express-rate-limit';
 import session, { Store } from 'express-session';
 import { existsSync, mkdirSync } from 'fs';
 import helmet from 'helmet';
@@ -51,8 +55,6 @@ import { User } from './interfaces/users.interface';
 import { additionalConverters } from './utils/custom-validation-classes';
 import { isValidOrigin } from './utils/isValidOrigin';
 import { dataDir, dataPath, isValidUrl } from './utils/util';
-import rateLimit from 'express-rate-limit';
-import prisma from '@utils/prisma';
 
 const corsWhitelist = ORIGIN?.split(',');
 const defaultRedirect = SAML_SUCCESS_REDIRECT ?? '/';
@@ -92,6 +94,7 @@ const samlStrategy = new Strategy(
     wantAuthnResponseSigned: false,
     acceptedClockSkewMs: 1000,
     audience: false,
+    logoutUrl: SAML_LOGOUT_URL,
     logoutCallbackUrl: SAML_LOGOUT_CALLBACK_URL ?? '',
   },
   async function (profile: Profile, done: VerifiedCallback) {
@@ -104,12 +107,11 @@ const samlStrategy = new Strategy(
     const {
       givenName,
       surname,
-      citizenIdentifier,
       username,
       attributes: { groups },
     } = profile;
 
-    if (!givenName || !surname || !citizenIdentifier) {
+    if (!givenName || !surname) {
       return done({
         name: 'SAML_MISSING_ATTRIBUTES',
         message: 'Missing profile attributes',
@@ -122,7 +124,9 @@ const samlStrategy = new Strategy(
     const admin = groupList?.includes(AD_ADMINGROUP);
 
     if (!authenticated) {
-      const externalUser = await prisma.externalUser.findFirst({ where: { personNumber: citizenIdentifier } });
+      const externalUser = await prisma.externalUser.findFirst({
+        where: { personNumber: username },
+      });
 
       if (!externalUser) {
         return done({
@@ -153,7 +157,7 @@ const samlStrategy = new Strategy(
       }
     }
   },
-  async function (profile: Profile, done: VerifiedCallback) {
+  async function (_profile: Profile, done: VerifiedCallback) {
     return done(null, {});
   },
 );
@@ -265,39 +269,28 @@ class App {
       res.status(200).send(metadata);
     });
 
-    this.app.get(
-      `${BASE_URL_PREFIX}/saml/logout`,
-      (req, res, next) => {
-        let relayState = defaultRedirect;
-        if (req.session.returnTo) {
-          relayState = req.session.returnTo;
-        }
-        if (req.query.successRedirect) {
-          relayState = `${req.query.successRedirect}`;
-        }
-        if (req.query.failureRedirect) {
-          relayState = `${relayState},${req.query.failureRedirect}`;
-        }
-        req.url = `${req.path}?RelayState=${relayState}`;
-        next();
-      },
-      (req, res, next) => {
-        let successRedirect = SAML_SUCCESS_REDIRECT;
-        const providedRedirect = req.query.successRedirect ?? req.query.RelayState;
-        if (typeof providedRedirect === 'string' && isValidUrl(providedRedirect) && isValidOrigin(providedRedirect)) {
-          successRedirect = providedRedirect;
+    this.app.get(`${BASE_URL_PREFIX}/saml/logout`, (req, res, next) => {
+      let successRedirect = SAML_LOGOUT_REDIRECT ?? '/';
+      const providedRedirect = req?.query?.successRedirect;
+      if (typeof providedRedirect === 'string' && isValidUrl(providedRedirect) && isValidOrigin(providedRedirect)) {
+        successRedirect = providedRedirect;
+      }
+
+      samlStrategy.logout(req as any, (err, url) => {
+        if (err || !url) {
+          logger.error('Failed to generate SAML logout URL', { err, user: req.user });
+          res.redirect(SAML_LOGOUT_CALLBACK_URL);
+          return;
         }
 
-        samlStrategy.logout(req as any, () => {
-          req.logout(err => {
-            if (err) {
-              return next(err);
-            }
-            res.redirect(successRedirect as string);
-          });
-        });
-      },
-    );
+        const parsed = new URL(url);
+        parsed.searchParams.append('RelayState', successRedirect);
+
+        const redirectUrl = parsed.toString();
+
+        res.redirect(redirectUrl);
+      });
+    });
 
     this.app.get(
       `${BASE_URL_PREFIX}/saml/logout/callback`,
@@ -309,26 +302,20 @@ class App {
           }
 
           let successRedirect: URL, failureRedirect: URL;
-          const urls = req?.body?.RelayState.split(',');
+          const url = req?.body?.RelayState;
 
-          if (isValidUrl(urls[0]) && isValidOrigin(urls[0])) {
-            successRedirect = new URL(urls[0]);
+          if (isValidUrl(url) && isValidOrigin(url)) {
+            successRedirect = new URL(url);
           } else {
-            successRedirect = new URL(defaultRedirect);
+            successRedirect = new URL(SAML_LOGOUT_REDIRECT ?? '/');
           }
 
-          if (isValidUrl(urls[1]) && isValidOrigin(urls[1])) {
-            failureRedirect = new URL(urls[1]);
-          } else {
-            failureRedirect = successRedirect;
-          }
-
-          const queries = new URLSearchParams(failureRedirect.searchParams);
+          failureRedirect = successRedirect;
 
           if (req.session.messages?.length > 0) {
-            queries.append('failMessage', req.session.messages[0]);
+            failureRedirect.searchParams.append('failMessage', req.session.messages[0]);
           } else {
-            queries.append('failMessage', 'SAML_UNKNOWN_ERROR');
+            failureRedirect.searchParams.append('failMessage', 'SAML_UNKNOWN_ERROR');
           }
 
           if (failureRedirect) {
@@ -369,12 +356,12 @@ class App {
               queries.append('failMessage', 'SAML_UNKNOWN_ERROR');
             }
             failureRedirect.search = queries.toString();
-            res.redirect(failureRedirect.toString());
+            req.session.destroy(() => res.redirect(failureRedirect.toString()));
           } else if (!user) {
             const failMessage = new URLSearchParams(failureRedirect.searchParams);
             failMessage.append('failMessage', 'NO_USER');
             failureRedirect.search = failMessage.toString();
-            res.redirect(failureRedirect.toString());
+            req.session.destroy(() => res.redirect(failureRedirect.toString()));
           } else {
             req.login(user, loginErr => {
               if (loginErr) {
