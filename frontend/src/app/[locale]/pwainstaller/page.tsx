@@ -4,17 +4,17 @@ import LoaderFullScreen from '@components/loader/loader-fullscreen';
 import { InstallPromptEvent } from '@interfaces/install-prompt-event.type';
 import DefaultLayout from '@layouts/default-layout/default-layout.component';
 import { Button, Icon } from '@sk-web-gui/react';
+import { isRunningStandalone } from '@utils/pwa-mode';
 import { useSessionStorage } from '@utils/use-sessionstorage.hook';
 import { MonitorDown } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useRef, useState, useTransition } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export default function PwaInstaller() {
   const [opacity, setOpacity] = useState<number>(1);
-  const [mounted, setMounted] = useState<boolean>(false);
-  const [loading, startLoading] = useTransition();
-  const [pwaSupported, setPwaSupported] = useState<boolean>(true);
+  const [ready, setReady] = useState<boolean>(false);
+  const [canInstall, setCanInstall] = useState<boolean>(false);
   const { t } = useTranslation();
   const installRef = useRef<InstallPromptEvent>(null);
   const setWebMode = useSessionStorage((state) => state.setWebMode);
@@ -22,20 +22,29 @@ export default function PwaInstaller() {
   const transitionDuration = 1000;
 
   useEffect(() => {
+    if (isRunningStandalone()) {
+      router.replace('/start');
+      return;
+    }
+
     const handleInstallPrompt = (event: InstallPromptEvent) => {
       event.preventDefault();
-      setPwaSupported(true);
       installRef.current = event;
+      setCanInstall(true);
+      setReady(true);
     };
 
-    startLoading(() => {
-      setPwaSupported(false);
-      window.addEventListener('beforeinstallprompt', handleInstallPrompt);
-    });
+    window.addEventListener('beforeinstallprompt', handleInstallPrompt);
+
+    const fallbackTimeout = window.setTimeout(() => {
+      setReady(true);
+    }, 1200);
+
     return () => {
       window.removeEventListener('beforeinstallprompt', handleInstallPrompt);
+      window.clearTimeout(fallbackTimeout);
     };
-  }, []);
+  }, [router]);
 
   const handleContinue = () => {
     setOpacity(0);
@@ -46,22 +55,19 @@ export default function PwaInstaller() {
   };
 
   useEffect(() => {
-    const deferredContinue = () => {
-      setTimeout(() => {
-        if (!pwaSupported && !installRef.current) {
-          handleContinue();
-        }
-      }, 2000);
-    };
+    if (!ready || canInstall || installRef.current) {
+      return;
+    }
 
-    if (mounted && !loading && !pwaSupported && !installRef.current) {
-      deferredContinue();
-    }
-    if (!mounted) {
-      setMounted(true);
-    }
+    const continueTimeout = window.setTimeout(() => {
+      handleContinue();
+    }, 200);
+
+    return () => {
+      window.clearTimeout(continueTimeout);
+    };
     //eslint-disable-next-line
-  }, [pwaSupported, installRef, loading, mounted]);
+  }, [ready, canInstall]);
 
   const handleInstall = () => {
     installRef?.current?.prompt?.();
@@ -69,7 +75,7 @@ export default function PwaInstaller() {
 
   return (
     <DefaultLayout transitionDuration={transitionDuration}>
-      {loading ?
+      {!ready ?
         <LoaderFullScreen />
       : <div
           className="flex flex-col justify-between h-full items-center grow"
@@ -87,7 +93,7 @@ export default function PwaInstaller() {
               rounded
               leftIcon={<Icon icon={<MonitorDown />} />}
               onClick={handleInstall}
-              disabled={!pwaSupported}
+              disabled={!canInstall}
             >
               {t('common:install')}
             </Button>
