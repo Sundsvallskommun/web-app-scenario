@@ -1,6 +1,6 @@
+import { BackendImage } from '@components/backend-image/backend-image.component';
 import { EditResourceImage } from '@components/edit-resource/edit-resource-image.component';
 import { Resource } from '@interfaces/resource';
-import { apiURL } from '@utils/api-url';
 import Image from 'next/image';
 import { FieldValues, useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -33,7 +33,7 @@ export const EditImage: React.FC<EditImageProps> = ({ isNew }) => {
     }
   }, [image]);
 
-  const url = isNew ? localUrl : apiURL(formdata?.url);
+  const url = isNew ? localUrl : formdata?.url;
 
   return (
     <div className="flex flex-col gap-32 grow mb-32 max-w-[60rem]">
@@ -49,7 +49,9 @@ export const EditImage: React.FC<EditImageProps> = ({ isNew }) => {
       {url && (
         <>
           <h3>{t('images:preview')}</h3>
-          <Image src={url} width="500" height="500" alt={''} className="h-auto w-auto" />
+          {isNew ?
+            <Image src={url} width={500} height={500} alt="" className="h-auto w-auto" unoptimized />
+          : <BackendImage src={url} width={500} height={500} alt="" className="h-auto w-auto" />}
         </>
       )}
     </div>

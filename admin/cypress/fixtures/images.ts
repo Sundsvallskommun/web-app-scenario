@@ -2,7 +2,7 @@ import { ImageApiResponse, ImagesApiResponse } from '../../src/data-contracts/ba
 
 export const image1 = {
   id: 1,
-  name: 'image1.png',
+  name: '\u00c5\u00c4\u00d6-bild.png',
   filename: 'image1.png',
   url: '/files/image1.png',
   createdAt: '2025-09-10T14:24:46.527Z',
