@@ -7,6 +7,7 @@ import authMiddleware from '@/middlewares/auth.middleware';
 import { ImageApiResponse, ImageDeleteApiResponse, ImagesApiResponse } from '@/responses/admin/image.response';
 import { fileUploadOptions } from '@/utils/fileUploadOptions';
 import { logger } from '@/utils/logger';
+import { normalizeUploadedFilename } from '@/utils/normalizeUploadedFilename';
 import prisma from '@/utils/prisma';
 import { dataDir, dataPath } from '@/utils/util';
 import { Image } from '@prisma/client';
@@ -91,7 +92,7 @@ export class AdminImageController {
     try {
       const imageResponse = await prisma.image.create({
         data: {
-          name: image.originalname,
+          name: normalizeUploadedFilename(image.originalname),
           filename: image.filename,
           url: `${dataPath(image.filename)}`,
         },
@@ -169,3 +170,4 @@ export class AdminImageController {
     }
   }
 }
+
