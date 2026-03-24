@@ -1,13 +1,12 @@
+import { BackendImage } from '@components/backend-image/backend-image.component';
 import { ListResources } from '@components/list-resources/list-resources';
 import resources from '@config/resources';
 import ListLayout from '@layouts/list-layout/list-layout.component';
 import { AutoTableHeader } from '@sk-web-gui/react';
-import { apiURL } from '@utils/api-url';
 import { useResource } from '@utils/use-resource';
 import { GetServerSideProps } from 'next';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import Image from 'next/image';
 import { capitalize } from 'underscore.string';
 
 export const Images: React.FC = () => {
@@ -23,8 +22,8 @@ export const Images: React.FC = () => {
       header = {
         property,
         label: capitalize(t(`images:name_one`)),
-        renderColumn: (value, item) => (
-          <Image src={apiURL(item?.url)} width="75" height="75" className="h-auto" alt="" />
+        renderColumn: (_value, item) => (
+          <BackendImage src={item?.url} width={75} height={75} className="h-auto" alt="" />
         ),
         isColumnSortable: false,
       };

@@ -2,18 +2,21 @@ import { imagesWithNew, newImage, oneImage } from '../fixtures/images';
 import { oneScenario } from '../fixtures/scenarios';
 
 describe('Images', () => {
+  const swedishImageName = '\u00c5\u00c4\u00d6-bild.png';
+
   it('lists images on front page', () => {
     cy.get('[data-cy="resource-card-images"]').within(() => {
       cy.get('[data-cy="resource-card-title"]').should('have.text', 'Bilder');
       cy.get('[data-cy="resource-card-subtitle"]').should('have.text', '3 bilder');
     });
   });
+
   it('lists and sorts images', () => {
     cy.get('[data-cy="resource-card-images"]').click();
     cy.get('[data-cy="resource-table"]')
       .eq(0)
       .within(() => {
-        cy.get('tbody').children().eq(0).contains('image1.png');
+        cy.get('tbody').children().eq(0).contains(swedishImageName);
         cy.get('tbody').children().eq(1).contains('image2.png');
         cy.get('tbody').children().eq(2).contains('image3.png');
 
@@ -21,17 +24,17 @@ describe('Images', () => {
 
         cy.get('tbody').children().eq(0).contains('image3.png');
         cy.get('tbody').children().eq(1).contains('image2.png');
-        cy.get('tbody').children().eq(2).contains('image1.png');
+        cy.get('tbody').children().eq(2).contains(swedishImageName);
 
         cy.get('thead>tr').children().eq(4).find('button.sk-table-sortbutton').click();
 
         cy.get('tbody').children().eq(0).contains('image2.png');
         cy.get('tbody').children().eq(1).contains('image3.png');
-        cy.get('tbody').children().eq(2).contains('image1.png');
+        cy.get('tbody').children().eq(2).contains(swedishImageName);
 
         cy.get('thead>tr').children().eq(4).find('button.sk-table-sortbutton').click();
 
-        cy.get('tbody').children().eq(0).contains('image1.png');
+        cy.get('tbody').children().eq(0).contains(swedishImageName);
         cy.get('tbody').children().eq(1).contains('image3.png');
         cy.get('tbody').children().eq(2).contains('image2.png');
       });
@@ -93,7 +96,7 @@ describe('Images', () => {
     cy.get('h1').should('have.text', 'Redigera bild');
     cy.get('header').should('include.text', 'Id: 1');
     cy.get('[data-cy="edit-toolbar-save"]').should('be.disabled');
-    cy.get('[data-cy="edit-name"]').should('have.value', 'image1.png');
+    cy.get('[data-cy="edit-name"]').should('have.value', swedishImageName);
     cy.get('[data-cy="edit-name"]').clear();
     cy.get('[data-cy="edit-name"]').type('Nytt namn');
     cy.get('[data-cy="edit-toolbar-save"]').should('not.be.disabled');

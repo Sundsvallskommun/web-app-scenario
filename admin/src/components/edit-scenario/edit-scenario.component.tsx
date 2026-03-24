@@ -1,10 +1,9 @@
+import { BackendImage } from '@components/backend-image/backend-image.component';
 import { EditResourceTextarea } from '@components/edit-resource/edit-resource-textarea.component';
 import { Image } from '@data-contracts/backend/data-contracts';
 import { Resource } from '@interfaces/resource';
 import { Button, Icon } from '@sk-web-gui/react';
-import { apiURL } from '@utils/api-url';
 import { X } from 'lucide-react';
-import NextImage from 'next/image';
 import { useState } from 'react';
 import { FieldValues, useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -87,11 +86,11 @@ export const EditScenario: React.FC<EditScenarioProps> = () => {
             >
               <Icon color="error" icon={<X />} />
             </Button>
-            <NextImage
+            <BackendImage
               data-cy="resource-image"
-              src={apiURL(imageUrl)}
-              width="500"
-              height="500"
+              src={imageUrl}
+              width={500}
+              height={500}
               alt={''}
               className="h-auto w-full max-w-full"
             />

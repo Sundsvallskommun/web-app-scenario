@@ -1,10 +1,9 @@
+import { BackendImage } from '@components/backend-image/backend-image.component';
 import { EditImage } from '@components/edit-image/edit-image.component';
 import resources from '@config/resources';
 import { Image } from '@data-contracts/backend/data-contracts';
 import { Button, Modal, Tabs } from '@sk-web-gui/react';
-import { apiURL } from '@utils/api-url';
 import { useCrudHelper } from '@utils/use-crud-helpers';
-import NextImage from 'next/image';
 import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -70,7 +69,7 @@ export const AddImageModal: React.FC<AddImageModalProps> = ({ open, onClose }) =
                     onClick={() => onClose(image)}
                   >
                     <figure className="flex flex-col justify-between items-center gap-2">
-                      <NextImage src={apiURL(image?.url)} width="100" height="100" alt="" />
+                      <BackendImage src={image?.url} width={100} height={100} alt="" />
                       <caption>{image.name}</caption>
                     </figure>
                   </button>

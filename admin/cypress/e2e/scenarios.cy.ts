@@ -1,6 +1,8 @@
 import { newScenario, oneScenario, scenariosWithNew } from '../fixtures/scenarios';
 
 describe('Scenarios', () => {
+  const swedishImageName = '\u00c5\u00c4\u00d6-bild.png';
+
   it('lists scenarios on front page', () => {
     cy.get('[data-cy="resource-card-scenarios"]').within(() => {
       cy.get('[data-cy="resource-card-title"]').should('have.text', 'Scenarion');
@@ -93,13 +95,14 @@ describe('Scenarios', () => {
     cy.get('[data-cy="edit-toolbar-save"]').should('not.be.disabled');
     cy.get('[data-cy="edit-toolbar-save"]').click();
     cy.get('[data-cy="edit-toolbar-save"]').should('be.disabled');
-    cy.get('[data-cy="resource-image"]').should('have.attr', 'srcset').should('include', 'files%2Fimage1.png');
+    cy.get('[data-cy="resource-image"]').should('have.attr', 'src').should('include', '/files/image1.png');
     cy.get('[data-cy="resource-image-remove-button"]').click();
     cy.get('[data-cy="resource-image"]').should('not.exist');
     cy.get('[data-cy="resource-image-add-button"]').click();
     cy.get('[data-cy="add-image-modal"]').within(() => {
       cy.get('[data-cy="tabs"]').children().eq(0).children().should('have.length', 2);
       cy.get('[data-cy="images-list"]').children().should('have.length', 3);
+      cy.contains(swedishImageName).should('exist');
       cy.get('[data-cy="images-list"]').children().eq(0).click();
     });
     cy.get('[data-cy="edit-toolbar-save"]').click();
