@@ -34,15 +34,18 @@ export default function PwaInstaller() {
       setReady(true);
     };
 
-    window.addEventListener('beforeinstallprompt', handleInstallPrompt);
+    globalThis.addEventListener('beforeinstallprompt', handleInstallPrompt);
 
-    const fallbackTimeout = window.setTimeout(() => {
+    const fallbackTimeout = globalThis.setTimeout(() => {
       setReady(true);
     }, 1200);
 
     return () => {
-      window.removeEventListener('beforeinstallprompt', handleInstallPrompt);
-      window.clearTimeout(fallbackTimeout);
+      globalThis.removeEventListener(
+        'beforeinstallprompt',
+        handleInstallPrompt
+      );
+      globalThis.clearTimeout(fallbackTimeout);
     };
   }, [router]);
 
@@ -59,12 +62,12 @@ export default function PwaInstaller() {
       return;
     }
 
-    const continueTimeout = window.setTimeout(() => {
+    const continueTimeout = globalThis.setTimeout(() => {
       handleContinue();
     }, 200);
 
     return () => {
-      window.clearTimeout(continueTimeout);
+      globalThis.clearTimeout(continueTimeout);
     };
     //eslint-disable-next-line
   }, [ready, canInstall]);
@@ -75,9 +78,8 @@ export default function PwaInstaller() {
 
   return (
     <DefaultLayout transitionDuration={transitionDuration}>
-      {!ready ?
-        <LoaderFullScreen />
-      : <div
+      {ready ?
+        <div
           className="flex flex-col justify-between h-full items-center grow"
           style={{ opacity, transitionDuration: `${transitionDuration}ms` }}
         >
@@ -104,7 +106,7 @@ export default function PwaInstaller() {
             </Button>
           </p>
         </div>
-      }
+      : <LoaderFullScreen />}
     </DefaultLayout>
   );
 }

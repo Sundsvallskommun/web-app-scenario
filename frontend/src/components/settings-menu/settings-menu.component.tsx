@@ -52,9 +52,12 @@ export const SettingsMenu: React.FC = () => {
       setCanInstall(true);
     };
 
-    window.addEventListener('beforeinstallprompt', handleInstallPrompt);
+    globalThis.addEventListener('beforeinstallprompt', handleInstallPrompt);
     return () => {
-      window.removeEventListener('beforeinstallprompt', handleInstallPrompt);
+      globalThis.removeEventListener(
+        'beforeinstallprompt',
+        handleInstallPrompt
+      );
     };
     //eslint-disable-next-line
   }, []);
