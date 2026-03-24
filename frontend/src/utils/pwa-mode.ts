@@ -1,15 +1,15 @@
 export const isRunningStandalone = (): boolean => {
-  if (typeof window === 'undefined') {
+  if (globalThis.window === undefined) {
     return false;
   }
 
-  const navigatorWithStandalone = window.navigator as Navigator & {
+  const navigatorWithStandalone = globalThis.navigator as Navigator & {
     standalone?: boolean;
   };
 
   return (
-    window.matchMedia('(display-mode: standalone)').matches ||
+    globalThis.matchMedia('(display-mode: standalone)').matches ||
     navigatorWithStandalone.standalone === true ||
-    document.referrer.startsWith('android-app://')
+    globalThis.document.referrer.startsWith('android-app://')
   );
 };
