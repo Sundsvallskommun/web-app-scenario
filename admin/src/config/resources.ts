@@ -2,12 +2,15 @@ import { Api } from '@data-contracts/backend/Api';
 import {
   CreateExternalUserDto,
   CreateScenarioDto,
+  CreateScenarioIntroTextDto,
   ExternalUser,
   Image,
   Scenario,
+  ScenarioIntroText,
   UpdateExternalUserDto,
   UpdateImageDto,
   UpdateScenarioDto,
+  UpdateScenarioIntroTextDto,
 } from '@data-contracts/backend/data-contracts';
 import { Resource } from '@interfaces/resource';
 
@@ -28,6 +31,21 @@ const scenarios: Resource<Scenario, CreateScenarioDto, UpdateScenarioDto> = {
     published: false,
   },
   requiredFields: ['name', 'assistantId'],
+};
+
+const scenarioIntroTexts: Resource<ScenarioIntroText, CreateScenarioIntroTextDto, UpdateScenarioIntroTextDto> = {
+  name: 'scenarioIntroTexts',
+  getOne: apiService.adminScenarioIntroTextControllerGetScenarioIntroText,
+  getMany: apiService.adminScenarioIntroTextControllerGetScenarioIntroTexts,
+  create: apiService.adminScenarioIntroTextControllerCreateScenarioIntroText,
+  update: apiService.adminScenarioIntroTextControllerUpdateScenarioIntroText,
+  remove: apiService.adminScenarioIntroTextControllerDeleteScenarioIntroText,
+
+  defaultValues: {
+    text: '',
+    sortOrder: 1,
+  },
+  requiredFields: ['text', 'sortOrder'],
 };
 
 const emptyFile = new File([], '');
@@ -61,6 +79,6 @@ const externalUsers: Resource<ExternalUser, CreateExternalUserDto, UpdateExterna
   requiredFields: ['name', 'personNumber'],
 };
 
-const resources = { scenarios, images, externalUsers };
+const resources = { scenarios, scenarioIntroTexts, images, externalUsers };
 
 export default resources;

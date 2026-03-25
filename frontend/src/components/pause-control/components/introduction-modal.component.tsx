@@ -9,12 +9,10 @@ interface IntroductionModalProps {
   open: boolean;
 }
 
-export const IntroductionModal: React.FC<IntroductionModalProps> = ({
-  onClose,
-  open,
-}) => {
-  const { t } = useTranslation(['common', 'intro']);
-  const scenario = useSessionStorage((state) => state.scenario);
+export const IntroductionModal: React.FC<IntroductionModalProps> = ({ onClose, open }) => {
+  const { t } = useTranslation('common');
+  const [scenario, scenarioIntroTexts] = useSessionStorage((state) => [state.scenario, state.scenarioIntroTexts]);
+
   return (
     <Modal
       data-cy="instruction-modal"
@@ -26,12 +24,9 @@ export const IntroductionModal: React.FC<IntroductionModalProps> = ({
     >
       <Modal.Content className="overflow-y-auto">
         <h2>{t('common:app_name')}</h2>
-        <p>{t('intro:1')}</p>
-        <p>{t('intro:2')}</p>
-        <p>{t('intro:3')}</p>
-        <p>{t('intro:4')}</p>
-        <p>{t('intro:5')}</p>
-        <p>{t('intro:6')}</p>
+        {scenarioIntroTexts.map((introText) => (
+          <p key={introText.id}>{introText.text}</p>
+        ))}
         <br />
         {!!scenario && (
           <>

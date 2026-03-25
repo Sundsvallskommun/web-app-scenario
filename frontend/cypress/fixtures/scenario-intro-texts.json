@@ -1,0 +1,35 @@
+{
+  "data": [
+    {
+      "id": 1,
+      "text": "\u00D6vningarna liknar verkliga situationer och visar vilka beslut och konsekvenser som kan uppst\u00E5 vid sv\u00E5ra val.",
+      "sortOrder": 1
+    },
+    {
+      "id": 2,
+      "text": "\u00C4ven om \u00F6vningarna inte \u00E4r verkliga s\u00E5 liknar de h\u00E4ndelser och utmaningar ungdomar kan st\u00E4llas inf\u00F6r.",
+      "sortOrder": 2
+    },
+    {
+      "id": 3,
+      "text": "Vi vet att inneh\u00E5llet kan k\u00E4nnas jobbigt f\u00F6r vissa deltagare.",
+      "sortOrder": 3
+    },
+    {
+      "id": 4,
+      "text": "Du kan stoppa \u00F6vningen n\u00E4r som helst om det k\u00E4nns obehagligt. Sedan kan du v\u00E4lja att forts\u00E4tta eller avsluta.",
+      "sortOrder": 4
+    },
+    {
+      "id": 5,
+      "text": "Kom ih\u00E5g att du alltid kan f\u00E5 hj\u00E4lp och st\u00F6d och inte \u00E4r ensam i att hantera dessa utmaningar.",
+      "sortOrder": 5
+    },
+    {
+      "id": 6,
+      "text": "Vi vill att du funderar p\u00E5 dina val och vad du kan l\u00E4ra dig av dem i en trygg milj\u00F6. Lycka till!",
+      "sortOrder": 6
+    }
+  ],
+  "message": "success"
+}
