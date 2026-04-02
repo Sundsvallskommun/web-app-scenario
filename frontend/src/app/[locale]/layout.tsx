@@ -9,7 +9,7 @@ export interface LocalizationLayoutProps {
   params: Promise<{ locale: string }>;
 }
 
-const namespaces = ['common', 'paths', 'intro', 'login', 'scenario'];
+const namespaces = ['common', 'paths', 'login', 'scenario'];
 
 const LocalizationLayout = async (props: LocalizationLayoutProps) => {
   const { params, children } = props;
@@ -31,15 +31,11 @@ export const generateMetadata = async ({ params }: LocalizationLayoutProps) => {
   const pathName =
     !path ? null : (
       path
-        .replace(/^\/?/, '') // Remove leading slash
-        .split('/') // Split into sections
-        .map(
-          (s) =>
-            `${s.substring(0, 1).toUpperCase()}${s.substring(1)}` // Capitalize the first letter
-              .replace('-', ' ') // Replace separators
-        )
+        .replace(/^\/?/, '')
+        .split('/')
+        .map((s) => `${s.substring(0, 1).toUpperCase()}${s.substring(1)}`.replace('-', ' '))
         .join(', ')
-    ); // Comma separate sections
+    );
 
   const getTitle = () => {
     if (path) {

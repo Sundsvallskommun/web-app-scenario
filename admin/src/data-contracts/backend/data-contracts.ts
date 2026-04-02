@@ -1,6 +1,5 @@
 /* eslint-disable */
 /* tslint:disable */
-// @ts-nocheck
 /*
  * ---------------------------------------------------------------
  * ## THIS FILE WAS GENERATED VIA SWAGGER-TYPESCRIPT-API        ##
@@ -25,7 +24,7 @@ export interface AdminUser {
   username: string;
   givenName: string;
   surname: string;
-  role: "app_read" | "app_admin";
+  role: AdminUserRoleEnum;
 }
 
 export interface AdminUserApiResponse {
@@ -47,6 +46,16 @@ export interface UpdateScenarioDto {
   description?: string | null;
   published?: boolean;
   imageId?: number | null;
+}
+
+export interface CreateScenarioIntroTextDto {
+  text: string;
+  sortOrder: number;
+}
+
+export interface UpdateScenarioIntroTextDto {
+  text?: string;
+  sortOrder?: number;
 }
 
 export interface Image {
@@ -102,6 +111,42 @@ export interface ScenarioApiResponse {
 
 export interface ScenarioDeleteApiResponse {
   data: boolean;
+  message: string;
+}
+
+export interface ScenarioIntroText {
+  id: number;
+  text: string;
+  sortOrder: number;
+  /** @pattern \d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d.\d+Z? */
+  createdAt: string;
+  /** @pattern \d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d.\d+Z? */
+  updatedAt: string;
+}
+
+export interface PublicScenarioIntroText {
+  id: number;
+  text: string;
+  sortOrder: number;
+}
+
+export interface ScenarioIntroTextsApiResponse {
+  data: ScenarioIntroText[];
+  message: string;
+}
+
+export interface ScenarioIntroTextApiResponse {
+  data: ScenarioIntroText;
+  message: string;
+}
+
+export interface ScenarioIntroTextDeleteApiResponse {
+  data: boolean;
+  message: string;
+}
+
+export interface PublicScenarioIntroTextsApiResponse {
+  data: PublicScenarioIntroText[];
   message: string;
 }
 
@@ -189,4 +234,9 @@ export interface CreateExternalUserDto {
 
 export interface UpdateExternalUserDto {
   org?: string;
+}
+
+export enum AdminUserRoleEnum {
+  AppRead = 'app_read',
+  AppAdmin = 'app_admin',
 }
