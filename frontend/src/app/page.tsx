@@ -1,27 +1,22 @@
 'use client';
 
 import LoaderFullScreen from '@components/loader/loader-fullscreen';
+import { isRunningStandalone } from '@utils/pwa-mode';
 import { useSessionStorage } from '@utils/use-sessionstorage.hook';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { shallow } from 'zustand/shallow';
 
 const Index = () => {
-  const [webMode, pwa] = useSessionStorage(
-    (state) => [state.webMode, state.pwa],
-    shallow
-  );
+  const webMode = useSessionStorage((state) => state.webMode);
   const router = useRouter();
 
-  const showInstaller = !webMode && !pwa;
-
   useEffect(() => {
-    if (showInstaller) {
+    if (!webMode && !isRunningStandalone()) {
       router.push('/pwainstaller');
     } else {
       router.push('/start');
     }
-  }, [router, showInstaller]);
+  }, [router, webMode]);
 
   return <LoaderFullScreen />;
 };

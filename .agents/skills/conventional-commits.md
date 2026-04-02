@@ -14,4 +14,7 @@ Follow these rules for git commits in this repository:
 - Do not use `!` to mark breaking changes in the commit header.
 - Describe breaking changes with a `BREAKING CHANGE:` footer in the commit message body when needed.
 - Before creating commits, group changes so each commit stays focused and traceable.
-- When a thread is done, ask the user if the work should be committed.
+- When your work is done, ask the user if the work should be committed.
+- Never commit on a default branch (develop, main, master, release etc).
+- All commits need to be done by a validated user
+- Make sure that the commits are signed

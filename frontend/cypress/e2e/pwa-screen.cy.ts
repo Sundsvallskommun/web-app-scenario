@@ -11,6 +11,21 @@ describe('PWA screen', () => {
 
   it('should show the PWA installation screen', () => {
     cy.get('h1').should('contain.text', 'Med livet som insats');
-    cy.contains('Installera programmet för bästa upplevelse');
+    cy.contains(/Installera programmet/);
+  });
+
+  it('should skip the PWA installation screen in standalone mode', () => {
+    cy.visit('/', {
+      timeout: 20000,
+      onBeforeLoad: (win) => {
+        Object.defineProperty(win.navigator, 'standalone', {
+          configurable: true,
+          value: true,
+        });
+      },
+    });
+
+    cy.location('pathname').should('include', '/start');
+    cy.contains(/Installera programmet/).should('not.exist');
   });
 });

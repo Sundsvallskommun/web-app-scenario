@@ -9,6 +9,7 @@ import {
   Switch,
 } from '@sk-web-gui/react';
 import { useLocalStorage } from '@utils/use-localstorage.hook';
+import { isRunningStandalone } from '@utils/pwa-mode';
 import { useSessionStorage } from '@utils/use-sessionstorage.hook';
 import { LogOut, MonitorDown, Settings2 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
@@ -31,21 +32,32 @@ export const SettingsMenu: React.FC = () => {
       ])
     );
 
-  const [pwaSupported, setPwaSupported] = useState<boolean>(true);
+  const [canInstall, setCanInstall] = useState<boolean>(false);
+  const [standalone, setStandalone] = useState<boolean>(false);
   const installRef = useRef<InstallPromptEvent>(null);
 
   const pwa = useSessionStorage((state) => state.pwa);
 
   useEffect(() => {
+    const standaloneMode = isRunningStandalone();
+    setStandalone(standaloneMode);
+
+    if (standaloneMode) {
+      return;
+    }
+
     const handleInstallPrompt = (event: InstallPromptEvent) => {
       event.preventDefault();
-      setPwaSupported(true);
       installRef.current = event;
+      setCanInstall(true);
     };
 
-    window.addEventListener('beforeinstallprompt', handleInstallPrompt);
+    globalThis.addEventListener('beforeinstallprompt', handleInstallPrompt);
     return () => {
-      window.removeEventListener('beforeinstallprompt', handleInstallPrompt);
+      globalThis.removeEventListener(
+        'beforeinstallprompt',
+        handleInstallPrompt
+      );
     };
     //eslint-disable-next-line
   }, []);
@@ -91,7 +103,7 @@ export const SettingsMenu: React.FC = () => {
                 {t('common:highcontrast')}
               </Switch>
             </PopupMenu.Item>
-            {(installRef.current || pwaSupported) && !pwa && (
+            {canInstall && !pwa && !standalone && (
               <PopupMenu.Group>
                 <PopupMenu.Item>
                   <Button
