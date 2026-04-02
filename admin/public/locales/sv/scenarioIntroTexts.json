@@ -1,0 +1,20 @@
+{
+  "name_zero": "introtext",
+  "name_one": "introtext",
+  "name_many": "introtexter",
+  "name_other": "introtexter",
+  "the_name": "introtexten",
+  "the_name_one": "introtexten",
+  "the_name_many": "introtexterna",
+  "the_name_other": "introtexterna",
+  "properties": {
+    "id": "Id",
+    "text": "Text",
+    "sortOrder": "Ordning",
+    "createdAt": "Skapad",
+    "updatedAt": "Senast uppdaterad"
+  },
+  "validation": {
+    "sortOrderUnique": "Ordning måste vara unik."
+  }
+}

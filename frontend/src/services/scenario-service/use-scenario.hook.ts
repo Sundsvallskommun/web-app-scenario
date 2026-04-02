@@ -1,6 +1,9 @@
-import { PublicScenario } from '@data-contracts/backend/data-contracts';
+import {
+  PublicScenario,
+  PublicScenarioIntroText,
+} from '@data-contracts/backend/data-contracts';
 import { useEffect, useState } from 'react';
-import { getScenario, getScenarios } from './scenario.service';
+import { getScenario, getScenarioIntroTexts, getScenarios } from './scenario.service';
 
 export const useScenario = (id: number) => {
   const [data, setData] = useState<PublicScenario | null>(null);
@@ -43,6 +46,29 @@ export const useScenarios = () => {
         setData(null);
       })
       .finally(() => {
+        setLoading(false);
+      });
+  }, []);
+
+  return { data, loading, loaded };
+};
+
+export const useScenarioIntroTexts = () => {
+  const [data, setData] = useState<PublicScenarioIntroText[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    setLoading(true);
+    getScenarioIntroTexts()
+      .then((res) => {
+        setData(res.data);
+      })
+      .catch(() => {
+        setData([]);
+      })
+      .finally(() => {
+        setLoaded(true);
         setLoading(false);
       });
   }, []);

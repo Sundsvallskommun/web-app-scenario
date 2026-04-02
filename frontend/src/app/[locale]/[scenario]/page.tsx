@@ -6,7 +6,7 @@ import { End } from '@components/scenario/End';
 import { Intro } from '@components/scenario/Intro';
 import { ScenarioStart } from '@components/scenario/ScenarioStart';
 import DefaultLayout from '@layouts/default-layout/default-layout.component';
-import { useScenario } from '@services/scenario-service/use-scenario.hook';
+import { useScenario, useScenarioIntroTexts } from '@services/scenario-service/use-scenario.hook';
 import { ChatHistoryEntry, useAssistantStore, useChat } from '@sk-web-gui/ai';
 import { apiURL } from '@utils/api-url';
 import { useSessionStorage } from '@utils/use-sessionstorage.hook';
@@ -23,15 +23,16 @@ export default function Scenario() {
   const router = useRouter();
   const { scenario } = useParams();
   const { loaded, data } = useScenario(Number(scenario));
-  const setScenario = useSessionStorage((state) => state.setScenario);
+  const { loaded: introLoaded, data: introTexts } = useScenarioIntroTexts();
+  const [setScenario, setScenarioIntroTexts] = useSessionStorage((state) => [
+    state.setScenario,
+    state.setScenarioIntroTexts,
+  ]);
   const [settings, setSettings, setInfo] = useAssistantStore(
     useShallow((state) => [state.settings, state.setSettings, state.setInfo])
   );
 
-  const [webMode, pwa] = useSessionStorage(
-    (state) => [state.webMode, state.pwa],
-    shallow
-  );
+  const [webMode, pwa] = useSessionStorage((state) => [state.webMode, state.pwa], shallow);
 
   const transitionDuration = 1000;
 
@@ -68,36 +69,28 @@ export default function Scenario() {
     // eslint-disable-next-line  react-hooks/exhaustive-deps
   }, [setInfo, data, loaded, setScenario, setSettings]);
 
-  const lastAssistantEntry = history
-    .filter((entry: ChatHistoryEntry) => entry.origin === 'assistant')
-    .at(-1);
+  useEffect(() => {
+    if (introLoaded) {
+      setScenarioIntroTexts(introTexts);
+    }
+  }, [introLoaded, introTexts, setScenarioIntroTexts]);
+
+  const lastAssistantEntry = history.findLast((entry: ChatHistoryEntry) => entry.origin === 'assistant');
 
   const pages: Page[] = [
     {
-      component: (
-        <Intro
-          transitionDuration={transitionDuration}
-          onNext={() => setPage(1)}
-        />
-      ),
+      component: <Intro texts={introTexts} transitionDuration={transitionDuration} onNext={() => setPage(1)} />,
       showBackground: false,
     },
     {
-      component: (
-        <ScenarioStart
-          onNext={() => handleStartScenario()}
-          onRestart={() => handleRestart()}
-        />
-      ),
+      component: <ScenarioStart onNext={() => handleStartScenario()} onRestart={() => handleRestart()} />,
       showBackground: true,
     },
     {
       component: (
         <Chat
           history={history}
-          sendQuery={(q, add) =>
-            sendQuery(q, [], { question: add ?? true, answer: true })
-          }
+          sendQuery={(q, add) => sendQuery(q, [], { question: add ?? true, answer: true })}
           done={done || lastAssistantEntry?.done}
           onNext={() => setPage(3)}
         />
@@ -105,18 +98,13 @@ export default function Scenario() {
       showBackground: true,
     },
     {
-      component: (
-        <End
-          history={history}
-          transitionDuration={transitionDuration}
-          onRestart={() => handleRestart()}
-        />
-      ),
+      component: <End history={history} transitionDuration={transitionDuration} onRestart={() => handleRestart()} />,
       showBackground: true,
     },
   ];
 
   const showInstaller = !webMode && !pwa && page === 0;
+  const isReady = loaded && introLoaded && data;
 
   return (
     <DefaultLayout
@@ -125,7 +113,7 @@ export default function Scenario() {
       transitionDuration={transitionDuration}
     >
       <main className="flex w-full flex-col grow shrink h-full max-h-full overflow-hidden justify-center items-center gap-0">
-        {loaded && data ? pages[page].component : <LoaderFullScreen />}
+        {isReady ? pages[page].component : <LoaderFullScreen />}
       </main>
     </DefaultLayout>
   );
