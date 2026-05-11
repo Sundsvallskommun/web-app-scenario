@@ -39,6 +39,22 @@ describe('Menues', () => {
     cy.get('[data-cy="settings-menu"]').should('not.be.visible');
   });
 
+  it('does not show install in settings when app runs as standalone', () => {
+    cy.visit('/start', {
+      timeout: 20000,
+      onBeforeLoad: (win) => {
+        Object.defineProperty(win.navigator, 'standalone', {
+          configurable: true,
+          value: true,
+        });
+      },
+    });
+    cy.wait('@getMe');
+
+    cy.get('[data-cy="settings-button"]').click();
+    cy.contains('button', 'Installera').should('not.exist');
+  });
+
   it('pauses the game and uses the pause menu', () => {
     //Start
     cy.get('h1').should('contain.text', 'Med livet som insats');

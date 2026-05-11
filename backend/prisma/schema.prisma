@@ -29,6 +29,14 @@ model Scenario {
   updatedAt   DateTime @updatedAt
 }
 
+model ScenarioIntroText {
+  id        Int      @id @default(autoincrement())
+  text      String
+  sortOrder Int      @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model ExternalUser {
   id           Int      @id @default(autoincrement())
   name         String

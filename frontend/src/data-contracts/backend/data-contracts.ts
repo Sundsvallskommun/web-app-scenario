@@ -48,6 +48,16 @@ export interface UpdateScenarioDto {
   imageId?: number | null;
 }
 
+export interface CreateScenarioIntroTextDto {
+  text: string;
+  sortOrder: number;
+}
+
+export interface UpdateScenarioIntroTextDto {
+  text?: string;
+  sortOrder?: number;
+}
+
 export interface Image {
   name: string;
   filename: string;
@@ -101,6 +111,42 @@ export interface ScenarioApiResponse {
 
 export interface ScenarioDeleteApiResponse {
   data: boolean;
+  message: string;
+}
+
+export interface ScenarioIntroText {
+  id: number;
+  text: string;
+  sortOrder: number;
+  /** @pattern \d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d.\d+Z? */
+  createdAt: string;
+  /** @pattern \d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d.\d+Z? */
+  updatedAt: string;
+}
+
+export interface PublicScenarioIntroText {
+  id: number;
+  text: string;
+  sortOrder: number;
+}
+
+export interface ScenarioIntroTextsApiResponse {
+  data: ScenarioIntroText[];
+  message: string;
+}
+
+export interface ScenarioIntroTextApiResponse {
+  data: ScenarioIntroText;
+  message: string;
+}
+
+export interface ScenarioIntroTextDeleteApiResponse {
+  data: boolean;
+  message: string;
+}
+
+export interface PublicScenarioIntroTextsApiResponse {
+  data: PublicScenarioIntroText[];
   message: string;
 }
 

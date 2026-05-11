@@ -19,6 +19,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
+    "ignoreDeprecations": "6.0",
     "incremental": true,
     "baseUrl": "./",
     "paths": {
@@ -32,7 +33,6 @@
       "@utils/*": ["src/utils/*"],
       "@middlewares/*": ["src/utils/middlewares/*"],
       "@public/*": ["public/*"],
-      "@jestRoot/*": ["jest/*"],
       "@data-contracts/*": ["src/data-contracts/*"]
     }
   }

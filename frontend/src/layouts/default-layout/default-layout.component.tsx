@@ -1,6 +1,6 @@
 'use client';
 
-import { cx } from '@sk-web-gui/react';
+import { cx, Logo, useThemeQueries } from '@sk-web-gui/react';
 import { apiURL } from '@utils/api-url';
 import { useLocalStorage } from '@utils/use-localstorage.hook';
 import React from 'react';
@@ -24,7 +24,7 @@ export const DefaultLayout: React.FC<DefaultLayoutProps> = (props) => {
     ...rest
   } = props;
   const highcontrast = useLocalStorage((state) => state.highcontrast);
-
+  const { isMaxSmallDevice } = useThemeQueries();
   const backgroundSrc = _backgroundSrc ?? apiURL('files/default.jpg');
 
   const backgroundImage = `url(${backgroundSrc})`;
@@ -48,7 +48,7 @@ export const DefaultLayout: React.FC<DefaultLayoutProps> = (props) => {
     <div className="w-dvw h-dvh portrait:max-h-dvh bg-background-content text-dark-primary overflow-hidden relative">
       <div
         className={cx(
-          'w-full h-full overflow-hidden bg-cover bg-center absolute top-0 left-0 right-0 bottom-0 z-0 transition-opacity',
+          'w-full h-full overflow-hidden bg-cover bg-center fixed top-0 left-0 right-0 bottom-0 z-0 transition-opacity',
           { ['bg-background-100 bg-blend-multiply']: highcontrast }
         )}
         style={{
@@ -57,12 +57,15 @@ export const DefaultLayout: React.FC<DefaultLayoutProps> = (props) => {
           transitionDuration: `${transitionDuration}ms`,
         }}
       ></div>
+      <div className="fixed bottom-12 right-12 lg:bottom-32 lg:right-32 opacity-80 hidden h-52 md:h-auto sm:block w-auto md:w-[12rem] lg:w-[14rem] xl:w-[18rem]">
+        <Logo
+          variant={isMaxSmallDevice ? 'symbol' : 'logo'}
+          className="h-stretch"
+        />
+      </div>
       <div className="flex flex-col w-full h-full overflow-hidden absolute top-0 left-0 right-0 bottom-0 z-10">
         <div
-          className={cx(
-            'grow shrink overflow-hidden flex w-full pb-24',
-            className
-          )}
+          className={cx('grow shrink flex w-full overflow-hidden', className)}
           {...rest}
         />
       </div>

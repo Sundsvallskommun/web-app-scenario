@@ -15,6 +15,9 @@ export default {
       transitionProperty: {
         opacity: 'opacity',
       },
+      height: {
+        stretch: 'stretch',
+      },
     },
   },
   darkMode: 'class', // or 'media' or 'class'
