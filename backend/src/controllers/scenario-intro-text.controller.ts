@@ -1,7 +1,7 @@
 import { HttpException } from '@/exceptions/HttpException';
 import { RequestWithUser } from '@/interfaces/auth.interface';
 import authMiddleware from '@/middlewares/auth.middleware';
-import { ScenarioIntroTextsApiResponse } from '@/responses/scenario-intro-text.response';
+import { PublicScenarioIntroTextsApiResponse } from '@/responses/scenario-intro-text.response';
 import { logger } from '@/utils/logger';
 import prisma from '@/utils/prisma';
 import { Response } from 'express';
@@ -12,11 +12,11 @@ import { ResponseSchema } from 'routing-controllers-openapi';
 @UseBefore(authMiddleware)
 export class ScenarioIntroTextController {
   @Get('/scenario-intro-texts')
-  @ResponseSchema(ScenarioIntroTextsApiResponse)
+  @ResponseSchema(PublicScenarioIntroTextsApiResponse)
   async getScenarioIntroTexts(
     @Req() req: RequestWithUser,
-    @Res() response: Response<ScenarioIntroTextsApiResponse>,
-  ): Promise<Response<ScenarioIntroTextsApiResponse>> {
+    @Res() response: Response<PublicScenarioIntroTextsApiResponse>,
+  ): Promise<Response<PublicScenarioIntroTextsApiResponse>> {
     if (!req.user) {
       throw new HttpException(400, 'Bad Request');
     }

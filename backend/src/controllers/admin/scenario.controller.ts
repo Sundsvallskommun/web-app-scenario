@@ -32,7 +32,7 @@ export class AdminScenarioController {
 
     try {
       const data = await prisma.scenario.findMany({
-        include: { image: true },
+        include: { image: true, category: true },
       });
 
       return response.send({ data, message: 'success' });
@@ -57,7 +57,7 @@ export class AdminScenarioController {
     try {
       const data = await prisma.scenario.findFirst({
         where: { id },
-        include: { image: true },
+        include: { image: true, category: true },
       });
 
       return response.send({ data, message: 'success' });
@@ -92,9 +92,16 @@ export class AdminScenarioController {
                   connect: { id: body.imageId },
                 }
               : undefined,
+          category:
+            typeof body?.categoryId === 'number'
+              ? {
+                  connect: { id: body.categoryId },
+                }
+              : undefined,
         },
         include: {
           image: true,
+          category: true,
         },
       });
 
@@ -130,9 +137,16 @@ export class AdminScenarioController {
                   connect: { id: body.imageId },
                 }
               : { disconnect: true },
+          category:
+            typeof body?.categoryId === 'number'
+              ? {
+                  connect: { id: body.categoryId },
+                }
+              : { disconnect: true },
         },
         include: {
           image: true,
+          category: true,
         },
       });
 

@@ -1,5 +1,7 @@
 import { Api } from '@data-contracts/backend/Api';
 import {
+  Category,
+  CreateCategoryDto,
   CreateExternalUserDto,
   CreateScenarioDto,
   CreateScenarioIntroTextDto,
@@ -7,6 +9,7 @@ import {
   Image,
   Scenario,
   ScenarioIntroText,
+  UpdateCategoryDto,
   UpdateExternalUserDto,
   UpdateImageDto,
   UpdateScenarioDto,
@@ -29,8 +32,25 @@ const scenarios: Resource<Scenario, CreateScenarioDto, UpdateScenarioDto> = {
     description: '',
     assistantId: '',
     published: false,
+    categoryId: null,
   },
   requiredFields: ['name', 'assistantId'],
+};
+
+const categories: Resource<Category, CreateCategoryDto, UpdateCategoryDto> = {
+  name: 'categories',
+  getOne: apiService.adminCategoryControllerGetCategory,
+  getMany: apiService.adminCategoryControllerGetCategories,
+  create: apiService.adminCategoryControllerCreateCategory,
+  update: apiService.adminCategoryControllerUpdateCategory,
+  remove: apiService.adminCategoryControllerDeleteCategory,
+
+  defaultValues: {
+    name: '',
+    imageId: null,
+    adGroups: [],
+  },
+  requiredFields: ['name'],
 };
 
 const scenarioIntroTexts: Resource<ScenarioIntroText, CreateScenarioIntroTextDto, UpdateScenarioIntroTextDto> = {
@@ -79,6 +99,6 @@ const externalUsers: Resource<ExternalUser, CreateExternalUserDto, UpdateExterna
   requiredFields: ['name', 'personNumber'],
 };
 
-const resources = { scenarios, scenarioIntroTexts, images, externalUsers };
+const resources = { scenarios, categories, scenarioIntroTexts, images, externalUsers };
 
 export default resources;

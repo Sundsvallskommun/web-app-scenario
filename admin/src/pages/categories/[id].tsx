@@ -1,52 +1,55 @@
-import { EditImage } from '@components/edit-image/edit-image.component';
+import { EditCategory } from '@components/edit-category/edit-category.component';
 import { EditorToolbar } from '@components/editor-toolbar/editor-toolbar';
 import LoaderFullScreen from '@components/loader/loader-fullscreen';
 import { defaultInformationFields } from '@config/defaults';
 import resources from '@config/resources';
-import { CategorySummary, Image, ScenarioSummary, UpdateImageDto } from '@data-contracts/backend/data-contracts';
+import { CreateCategoryDto, UpdateCategoryDto } from '@data-contracts/backend/data-contracts';
 import EditLayout from '@layouts/edit-layout/edit-layout.component';
-import { List } from '@sk-web-gui/react';
 import { getFormattedFields } from '@utils/formatted-field';
 import { useRouteGuard } from '@utils/routeguard.hook';
 import { useCrudHelper } from '@utils/use-crud-helpers';
 import { useResource } from '@utils/use-resource';
+import { AxiosError } from 'axios';
 import { GetServerSideProps } from 'next';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
+import { useSnackbar } from '@sk-web-gui/react';
 import { capitalize } from 'underscore.string';
 
-export const ImagePage: React.FC = () => {
+export const CategoryPage: React.FC = () => {
   const { t } = useTranslation();
   const router = useRouter();
+  const message = useSnackbar();
 
-  const { resource: _resource, id: _id } = useParams();
-  const resource = 'images';
+  const { id: _id } = useParams();
+  const resource = 'categories';
 
   const { create, update, getOne, defaultValues } = resources[resource];
   const { refresh } = useResource(resource);
 
-  const { handleGetOne, handleCreate, handleUpdate } = useCrudHelper(resource);
+  const { handleGetOne } = useCrudHelper(resource);
 
-  type CreateType = { image: File };
-  type UpdateType = UpdateImageDto;
+  type CreateType = CreateCategoryDto;
+  type UpdateType = UpdateCategoryDto;
   type DataType = CreateType | UpdateType;
 
-  const form = useForm<DataType & Image>({
+  const form = useForm<DataType>({
     defaultValues: defaultValues,
   });
   const {
+    clearErrors,
     handleSubmit,
     reset,
+    setError,
     watch,
     formState: { isDirty },
   } = form;
 
-  const id = _id === 'new' ? undefined : parseInt(_id as string, 10);
+  const id = _id === 'new' ? undefined : Number.parseInt(_id as string, 10);
 
   const [loaded, setLoaded] = useState<boolean>(false);
   const [isNew, setIsNew] = useState<boolean>(!id);
@@ -91,27 +94,63 @@ export const ImagePage: React.FC = () => {
     }
   }, [formdata?.id, isNew, isDirty]);
 
-  const onSubmit = (data: DataType) => {
-    switch (isNew) {
-      case true:
-        if (create) {
-          handleCreate(() => create(data as CreateType)).then((res) => {
-            if (res) {
-              reset(res);
+  const isDuplicateNameError = (error: unknown) => {
+    const message = (error as AxiosError<{ message?: string }>)?.response?.data?.message ?? '';
+    return typeof message === 'string' && message.includes('name');
+  };
+
+  const normalizePayload = (data: DataType): DataType => ({
+    ...data,
+    adGroups: (data.adGroups ?? []).map((group) => group.trim()).filter((group) => group.length > 0),
+  });
+
+  const onSubmit = async (data: DataType) => {
+    clearErrors('name');
+    const payload = normalizePayload(data);
+
+    try {
+      switch (isNew) {
+        case true:
+          if (create) {
+            const result = await create(payload as CreateType);
+            if (result) {
+              message({
+                message: capitalize(t('crud:create.success', { resource: t(`${resource}:name_one`) })),
+                status: 'success',
+              });
+              reset(result.data.data);
+              setIsNew(false);
               refresh();
             }
-          });
-        }
-
-        break;
-      case false:
-        if (id && update) {
-          handleUpdate(() => update?.(id, data as UpdateType)).then((res) => {
-            reset(res);
+          }
+          break;
+        case false:
+          if (id && update) {
+            const result = await update(id, payload);
+            message({
+              message: capitalize(t('crud:update.success', { resource: t(`${resource}:name_one`) })),
+              status: 'success',
+            });
+            reset(result.data.data);
             refresh();
-          });
-        }
-        break;
+          }
+          break;
+      }
+    } catch (error) {
+      if (isDuplicateNameError(error)) {
+        setError('name', {
+          type: 'server',
+          message: t(`${resource}:validation.nameUnique`),
+        });
+        return;
+      }
+
+      message({
+        message: capitalize(
+          t(isNew ? 'crud:create.error' : 'crud:update.error', { resource: t(`${resource}:name_one`) })
+        ),
+        status: 'error',
+      });
     }
   };
 
@@ -119,7 +158,7 @@ export const ImagePage: React.FC = () => {
       <LoaderFullScreen />
     : <EditLayout
         headerInfo={
-          !isNew ?
+          isNew ? undefined : (
             <ul className="text-small flex gap-16">
               {defaultInformationFields.map((field, index) => (
                 <li key={index + field}>
@@ -128,7 +167,7 @@ export const ImagePage: React.FC = () => {
                 </li>
               ))}
             </ul>
-          : undefined
+          )
         }
         title={
           isNew ?
@@ -137,52 +176,12 @@ export const ImagePage: React.FC = () => {
         }
         backLink={`/${resource}`}
       >
-        <div className="flex flew-row gap-32 flex-wrap">
-          <div className="flex flex-col gap-32 grow mb-32">
-            <FormProvider {...form}>
-              <form className="flex flex-row gap-32 justify-between grow flex-wrap" onSubmit={handleSubmit(onSubmit)}>
-                <EditorToolbar resource={resource} isDirty={isDirty} id={id} />
-                <EditImage isNew={isNew} />
-              </form>
-            </FormProvider>
-          </div>
-          {formdata?.scenarios?.length > 0 && (
-            <div className="flex flex-col gap-32 grow mb-32">
-              <h3 className="text-h4-sm md:text-h4-md xl:text-h4-lg" id="resourcelist">
-                {t('images:used_by')}
-              </h3>
-              <List aria-labelledby="resourcelist" data-cy="image-scenario-list">
-                {formdata.scenarios.map((scenario: ScenarioSummary) => (
-                  <List.Item key={`image-scenario-${scenario.id}`}>
-                    <List.Text>
-                      <Link href={`/scenarios/${scenario.id}`}>
-                        {scenario.id} - {scenario.name}
-                      </Link>
-                    </List.Text>
-                  </List.Item>
-                ))}
-              </List>
-            </div>
-          )}
-          {formdata?.categories?.length > 0 && (
-            <div className="flex flex-col gap-32 grow mb-32">
-              <h3 className="text-h4-sm md:text-h4-md xl:text-h4-lg" id="categoryresourcelist">
-                {t('images:used_by_categories')}
-              </h3>
-              <List aria-labelledby="categoryresourcelist" data-cy="image-category-list">
-                {formdata.categories.map((category: CategorySummary) => (
-                  <List.Item key={`image-category-${category.id}`}>
-                    <List.Text>
-                      <Link href={`/categories/${category.id}`}>
-                        {category.id} - {category.name}
-                      </Link>
-                    </List.Text>
-                  </List.Item>
-                ))}
-              </List>
-            </div>
-          )}
-        </div>
+        <FormProvider {...form}>
+          <form className="flex flex-row gap-32 justify-between grow flex-wrap" onSubmit={handleSubmit(onSubmit)}>
+            <EditorToolbar resource={resource} isDirty={isDirty} id={id} />
+            <EditCategory />
+          </form>
+        </FormProvider>
       </EditLayout>;
 };
 
@@ -192,4 +191,4 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => ({
   },
 });
 
-export default ImagePage;
+export default CategoryPage;

@@ -67,7 +67,7 @@ export class AdminImageController {
     try {
       const data = await prisma.image.findFirst({
         where: { id },
-        include: { scenarios: true },
+        include: { scenarios: true, categories: true },
       });
 
       return response.send({ data, message: 'success' });
@@ -145,14 +145,14 @@ export class AdminImageController {
     try {
       const image = await prisma.image.findFirst({
         where: { id },
-        include: { scenarios: true },
+        include: { scenarios: true, categories: true },
       });
 
-      if (image.scenarios && image.scenarios.length > 0) {
+      if ((image?.scenarios && image.scenarios.length > 0) || (image?.categories && image.categories.length > 0)) {
         throw new HttpException(409, 'Image is in use');
       }
 
-      unlink(`${dataDir('uploads')}/${image.filename}`, err => {
+      unlink(`${dataDir('uploads')}/${image?.filename}`, err => {
         if (err) {
           logger.error('Error deleting image', err);
           throw new HttpException(500, 'Internal Server Error');
@@ -170,4 +170,3 @@ export class AdminImageController {
     }
   }
 }
-
