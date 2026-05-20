@@ -9,12 +9,27 @@ on:
       - "develop"
       - "main"
     paths:
+      - .github/workflows/cypress-admin.yml
+      - admin/package.json
+      - admin/yarn.lock
       - admin/src/**
       - admin/cypress/**
 
 jobs:
   install:
     runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      NEXT_PUBLIC_APP_NAME: Scenariobyggare
+      NEXT_PUBLIC_API_URL: http://localhost:3001
+      NEXT_PUBLIC_API_PATH: /api
+      DOMAIN_NAME: localhost
+      BASE_PATH: ""
+      NEXT_PUBLIC_BASE_PATH: ""
+      HEALTH_AUTH: false
+      HEALTH_USERNAME: ""
+      HEALTH_PASSWORD: ""
+      PORT: 3002
     defaults:
       run:
         working-directory: admin
@@ -23,25 +38,35 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Cypress run
-        uses: cypress-io/github-action@6c143abc292aa835d827652c2ea025d098311070
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
         with:
-          working-directory: admin
-          install-command: yarn --frozen-lockfile --silent --network-timeout 1000000
-          browser: chrome
-          build: yarn build
-          start: yarn start
-          wait-on: "http://localhost:3002"
-          spec: cypress/e2e/**/*.cy.ts
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NEXT_PUBLIC_APP_NAME: Scenariobyggare
-          NEXT_PUBLIC_API_URL: http://localhost:3001
-          NEXT_PUBLIC_API_PATH: /api
-          DOMAIN_NAME: localhost
-          BASE_PATH: ""
-          NEXT_PUBLIC_BASE_PATH: ""
-          HEALTH_AUTH: false
-          HEALTH_USERNAME: ""
-          HEALTH_PASSWORD: ""
-          PORT: 3002
+          node-version: 24
+          cache: yarn
+          cache-dependency-path: admin/yarn.lock
+
+      - name: Install dependencies
+        run: yarn --frozen-lockfile --silent --network-timeout 1000000
+
+      - name: Build application
+        run: yarn build
+
+      - name: Run Cypress
+        run: |
+          yarn start > /tmp/admin-next.log 2>&1 &
+          SERVER_PID=$!
+          trap "kill $SERVER_PID" EXIT
+
+          for i in {1..60}; do
+            if curl --silent --output /dev/null http://localhost:3002; then
+              break
+            fi
+            sleep 5
+          done
+
+          if ! curl --silent --output /dev/null http://localhost:3002; then
+            cat /tmp/admin-next.log
+            exit 1
+          fi
+
+          ./node_modules/.bin/cypress run --browser chrome --headless --spec "cypress/e2e/**/*.cy.ts"
