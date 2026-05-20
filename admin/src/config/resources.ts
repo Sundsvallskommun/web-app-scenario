@@ -95,6 +95,7 @@ const externalUsers: Resource<ExternalUser, CreateExternalUserDto, UpdateExterna
     name: '',
     org: '',
     personNumber: '',
+    categoryIds: [],
   },
   requiredFields: ['name', 'personNumber'],
 };
