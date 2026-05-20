@@ -4,7 +4,7 @@ import resources from '@config/resources';
 import { Image } from '@data-contracts/backend/data-contracts';
 import { Button, Modal, Tabs } from '@sk-web-gui/react';
 import { useCrudHelper } from '@utils/use-crud-helpers';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { capitalize } from 'underscore.string';
@@ -22,16 +22,19 @@ export const AddImageModal: React.FC<AddImageModalProps> = ({ open, onClose }) =
   const { watch, reset } = form;
   const newImage = watch('image');
 
-  const getAndSetImages = () => {
+  const getAndSetImages = useCallback(() => {
     handleGetMany(() => resources.images.getMany()).then((res) => {
       if (res) {
         setImages(res);
       }
     });
-  };
+  }, [handleGetMany]);
+
   useEffect(() => {
-    getAndSetImages();
-  }, []);
+    if (open) {
+      getAndSetImages();
+    }
+  }, [getAndSetImages, open]);
   const { create } = resources['images'];
   const { handleCreate } = useCrudHelper('images');
 

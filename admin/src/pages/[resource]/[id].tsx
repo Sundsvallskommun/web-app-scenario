@@ -68,8 +68,7 @@ export const ResourcePage: React.FC = () => {
 
   useEffect(() => {
     if (id) {
-      // eslint-disable-next-line implicit-any
-      handleGetOne<any>(() => getOne(id)).then((res) => {
+      handleGetOne(() => getOne(id)).then((res) => {
         reset(res);
         setIsNew(false);
         setLoaded(true);

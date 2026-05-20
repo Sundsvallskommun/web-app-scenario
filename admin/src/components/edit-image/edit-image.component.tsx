@@ -31,7 +31,7 @@ export const EditImage: React.FC<EditImageProps> = ({ isNew }) => {
       setValue('name', image.name, { shouldDirty: true });
       setLocalUrl(url);
     }
-  }, [image]);
+  }, [image, setValue]);
 
   const url = isNew ? localUrl : formdata?.url;
 
