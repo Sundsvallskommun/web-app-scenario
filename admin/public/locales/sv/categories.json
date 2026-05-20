@@ -1,0 +1,25 @@
+{
+  "name_zero": "kategori",
+  "name_one": "kategori",
+  "name_many": "kategorier",
+  "name_other": "kategorier",
+  "the_name": "kategorin",
+  "the_name_one": "kategorin",
+  "the_name_many": "kategorierna",
+  "the_name_other": "kategorierna",
+  "properties": {
+    "id": "Id",
+    "name": "Namn",
+    "imageId": "Bild-id",
+    "image": "Bild",
+    "adGroups": {
+      "DEFAULT": "ad-grupp",
+      "DEFAULT_many": "ad-grupper"
+    },
+    "createdAt": "Skapad",
+    "updatedAt": "Senast uppdaterad"
+  },
+  "validation": {
+    "nameUnique": "Namn måste vara unikt."
+  }
+}

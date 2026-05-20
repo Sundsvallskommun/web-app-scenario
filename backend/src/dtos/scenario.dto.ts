@@ -2,7 +2,9 @@ import { IsNullable } from '@/utils/custom-validation-classes';
 import { Scenario } from '@prisma/client';
 import { IsBoolean, IsInt, IsOptional, IsString } from 'class-validator';
 
-export class CreateScenarioDto implements Partial<Pick<Scenario, 'name' | 'description' | 'imageId' | 'assistantId'>> {
+export class CreateScenarioDto implements Partial<
+  Pick<Scenario, 'name' | 'description' | 'imageId' | 'assistantId' | 'categoryId'>
+> {
   @IsString()
   name: string;
   @IsString()
@@ -18,9 +20,15 @@ export class CreateScenarioDto implements Partial<Pick<Scenario, 'name' | 'descr
   @IsNullable()
   @IsOptional()
   imageId?: number;
+  @IsInt()
+  @IsNullable()
+  @IsOptional()
+  categoryId?: number;
 }
 
-export class UpdateScenarioDto implements Partial<Pick<Scenario, 'name' | 'description' | 'imageId' | 'assistantId'>> {
+export class UpdateScenarioDto implements Partial<
+  Pick<Scenario, 'name' | 'description' | 'imageId' | 'assistantId' | 'categoryId'>
+> {
   @IsString()
   @IsOptional()
   name?: string;
@@ -38,4 +46,8 @@ export class UpdateScenarioDto implements Partial<Pick<Scenario, 'name' | 'descr
   @IsNullable()
   @IsOptional()
   imageId?: number;
+  @IsInt()
+  @IsNullable()
+  @IsOptional()
+  categoryId?: number;
 }
