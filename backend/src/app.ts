@@ -56,6 +56,8 @@ import { additionalConverters } from './utils/custom-validation-classes';
 import { isValidOrigin } from './utils/isValidOrigin';
 import { dataDir, dataPath, isValidUrl } from './utils/util';
 
+type ControllerClass = new (...args: never[]) => unknown;
+
 const corsWhitelist = ORIGIN?.split(',');
 const defaultRedirect = SAML_SUCCESS_REDIRECT ?? '/';
 const SessionStoreCreate = SESSION_MEMORY ? createMemoryStore(session) : createFileStore(session);
@@ -123,6 +125,8 @@ const samlStrategy = new Strategy(
     const authenticated = groupList?.some(group => authenticatedGroups.includes(group));
     const admin = groupList?.includes(AD_ADMINGROUP);
 
+    let externalUserId: number | undefined;
+
     if (!authenticated) {
       const externalUser = await prisma.externalUser.findFirst({
         where: { personNumber: username },
@@ -134,6 +138,8 @@ const samlStrategy = new Strategy(
           message: 'Missing permissions',
         });
       }
+
+      externalUserId = externalUser.id;
     }
 
     try {
@@ -143,6 +149,8 @@ const samlStrategy = new Strategy(
         givenName: givenName,
         surname: surname,
         role: admin ? InternalRoleEnum.Admin : InternalRoleEnum.Read,
+        isExternal: !authenticated,
+        externalUserId,
       };
 
       done(null, findUser);
@@ -168,7 +176,7 @@ class App {
   public port: string | number;
   public swaggerEnabled: boolean;
 
-  constructor(Controllers: Function[]) {
+  constructor(Controllers: ControllerClass[]) {
     this.app = express();
     this.env = NODE_ENV || 'development';
     this.port = PORT || 3000;
@@ -269,7 +277,7 @@ class App {
       res.status(200).send(metadata);
     });
 
-    this.app.get(`${BASE_URL_PREFIX}/saml/logout`, (req, res, next) => {
+    this.app.get(`${BASE_URL_PREFIX}/saml/logout`, (req, res) => {
       let successRedirect = SAML_LOGOUT_REDIRECT ?? '/';
       const providedRedirect = req?.query?.successRedirect;
       if (typeof providedRedirect === 'string' && isValidUrl(providedRedirect) && isValidOrigin(providedRedirect)) {
@@ -295,10 +303,10 @@ class App {
     this.app.get(
       `${BASE_URL_PREFIX}/saml/logout/callback`,
       bodyParser.urlencoded({ extended: false }),
-      (req, res, next) => {
+      (req, res) => {
         req.logout(err => {
           if (err) {
-            return next(err);
+            throw err;
           }
 
           let successRedirect: URL, failureRedirect: URL;
@@ -378,7 +386,7 @@ class App {
     );
   }
 
-  private initializeRoutes(controllers: Function[]) {
+  private initializeRoutes(controllers: ControllerClass[]) {
     useExpressServer(this.app, {
       routePrefix: BASE_URL_PREFIX,
       controllers: controllers,
@@ -386,7 +394,7 @@ class App {
     });
   }
 
-  private initializeSwagger(controllers: Function[]) {
+  private initializeSwagger(controllers: ControllerClass[]) {
     const schemas = validationMetadatasToSchemas({
       classTransformerMetadataStorage: defaultMetadataStorage,
       refPointerPrefix: '#/components/schemas/',

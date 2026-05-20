@@ -2,6 +2,7 @@ import ApiResponse from '@/interfaces/api-service.interface';
 import { ExternalUser as _ExternalUser } from '@prisma/client';
 import { Type } from 'class-transformer';
 import { IsBoolean, IsDateString, IsInt, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { CategorySummary } from './category.response';
 
 export class ExternalUser implements _ExternalUser {
   @IsInt()
@@ -13,6 +14,10 @@ export class ExternalUser implements _ExternalUser {
   org: string;
   @IsString()
   personNumber: string;
+  @IsOptional()
+  @ValidateNested({ each: true })
+  @Type(() => CategorySummary)
+  categories?: CategorySummary[];
   @IsDateString()
   createdAt: Date;
   @IsDateString()
@@ -30,7 +35,7 @@ export class ExternalUsersApiResponse implements ApiResponse<ExternalUser[]> {
 export class ExternalUserApiResponse implements ApiResponse<ExternalUser> {
   @ValidateNested()
   @Type(() => ExternalUser)
-  data: _ExternalUser;
+  data: ExternalUser;
   @IsString()
   message: string;
 }

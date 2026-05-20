@@ -6,6 +6,8 @@ export type User = {
   givenName: string;
   surname: string;
   role?: InternalRoleEnum;
+  isExternal?: boolean;
+  externalUserId?: number;
 };
 
 export type ClientUser = {

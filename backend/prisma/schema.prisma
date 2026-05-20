@@ -33,14 +33,15 @@ model Scenario {
 }
 
 model Category {
-  id        Int               @id @default(autoincrement())
-  name      String            @unique
-  imageId   Int?
-  image     Image?            @relation(fields: [imageId], references: [id])
-  adGroups  CategoryAdGroup[]
-  scenarios Scenario[]
-  createdAt DateTime          @default(now())
-  updatedAt DateTime          @updatedAt
+  id                     Int                    @id @default(autoincrement())
+  name                   String                 @unique
+  imageId                Int?
+  image                  Image?                 @relation(fields: [imageId], references: [id])
+  adGroups               CategoryAdGroup[]
+  externalUserCategories ExternalUserCategory[]
+  scenarios              Scenario[]
+  createdAt              DateTime               @default(now())
+  updatedAt              DateTime               @updatedAt
 }
 
 model CategoryAdGroup {
@@ -62,10 +63,20 @@ model ScenarioIntroText {
 }
 
 model ExternalUser {
-  id           Int      @id @default(autoincrement())
+  id           Int                    @id @default(autoincrement())
   name         String
   org          String?
   personNumber String
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  categories   ExternalUserCategory[]
+  createdAt    DateTime               @default(now())
+  updatedAt    DateTime               @updatedAt
+}
+
+model ExternalUserCategory {
+  externalUserId Int
+  categoryId     Int
+  externalUser   ExternalUser @relation(fields: [externalUserId], references: [id], onDelete: Cascade)
+  category       Category     @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@id([externalUserId, categoryId])
 }

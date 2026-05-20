@@ -1,5 +1,5 @@
 import { ExternalUser } from '@prisma/client';
-import { IsOptional, IsString } from 'class-validator';
+import { IsArray, IsInt, IsOptional, IsString } from 'class-validator';
 
 export class CreateExternalUserDto implements Partial<Pick<ExternalUser, 'name' | 'org' | 'personNumber'>> {
   @IsString()
@@ -9,6 +9,10 @@ export class CreateExternalUserDto implements Partial<Pick<ExternalUser, 'name' 
   org?: string;
   @IsString()
   personNumber: string;
+  @IsOptional()
+  @IsArray()
+  @IsInt({ each: true })
+  categoryIds?: number[];
 }
 
 export class UpdateExternalUserDto implements Partial<Pick<ExternalUser, 'org'>> {
@@ -21,4 +25,8 @@ export class UpdateExternalUserDto implements Partial<Pick<ExternalUser, 'org'>>
   @IsString()
   @IsOptional()
   org?: string;
+  @IsOptional()
+  @IsArray()
+  @IsInt({ each: true })
+  categoryIds?: number[];
 }

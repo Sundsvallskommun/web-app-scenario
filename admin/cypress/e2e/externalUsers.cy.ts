@@ -46,10 +46,10 @@ describe('External users', () => {
     cy.get('[data-cy="resource-table"]>thead>tr').children().eq(1).should('include.text', 'Personnummer');
   });
 
-  it('creates a new external user', () => {
+  it('creates a new external user with categories', () => {
     cy.intercept('GET', '**/api/admin/external-users', externalUsersWithNew);
-    cy.intercept('GET', '**/api/admin/external-user/4', newExternalUser);
-    cy.intercept('POST', '**/api/admin/external-user', newExternalUser).as('save');
+    cy.intercept('GET', '**/api/admin/external-user/4', { data: newExternalUser, message: 'success' });
+    cy.intercept('POST', '**/api/admin/external-user', { data: newExternalUser, message: 'success' }).as('save');
 
     cy.get('[data-cy="mainmenu-resource-externalUsers"]>span>button').click();
     cy.contains('Lägg till extern användare').click();
@@ -58,6 +58,8 @@ describe('External users', () => {
     cy.get('[data-cy="edit-name"]').type('Test Testsson 4');
     cy.get('[data-cy="edit-org"]').type('Sundsvalls kommun');
     cy.get('[data-cy="edit-personNumber"]').type('199001012385');
+    cy.get('[data-cy="edit-categoryIds-1"]').check({ force: true });
+    cy.get('[data-cy="edit-categoryIds-2"]').check({ force: true });
     cy.get('[data-cy="edit-toolbar-save"]').should('not.be.disabled');
     cy.get('[data-cy="edit-toolbar-delete"]').click();
     cy.get('article.sk-modal-dialog').within(() => {
@@ -66,13 +68,19 @@ describe('External users', () => {
     });
     cy.get('[data-cy="edit-toolbar-save"]').click();
     cy.wait('@save');
+    cy.get('[data-cy="edit-categoryIds-1"]').should('be.checked');
+    cy.get('[data-cy="edit-categoryIds-2"]').should('be.checked');
   });
 
-  it('edits an external user', () => {
+  it('edits an external user category access', () => {
     cy.intercept('GET', '**/api/admin/external-user/1', oneExternalUser);
     cy.intercept('PATCH', '**/api/admin/external-user/1', {
       ...oneExternalUser,
-      data: { ...oneExternalUser.data, org: 'SK' },
+      data: {
+        ...oneExternalUser.data,
+        org: 'SK',
+        categories: [...oneExternalUser.data.categories, newExternalUser.categories[1]],
+      },
     });
     cy.get('[data-cy="mainmenu-resource-externalUsers"]>span>a').click();
     cy.get('[data-cy="resource-table"]')
@@ -88,7 +96,31 @@ describe('External users', () => {
     cy.get('[data-cy="edit-name"]').should('have.value', 'Test Testsson 1');
     cy.get('[data-cy="edit-org"]').should('have.value', 'Sundsvalls kommun').clear().type('SK');
     cy.get('[data-cy="edit-personNumber"]').should('have.value', '199001012385');
+    cy.get('[data-cy="edit-categoryIds-1"]').should('be.checked');
+    cy.get('[data-cy="edit-categoryIds-2"]').should('not.be.checked');
+    cy.get('[data-cy="edit-categoryIds-2"]').check({ force: true });
     cy.get('[data-cy="edit-toolbar-save"]').should('not.be.disabled');
+    cy.get('[data-cy="edit-toolbar-save"]').click();
+    cy.get('[data-cy="edit-toolbar-save"]').should('be.disabled');
+  });
+
+  it('clears category restrictions for an external user', () => {
+    cy.intercept('GET', '**/api/admin/external-user/1', oneExternalUser);
+    cy.intercept('PATCH', '**/api/admin/external-user/1', {
+      ...oneExternalUser,
+      data: { ...oneExternalUser.data, categories: [] },
+    });
+    cy.get('[data-cy="mainmenu-resource-externalUsers"]>span>a').click();
+    cy.get('[data-cy="resource-table"]')
+      .eq(0)
+      .find('tbody')
+      .children()
+      .eq(0)
+      .find('a[data-cy="edit-resource"]')
+      .click();
+    cy.get('[data-cy="edit-categoryIds-1"]').should('be.checked');
+    cy.get('[data-cy="edit-categoryIds-clear"]').click();
+    cy.get('[data-cy="edit-categoryIds-1"]').should('not.be.checked');
     cy.get('[data-cy="edit-toolbar-save"]').click();
     cy.get('[data-cy="edit-toolbar-save"]').should('be.disabled');
   });

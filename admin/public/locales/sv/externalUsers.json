@@ -12,7 +12,13 @@
     "name": "Namn",
     "personNumber": "Personnummer",
     "org": "Organisation",
+    "categories": {
+      "DEFAULT": "kategori",
+      "DEFAULT_many": "kategorier"
+    },
     "createdAt": "Skapad",
     "updatedAt": "Senast uppdaterad"
-  }
+  },
+  "category_access_description": "Lämna tomt för att ge åtkomst till alla publicerade scenarier. Valda kategorier begränsar åtkomst till de kategorierna samt okategoriserade scenarier.",
+  "clear_categories": "rensa kategorier"
 }

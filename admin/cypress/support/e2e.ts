@@ -1,6 +1,7 @@
 import '@cypress/code-coverage/support';
 
 import { CookieConsentUtils } from '@sk-web-gui/react';
+import { externalUsers } from '../fixtures/externalUsers';
 import me from '../fixtures/me';
 import { categories } from '../fixtures/categories';
 import images from '../fixtures/images';
@@ -24,5 +25,5 @@ beforeEach(() => {
   cy.intercept('GET', '**/api/admin/scenarios', scenarios).as('scenarios');
   cy.intercept('GET', '**/api/admin/categories', categories).as('categories');
   cy.intercept('GET', '**/api/admin/scenario-intro-texts', scenarioIntroTexts).as('scenarioIntroTexts');
-  cy.intercept('GET', '**/api/admin/external-users', scenarios).as('externalUsers');
+  cy.intercept('GET', '**/api/admin/external-users', externalUsers).as('externalUsers');
 });
