@@ -44,7 +44,7 @@ export const EditCategory: React.FC = () => {
   const addAdGroup = () => {
     const trimmedAdGroup = newAdGroup.trim();
 
-    if (!trimmedAdGroup) {
+    if (!trimmedAdGroup || adGroups.some((group) => group.toLowerCase() === trimmedAdGroup.toLowerCase())) {
       return;
     }
 
@@ -124,7 +124,7 @@ export const EditCategory: React.FC = () => {
             <Button
               className="absolute top-8 right-8"
               onClick={() => handleRemoveImage()}
-              aria-label={t(`common:add_image`)}
+              aria-label={t(`common:remove_image`)}
               rounded
               variant="primary"
               color="error"

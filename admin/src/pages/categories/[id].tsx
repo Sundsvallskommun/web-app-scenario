@@ -160,7 +160,7 @@ export const CategoryPage: React.FC = () => {
         headerInfo={
           isNew ? undefined : (
             <ul className="text-small flex gap-16">
-              {defaultInformationFields.map((field, index) => (
+              {defaultInformationFields?.map((field, index) => (
                 <li key={index + field}>
                   <strong>{capitalize(t(`common:${field}`))}: </strong>
                   {formdata?.[field]}
