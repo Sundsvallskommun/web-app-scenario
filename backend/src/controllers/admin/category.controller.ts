@@ -93,7 +93,9 @@ export class AdminCategoryController {
       });
 
       const formattedData = data ? formatCategoryResponse(data) : data;
-
+      if (!formattedData) {
+        throw new HttpException(404, 'Could not find category');
+      }
       return response.send({ data: formattedData as unknown as Category, message: 'success' });
     } catch (error) {
       logger.error('Error getting category', error);
