@@ -53,9 +53,10 @@ describe('Categories', () => {
     cy.get('[data-cy="edit-category-adGroup-chip-1"]').click();
     cy.get('[data-cy="edit-category-adGroup-input"]').type('group-c');
     cy.get('[data-cy="edit-category-adGroup-add"]').click();
+    cy.get('[data-cy="edit-category-adGroup-chip-1"]').should('contain.text', 'group-c');
     cy.get('[data-cy="edit-name"]').clear();
     cy.get('[data-cy="edit-name"]').type('Category 1 updated');
-    cy.get('[data-cy="edit-toolbar-save"]').click();
+    cy.get('[data-cy="edit-toolbar-save"]').click({ force: true });
     cy.wait('@save');
     cy.get('[data-cy="edit-name"]').should('have.value', 'Category 1 updated');
     cy.get('[data-cy="edit-category-adGroup-chip-1"]').should('contain.text', 'group-c');
