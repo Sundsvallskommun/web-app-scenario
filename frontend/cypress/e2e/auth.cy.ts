@@ -10,6 +10,7 @@ describe('Login', () => {
     cy.get('h1').should('have.text', 'Med livet som insats');
 
     cy.intercept('GET', '**/api/me', getMe);
+    cy.intercept('GET', '**/api/categories', { fixture: 'categories' });
     cy.intercept('**/api/saml/login*', (req) => {
       req.destroy();
     }).as('login');
@@ -19,7 +20,7 @@ describe('Login', () => {
     cy.wait('@login').then(() => {
       cy.visit('/start', { timeout: 20000 });
     });
-    cy.get('h1').should('have.text', 'Med livet som insats');
+    cy.get('[data-cy="category-card-1"]').should('contain.text', 'Kategori 1');
     cy.get('[data-cy="settings-button"]').click();
     cy.get('[data-cy="settings-logout"]').should('be.visible');
   });

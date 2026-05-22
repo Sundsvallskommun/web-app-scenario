@@ -8,6 +8,9 @@ config({ path: `.env.${process.env.NODE_ENV || 'development'}.local` });
 export const CREDENTIALS = process.env.CREDENTIALS === 'true';
 export const SWAGGER_ENABLED = process.env.SWAGGER_ENABLED === 'true';
 export const SESSION_MEMORY = process.env.SESSION_MEMORY === 'true';
+export const SAML_ACCEPTED_CLOCK_SKEW_MS = Number(process.env.SAML_ACCEPTED_CLOCK_SKEW_MS ?? '300000');
+export const AD_ADMINGROUP = process.env.AD_ADMINGROUP ?? '';
+export const SAML_LOGOUT_CALLBACK_URL = process.env.SAML_LOGOUT_CALLBACK_URL ?? '';
 
 export const {
   APP_NAME,
@@ -22,7 +25,6 @@ export const {
   CLIENT_SECRET,
   BASE_URL_PREFIX,
   SAML_CALLBACK_URL,
-  SAML_LOGOUT_CALLBACK_URL,
   SAML_SUCCESS_BASE,
   SAML_SUCCESS_REDIRECT,
   SAML_FAILURE_REDIRECT,
@@ -35,7 +37,6 @@ export const {
   SAML_IDP_PUBLIC_CERT,
   SAML_PRIVATE_KEY,
   SAML_PUBLIC_KEY,
-  AD_ADMINGROUP,
   AD_GROUPS,
   ENEO_API_KEY,
   AZURE_REGION,

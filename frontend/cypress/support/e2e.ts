@@ -7,7 +7,9 @@ localStorage.clear();
 beforeEach(() => {
   cy.viewport('macbook-16');
   cy.intercept('GET', '**/api/me', getMe).as('getMe');
-  cy.intercept('GET', '**/api/scenarios/1', { fixture: 'scenario-1' });
+  cy.intercept('GET', '**/api/categories', { fixture: 'categories' }).as('Categories');
+  cy.intercept('GET', '**/api/categories/*/scenarios', { fixture: 'scenarios' }).as('Scenarios');
+  cy.intercept('GET', '**/api/categories/*/scenarios/*', { fixture: 'scenario-1' }).as('Scenario');
   cy.intercept('GET', '**/api/scenario-intro-texts', {
     fixture: 'scenario-intro-texts',
   }).as('ScenarioIntroTexts');

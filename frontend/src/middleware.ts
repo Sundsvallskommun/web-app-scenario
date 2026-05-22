@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { i18nRouter } from 'next-i18n-router';
 import i18nConfig from '@app/i18nConfig';
+import { isProtectedRoute } from '@utils/protected-routes';
 import { envs } from '../middleware-envs';
 
 export async function middleware(req: NextRequest) {
@@ -10,7 +11,7 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL(envs.adminUrl));
   }
 
-  if (envs.protectedRoutes.includes(pathname)) {
+  if (isProtectedRoute(pathname)) {
     const cookieName = 'connect.sid';
     const token = req.cookies.get(cookieName)?.value || '';
 

@@ -1,4 +1,4 @@
-import { cleanEnv, port, str, url } from 'envalid';
+import { cleanEnv, num, port, str, url } from 'envalid';
 
 // NOTE: Make sure we got these in ENV
 const validateEnv = () => {
@@ -18,6 +18,7 @@ const validateEnv = () => {
     SAML_IDP_PUBLIC_CERT: str(),
     SAML_PRIVATE_KEY: str(),
     SAML_PUBLIC_KEY: str(),
+    SAML_ACCEPTED_CLOCK_SKEW_MS: num({ default: 300000 }),
   });
 };
 
