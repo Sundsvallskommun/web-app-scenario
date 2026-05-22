@@ -46,3 +46,9 @@ yarn-error.log*
 .yarnrc
 
 certificates
+
+
+
+tsconfig.tsbuildinfo
+
+middleware-envs.js

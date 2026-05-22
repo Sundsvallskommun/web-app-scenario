@@ -5,6 +5,7 @@ export type User = {
   name: string;
   givenName: string;
   surname: string;
+  groups?: string[];
   role?: InternalRoleEnum;
   isExternal?: boolean;
   externalUserId?: number;

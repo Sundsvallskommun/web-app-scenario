@@ -1,5 +1,6 @@
 'use client';
 
+import { useCategoryStore } from '@services/category-service/category.service';
 import { useUserStore } from '@services/user-service/user-service';
 import { apiURL } from '@utils/api-url';
 import { appURL } from '@utils/app-url';
@@ -10,9 +11,11 @@ const Logout: React.FC = () => {
   const router = useRouter();
 
   const resetUser = useUserStore((state) => state.reset);
+  const resetCategories = useCategoryStore((state) => state.reset);
 
   useEffect(() => {
     resetUser();
+    resetCategories();
     sessionStorage.clear();
 
     const query = new URLSearchParams({

@@ -1,8 +1,12 @@
 {
   "scenario": "Scenario",
+  "categories": "Kategorier",
+  "chooseCategory": "Välj kategori",
+  "categoryEmpty": "Du har inga tillgängliga kategorier just nu.",
+  "categoryScenariosEmpty": "Det finns inga scenarion i den här kategorin än.",
   "pick": "Välj scenario",
   "start": "Starta scenario",
   "goBack": "Gå tillbaka",
-  "scrollLeft" : "Scrolla vänster",
-  "scrollRight" : "Scrolla höger"
+  "scrollLeft": "Scrolla vänster",
+  "scrollRight": "Scrolla höger"
 }

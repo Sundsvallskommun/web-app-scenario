@@ -66,7 +66,7 @@ export const SettingsMenu: React.FC = () => {
     installRef?.current?.prompt?.();
   };
   return (
-    <div className="absolute m-24 top-0 right-12">
+    <div className="absolute m-24 top-0 right-12 z-50">
       <PopupMenu position="under" align="end">
         <PopupMenu.Button
           size="sm"
