@@ -36,7 +36,11 @@ export class ConversationController {
 
     const url = `${this.basePath}/conversations/`;
     const responseType = body?.stream ? 'stream' : 'json';
-    const data: ConversationRequest = body;
+    // Eneo 1.2 requires exactly one of session_id / assistant_id / group_chat_id.
+    // When continuing a session, session_id wins and the others must be dropped.
+    const data: ConversationRequest = body.session_id
+      ? { ...body, assistant_id: undefined, group_chat_id: undefined }
+      : body;
     try {
       if (responseType === 'json') {
         const res = await this.apiService.post<AskResponseInterface, ConversationRequest>(url, data, {
