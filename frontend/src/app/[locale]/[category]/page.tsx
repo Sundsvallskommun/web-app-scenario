@@ -1,12 +1,11 @@
 'use client';
 
 import { Carousel } from '@components/carousel/carousel.component';
-import LoaderFullScreen from '@components/loader/loader-fullscreen';
 import { PickScenarioModal } from '@components/pick-scenario-modal/pick-scenario-modal.component';
 import { SettingsMenu } from '@components/settings-menu/settings-menu.component';
 import DefaultLayout from '@layouts/default-layout/default-layout.component';
 import { Card } from '@sk-web-gui/next';
-import { Button, cx, Icon, useThemeQueries } from '@sk-web-gui/react';
+import { Button, cx, Icon, Spinner, useThemeQueries } from '@sk-web-gui/react';
 import { useCategoryStore } from '@services/category-service/category.service';
 import { useScenarios } from '@services/scenario-service/use-scenario.hook';
 import { apiURL } from '@utils/api-url';
@@ -30,13 +29,13 @@ export default function CategoryPage() {
   const [scenarioId, setScenarioId] = useState<number>(0);
   const router = useRouter();
   useEffect(() => {
-    setShowBackground(true);
-    const timeout = globalThis.setTimeout(() => {
-      setOpacity(1);
-    }, transitionDuration);
-
-    return () => globalThis.clearTimeout(timeout);
-  }, []);
+    // setShowBackground(true);
+    if (loaded) {
+      const timeout = globalThis.setTimeout(() => {
+        setOpacity(1);
+      }, transitionDuration);
+    }
+  }, [loaded]);
 
   const category = useMemo(
     () => categories.find((entry) => entry.id === categoryId),
@@ -96,15 +95,13 @@ export default function CategoryPage() {
           {category?.name}
         </h1>
 
-        {!loaded ?
-          <LoaderFullScreen />
-        : scenarios?.length ?
+        {!loaded || scenarios?.length ?
           <div
-            className="transition-opacity"
+            className="transition-opacity opacity-0  h-[261px] md:h-[348px] lg:h-[432px] w-screen"
             style={{ opacity, transitionDuration: `${transitionDuration}ms` }}
           >
             <Carousel>
-              {scenarios.map((scenario) => (
+              {scenarios?.map((scenario) => (
                 <Card.Wrapper key={scenario.id} className="shrink-0">
                   <Card
                     onClick={() => handleScenarioPick(scenario.id)}
