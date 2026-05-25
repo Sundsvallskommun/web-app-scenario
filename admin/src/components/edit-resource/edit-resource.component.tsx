@@ -20,7 +20,7 @@ export const EditResource: React.FC<EditResourceProps> = ({ resource }) => {
   type CreateType = Parameters<NonNullable<Resource<FieldValues>['create']>>[0];
   type UpdateType = Parameters<NonNullable<Resource<FieldValues>['update']>>[1];
   type DataType = CreateType | UpdateType;
-  const { requiredFields } = resources[resource] as Resource<FieldValues, CreateType, UpdateType>;
+  const { requiredFields } = resources[resource] as unknown as Resource<FieldValues, CreateType, UpdateType>;
 
   const { watch } = useFormContext<DataType>();
   const formdata = watch() as DataType;

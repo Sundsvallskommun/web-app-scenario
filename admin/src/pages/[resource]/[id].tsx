@@ -68,7 +68,7 @@ export const ResourcePage: React.FC = () => {
 
   useEffect(() => {
     if (id) {
-      handleGetOne(() => getOne(id)).then((res) => {
+      handleGetOne(() => getOne(id) as unknown as ResourceResponse<FieldValues>).then((res) => {
         reset(res);
         setIsNew(false);
         setLoaded(true);

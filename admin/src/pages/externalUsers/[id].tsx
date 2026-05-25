@@ -61,7 +61,7 @@ export const ExternalUserPage: React.FC = () => {
     formState: { isDirty },
   } = form;
 
-  const id = _id === 'new' ? undefined : parseInt(_id as string, 10);
+  const id = _id === 'new' ? undefined : Number.parseInt(_id as string, 10);
 
   const [loaded, setLoaded] = useState<boolean>(false);
   const [isNew, setIsNew] = useState<boolean>(!id);
@@ -135,7 +135,7 @@ export const ExternalUserPage: React.FC = () => {
         break;
       case false:
         if (id && update) {
-          handleUpdate(() => update(id, payload as UpdateExternalUserDto)).then((res) => {
+          handleUpdate(() => update(id, payload)).then((res) => {
             if (res) {
               reset(normalizeExternalUser(res as ExternalUser));
               refresh();
