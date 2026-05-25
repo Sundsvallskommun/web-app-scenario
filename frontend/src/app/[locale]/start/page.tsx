@@ -123,29 +123,32 @@ export default function Start() {
               const active = hoveredCategoryId === category.id;
               const catLength = categories.length;
               const height =
-                catLength === 2 ? '50%'
-                : catLength === 3 ? '33%'
-                : '25%';
+                catLength === 2 ? '50dvh'
+                : catLength === 3 ? '33dvh'
+                : '25dvh';
               const heightDimmed =
-                catLength === 2 ? '33%'
-                : catLength === 3 ? '25%'
-                : '22%';
+                catLength === 2 ? '33dvh'
+                : catLength === 3 ? '25dvh'
+                : '22dvh';
               const heightActive =
-                catLength === 2 ? '67%'
-                : catLength === 3 ? '50%'
-                : '34%';
+                catLength === 2 ? '67dvh'
+                : catLength === 3 ? '50dvh'
+                : '34dvh';
               return (
                 <div
                   key={category.id}
                   className={cx(
-                    'flex transition-[height] duration-500 ease-out ',
-                    dimmed ?
-                      `min-h-[180px] h-[${heightDimmed}]`
-                    : 'min-h-[200px]',
-                    active ? `h-[${heightActive}]` : `h-[${height}]`
+                    'flex shrink-0 transition-[height] duration-500 ease-out ',
+                    dimmed ? `h-[max(${heightDimmed},180px)]` : '',
+                    active ?
+                      `h-[max(${heightActive},250px)]`
+                    : `h-[max(${height},200px)]`
+  
                   )}
                   onMouseEnter={() => setHoveredCategoryId(category.id)}
                   onMouseLeave={() => setHoveredCategoryId(null)}
+                  onFocus={() => setHoveredCategoryId(category.id)}
+                  onBlur={() => setHoveredCategoryId(null)}
                 >
                   <Link
                     href={category.href}
@@ -164,7 +167,7 @@ export default function Start() {
                       style={{ backgroundImage: `url(${category.imageUrl})` }}
                     />
                     <div className="absolute inset-0 bg-[rgba(0,0,0,0.3)] transition-colors duration-500 group-hover:bg-[rgba(0,0,0,0.22)]" />
-                    <span className="relative z-10 px-24 text-center text-[clamp(2.5rem,5vw,4.5rem)] font-header text-h-1-sm md:text-display-1-sm lg:text-display-1-md xl:text-display-1-lg m-0 text-white">
+                    <span className="relative z-10 text-center font-header text-h1-sm sm:text-display-3-sm md:text-display-3-md lg:text-display-2-lg xl:text-display-1-lg m-0 text-white">
                       {category.name}
                     </span>
                   </Link>
@@ -193,7 +196,7 @@ export default function Start() {
           />
           <div className="absolute inset-0 bg-[rgba(0,0,0,0.22)]" />
           <div className="flex flex-col">
-            <div className="relative z-10 flex h-full items-center justify-center px-24 text-center text-[clamp(2.5rem,5vw,4.5rem)] font-header text-h-1-sm md:text-display-1-sm lg:text-display-1-md xl:text-display-1-lg m-0  text-white">
+            <div className="relative z-10 flex h-full items-center justify-center text-center font-header text-h1-sm sm:text-display-3-sm md:text-display-3-md lg:text-display-2-lg xl:text-display-1-lg m-0 text-white">
               {expandingCategory.name}
             </div>
             <div
