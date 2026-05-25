@@ -14,7 +14,11 @@ import {
   AdminUserApiResponse,
   ApiResponseAzureToken,
   AskResponse,
+  CategoriesApiResponse,
+  CategoryApiResponse,
+  CategoryDeleteApiResponse,
   ConversationRequestDto,
+  CreateCategoryDto,
   CreateExternalUserDto,
   CreateScenarioDto,
   CreateScenarioIntroTextDto,
@@ -25,14 +29,15 @@ import {
   ImageDeleteApiResponse,
   ImagesApiResponse,
   PublicScenarioApiResponse,
+  PublicScenarioIntroTextsApiResponse,
   PublicScenariosApiResponse,
   ScenarioApiResponse,
+  ScenarioDeleteApiResponse,
   ScenarioIntroTextApiResponse,
   ScenarioIntroTextDeleteApiResponse,
   ScenarioIntroTextsApiResponse,
-  ScenarioDeleteApiResponse,
   ScenariosApiResponse,
-  PublicScenarioIntroTextsApiResponse,
+  UpdateCategoryDto,
   UpdateExternalUserDto,
   UpdateImageDto,
   UpdateScenarioDto,
@@ -195,7 +200,9 @@ export class Api<
    * @summary Get scenario intro texts
    * @request GET:/api/admin/scenario-intro-texts
    */
-  adminScenarioIntroTextControllerGetScenarioIntroTexts = (params: RequestParams = {}) =>
+  adminScenarioIntroTextControllerGetScenarioIntroTexts = (
+    params: RequestParams = {},
+  ) =>
     this.request<ScenarioIntroTextsApiResponse, any>({
       path: `/api/admin/scenario-intro-texts`,
       method: "GET",
@@ -273,7 +280,95 @@ export class Api<
       path: `/api/admin/scenario-intro-texts/${id}`,
       method: "DELETE",
       ...params,
-    });  /**
+    });
+  /**
+   * No description
+   *
+   * @tags Admin Category
+   * @name AdminCategoryControllerGetCategories
+   * @summary Get categories
+   * @request GET:/api/admin/categories
+   */
+  adminCategoryControllerGetCategories = (params: RequestParams = {}) =>
+    this.request<CategoriesApiResponse, any>({
+      path: `/api/admin/categories`,
+      method: "GET",
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags Admin Category
+   * @name AdminCategoryControllerCreateCategory
+   * @summary Create category
+   * @request POST:/api/admin/categories
+   */
+  adminCategoryControllerCreateCategory = (
+    data?: CreateCategoryDto,
+    params: RequestParams = {},
+  ) =>
+    this.request<CategoryApiResponse, any>({
+      path: `/api/admin/categories`,
+      method: "POST",
+      body: data,
+      type: ContentType.Json,
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags Admin Category
+   * @name AdminCategoryControllerGetCategory
+   * @summary Get category
+   * @request GET:/api/admin/categories/{id}
+   */
+  adminCategoryControllerGetCategory = (
+    id: number,
+    params: RequestParams = {},
+  ) =>
+    this.request<CategoryApiResponse, any>({
+      path: `/api/admin/categories/${id}`,
+      method: "GET",
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags Admin Category
+   * @name AdminCategoryControllerUpdateCategory
+   * @summary Update category
+   * @request PATCH:/api/admin/categories/{id}
+   */
+  adminCategoryControllerUpdateCategory = (
+    id: number,
+    data?: UpdateCategoryDto,
+    params: RequestParams = {},
+  ) =>
+    this.request<CategoryApiResponse, any>({
+      path: `/api/admin/categories/${id}`,
+      method: "PATCH",
+      body: data,
+      type: ContentType.Json,
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags Admin Category
+   * @name AdminCategoryControllerDeleteCategory
+   * @summary Delete category
+   * @request DELETE:/api/admin/categories/{id}
+   */
+  adminCategoryControllerDeleteCategory = (
+    id: number,
+    params: RequestParams = {},
+  ) =>
+    this.request<CategoryDeleteApiResponse, any>({
+      path: `/api/admin/categories/${id}`,
+      method: "DELETE",
+      ...params,
+    });
+  /**
    * No description
    *
    * @tags Admin Image
@@ -288,92 +383,6 @@ export class Api<
       ...params,
     });
   /**
-   * No description
-   *
-   * @tags Admin Scenario Intro Text
-   * @name AdminScenarioIntroTextControllerGetScenarioIntroTexts
-   * @summary Get scenario intro texts
-   * @request GET:/api/admin/scenario-intro-texts
-   */
-  adminScenarioIntroTextControllerGetScenarioIntroTexts = (params: RequestParams = {}) =>
-    this.request<ScenarioIntroTextsApiResponse, any>({
-      path: `/api/admin/scenario-intro-texts`,
-      method: "GET",
-      ...params,
-    });
-  /**
-   * No description
-   *
-   * @tags Admin Scenario Intro Text
-   * @name AdminScenarioIntroTextControllerCreateScenarioIntroText
-   * @summary Create scenario intro text
-   * @request POST:/api/admin/scenario-intro-texts
-   */
-  adminScenarioIntroTextControllerCreateScenarioIntroText = (
-    data?: CreateScenarioIntroTextDto,
-    params: RequestParams = {},
-  ) =>
-    this.request<ScenarioIntroTextApiResponse, any>({
-      path: `/api/admin/scenario-intro-texts`,
-      method: "POST",
-      body: data,
-      type: ContentType.Json,
-      ...params,
-    });
-  /**
-   * No description
-   *
-   * @tags Admin Scenario Intro Text
-   * @name AdminScenarioIntroTextControllerGetScenarioIntroText
-   * @summary Get scenario intro text
-   * @request GET:/api/admin/scenario-intro-texts/{id}
-   */
-  adminScenarioIntroTextControllerGetScenarioIntroText = (
-    id: number,
-    params: RequestParams = {},
-  ) =>
-    this.request<ScenarioIntroTextApiResponse, any>({
-      path: `/api/admin/scenario-intro-texts/${id}`,
-      method: "GET",
-      ...params,
-    });
-  /**
-   * No description
-   *
-   * @tags Admin Scenario Intro Text
-   * @name AdminScenarioIntroTextControllerUpdateScenarioIntroText
-   * @summary Update scenario intro text
-   * @request PATCH:/api/admin/scenario-intro-texts/{id}
-   */
-  adminScenarioIntroTextControllerUpdateScenarioIntroText = (
-    id: number,
-    data?: UpdateScenarioIntroTextDto,
-    params: RequestParams = {},
-  ) =>
-    this.request<ScenarioIntroTextApiResponse, any>({
-      path: `/api/admin/scenario-intro-texts/${id}`,
-      method: "PATCH",
-      body: data,
-      type: ContentType.Json,
-      ...params,
-    });
-  /**
-   * No description
-   *
-   * @tags Admin Scenario Intro Text
-   * @name AdminScenarioIntroTextControllerDeleteScenarioIntroText
-   * @summary Delete scenario intro text
-   * @request DELETE:/api/admin/scenario-intro-texts/{id}
-   */
-  adminScenarioIntroTextControllerDeleteScenarioIntroText = (
-    id: number,
-    params: RequestParams = {},
-  ) =>
-    this.request<ScenarioIntroTextDeleteApiResponse, any>({
-      path: `/api/admin/scenario-intro-texts/${id}`,
-      method: "DELETE",
-      ...params,
-    });  /**
    * No description
    *
    * @tags Admin Image
@@ -398,92 +407,6 @@ export class Api<
   /**
    * No description
    *
-   * @tags Admin Scenario Intro Text
-   * @name AdminScenarioIntroTextControllerGetScenarioIntroTexts
-   * @summary Get scenario intro texts
-   * @request GET:/api/admin/scenario-intro-texts
-   */
-  adminScenarioIntroTextControllerGetScenarioIntroTexts = (params: RequestParams = {}) =>
-    this.request<ScenarioIntroTextsApiResponse, any>({
-      path: `/api/admin/scenario-intro-texts`,
-      method: "GET",
-      ...params,
-    });
-  /**
-   * No description
-   *
-   * @tags Admin Scenario Intro Text
-   * @name AdminScenarioIntroTextControllerCreateScenarioIntroText
-   * @summary Create scenario intro text
-   * @request POST:/api/admin/scenario-intro-texts
-   */
-  adminScenarioIntroTextControllerCreateScenarioIntroText = (
-    data?: CreateScenarioIntroTextDto,
-    params: RequestParams = {},
-  ) =>
-    this.request<ScenarioIntroTextApiResponse, any>({
-      path: `/api/admin/scenario-intro-texts`,
-      method: "POST",
-      body: data,
-      type: ContentType.Json,
-      ...params,
-    });
-  /**
-   * No description
-   *
-   * @tags Admin Scenario Intro Text
-   * @name AdminScenarioIntroTextControllerGetScenarioIntroText
-   * @summary Get scenario intro text
-   * @request GET:/api/admin/scenario-intro-texts/{id}
-   */
-  adminScenarioIntroTextControllerGetScenarioIntroText = (
-    id: number,
-    params: RequestParams = {},
-  ) =>
-    this.request<ScenarioIntroTextApiResponse, any>({
-      path: `/api/admin/scenario-intro-texts/${id}`,
-      method: "GET",
-      ...params,
-    });
-  /**
-   * No description
-   *
-   * @tags Admin Scenario Intro Text
-   * @name AdminScenarioIntroTextControllerUpdateScenarioIntroText
-   * @summary Update scenario intro text
-   * @request PATCH:/api/admin/scenario-intro-texts/{id}
-   */
-  adminScenarioIntroTextControllerUpdateScenarioIntroText = (
-    id: number,
-    data?: UpdateScenarioIntroTextDto,
-    params: RequestParams = {},
-  ) =>
-    this.request<ScenarioIntroTextApiResponse, any>({
-      path: `/api/admin/scenario-intro-texts/${id}`,
-      method: "PATCH",
-      body: data,
-      type: ContentType.Json,
-      ...params,
-    });
-  /**
-   * No description
-   *
-   * @tags Admin Scenario Intro Text
-   * @name AdminScenarioIntroTextControllerDeleteScenarioIntroText
-   * @summary Delete scenario intro text
-   * @request DELETE:/api/admin/scenario-intro-texts/{id}
-   */
-  adminScenarioIntroTextControllerDeleteScenarioIntroText = (
-    id: number,
-    params: RequestParams = {},
-  ) =>
-    this.request<ScenarioIntroTextDeleteApiResponse, any>({
-      path: `/api/admin/scenario-intro-texts/${id}`,
-      method: "DELETE",
-      ...params,
-    });  /**
-   * No description
-   *
    * @tags Admin Image
    * @name AdminImageControllerGetImage
    * @summary Get image
@@ -496,92 +419,6 @@ export class Api<
       ...params,
     });
   /**
-   * No description
-   *
-   * @tags Admin Scenario Intro Text
-   * @name AdminScenarioIntroTextControllerGetScenarioIntroTexts
-   * @summary Get scenario intro texts
-   * @request GET:/api/admin/scenario-intro-texts
-   */
-  adminScenarioIntroTextControllerGetScenarioIntroTexts = (params: RequestParams = {}) =>
-    this.request<ScenarioIntroTextsApiResponse, any>({
-      path: `/api/admin/scenario-intro-texts`,
-      method: "GET",
-      ...params,
-    });
-  /**
-   * No description
-   *
-   * @tags Admin Scenario Intro Text
-   * @name AdminScenarioIntroTextControllerCreateScenarioIntroText
-   * @summary Create scenario intro text
-   * @request POST:/api/admin/scenario-intro-texts
-   */
-  adminScenarioIntroTextControllerCreateScenarioIntroText = (
-    data?: CreateScenarioIntroTextDto,
-    params: RequestParams = {},
-  ) =>
-    this.request<ScenarioIntroTextApiResponse, any>({
-      path: `/api/admin/scenario-intro-texts`,
-      method: "POST",
-      body: data,
-      type: ContentType.Json,
-      ...params,
-    });
-  /**
-   * No description
-   *
-   * @tags Admin Scenario Intro Text
-   * @name AdminScenarioIntroTextControllerGetScenarioIntroText
-   * @summary Get scenario intro text
-   * @request GET:/api/admin/scenario-intro-texts/{id}
-   */
-  adminScenarioIntroTextControllerGetScenarioIntroText = (
-    id: number,
-    params: RequestParams = {},
-  ) =>
-    this.request<ScenarioIntroTextApiResponse, any>({
-      path: `/api/admin/scenario-intro-texts/${id}`,
-      method: "GET",
-      ...params,
-    });
-  /**
-   * No description
-   *
-   * @tags Admin Scenario Intro Text
-   * @name AdminScenarioIntroTextControllerUpdateScenarioIntroText
-   * @summary Update scenario intro text
-   * @request PATCH:/api/admin/scenario-intro-texts/{id}
-   */
-  adminScenarioIntroTextControllerUpdateScenarioIntroText = (
-    id: number,
-    data?: UpdateScenarioIntroTextDto,
-    params: RequestParams = {},
-  ) =>
-    this.request<ScenarioIntroTextApiResponse, any>({
-      path: `/api/admin/scenario-intro-texts/${id}`,
-      method: "PATCH",
-      body: data,
-      type: ContentType.Json,
-      ...params,
-    });
-  /**
-   * No description
-   *
-   * @tags Admin Scenario Intro Text
-   * @name AdminScenarioIntroTextControllerDeleteScenarioIntroText
-   * @summary Delete scenario intro text
-   * @request DELETE:/api/admin/scenario-intro-texts/{id}
-   */
-  adminScenarioIntroTextControllerDeleteScenarioIntroText = (
-    id: number,
-    params: RequestParams = {},
-  ) =>
-    this.request<ScenarioIntroTextDeleteApiResponse, any>({
-      path: `/api/admin/scenario-intro-texts/${id}`,
-      method: "DELETE",
-      ...params,
-    });  /**
    * No description
    *
    * @tags Admin Image
@@ -602,92 +439,6 @@ export class Api<
       ...params,
     });
   /**
-   * No description
-   *
-   * @tags Admin Scenario Intro Text
-   * @name AdminScenarioIntroTextControllerGetScenarioIntroTexts
-   * @summary Get scenario intro texts
-   * @request GET:/api/admin/scenario-intro-texts
-   */
-  adminScenarioIntroTextControllerGetScenarioIntroTexts = (params: RequestParams = {}) =>
-    this.request<ScenarioIntroTextsApiResponse, any>({
-      path: `/api/admin/scenario-intro-texts`,
-      method: "GET",
-      ...params,
-    });
-  /**
-   * No description
-   *
-   * @tags Admin Scenario Intro Text
-   * @name AdminScenarioIntroTextControllerCreateScenarioIntroText
-   * @summary Create scenario intro text
-   * @request POST:/api/admin/scenario-intro-texts
-   */
-  adminScenarioIntroTextControllerCreateScenarioIntroText = (
-    data?: CreateScenarioIntroTextDto,
-    params: RequestParams = {},
-  ) =>
-    this.request<ScenarioIntroTextApiResponse, any>({
-      path: `/api/admin/scenario-intro-texts`,
-      method: "POST",
-      body: data,
-      type: ContentType.Json,
-      ...params,
-    });
-  /**
-   * No description
-   *
-   * @tags Admin Scenario Intro Text
-   * @name AdminScenarioIntroTextControllerGetScenarioIntroText
-   * @summary Get scenario intro text
-   * @request GET:/api/admin/scenario-intro-texts/{id}
-   */
-  adminScenarioIntroTextControllerGetScenarioIntroText = (
-    id: number,
-    params: RequestParams = {},
-  ) =>
-    this.request<ScenarioIntroTextApiResponse, any>({
-      path: `/api/admin/scenario-intro-texts/${id}`,
-      method: "GET",
-      ...params,
-    });
-  /**
-   * No description
-   *
-   * @tags Admin Scenario Intro Text
-   * @name AdminScenarioIntroTextControllerUpdateScenarioIntroText
-   * @summary Update scenario intro text
-   * @request PATCH:/api/admin/scenario-intro-texts/{id}
-   */
-  adminScenarioIntroTextControllerUpdateScenarioIntroText = (
-    id: number,
-    data?: UpdateScenarioIntroTextDto,
-    params: RequestParams = {},
-  ) =>
-    this.request<ScenarioIntroTextApiResponse, any>({
-      path: `/api/admin/scenario-intro-texts/${id}`,
-      method: "PATCH",
-      body: data,
-      type: ContentType.Json,
-      ...params,
-    });
-  /**
-   * No description
-   *
-   * @tags Admin Scenario Intro Text
-   * @name AdminScenarioIntroTextControllerDeleteScenarioIntroText
-   * @summary Delete scenario intro text
-   * @request DELETE:/api/admin/scenario-intro-texts/{id}
-   */
-  adminScenarioIntroTextControllerDeleteScenarioIntroText = (
-    id: number,
-    params: RequestParams = {},
-  ) =>
-    this.request<ScenarioIntroTextDeleteApiResponse, any>({
-      path: `/api/admin/scenario-intro-texts/${id}`,
-      method: "DELETE",
-      ...params,
-    });  /**
    * No description
    *
    * @tags Admin Image
@@ -737,12 +488,15 @@ export class Api<
    * @summary Get scenario intro texts
    * @request GET:/api/scenario-intro-texts
    */
-  scenarioIntroTextControllerGetScenarioIntroTexts = (params: RequestParams = {}) =>
+  scenarioIntroTextControllerGetScenarioIntroTexts = (
+    params: RequestParams = {},
+  ) =>
     this.request<PublicScenarioIntroTextsApiResponse, any>({
       path: `/api/scenario-intro-texts`,
       method: "GET",
       ...params,
-    });  /**
+    });
+  /**
    * @description Provide either an assistant_id or a group_chat_id to start a new conversation with an assistant or group chat. Provide session_id to continue a conversation.
    *
    * @tags Conversation
@@ -863,4 +617,3 @@ export class Api<
       ...params,
     });
 }
-

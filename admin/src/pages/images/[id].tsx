@@ -3,7 +3,7 @@ import { EditorToolbar } from '@components/editor-toolbar/editor-toolbar';
 import LoaderFullScreen from '@components/loader/loader-fullscreen';
 import { defaultInformationFields } from '@config/defaults';
 import resources from '@config/resources';
-import { Image, Scenario, UpdateImageDto } from '@data-contracts/backend/data-contracts';
+import { CategorySummary, Image, ScenarioSummary, UpdateImageDto } from '@data-contracts/backend/data-contracts';
 import EditLayout from '@layouts/edit-layout/edit-layout.component';
 import { List } from '@sk-web-gui/react';
 import { getFormattedFields } from '@utils/formatted-field';
@@ -152,11 +152,29 @@ export const ImagePage: React.FC = () => {
                 {t('images:used_by')}
               </h3>
               <List aria-labelledby="resourcelist" data-cy="image-scenario-list">
-                {formdata.scenarios.map((scenario: Scenario) => (
+                {formdata.scenarios.map((scenario: ScenarioSummary) => (
                   <List.Item key={`image-scenario-${scenario.id}`}>
                     <List.Text>
                       <Link href={`/scenarios/${scenario.id}`}>
                         {scenario.id} - {scenario.name}
+                      </Link>
+                    </List.Text>
+                  </List.Item>
+                ))}
+              </List>
+            </div>
+          )}
+          {formdata?.categories?.length > 0 && (
+            <div className="flex flex-col gap-32 grow mb-32">
+              <h3 className="text-h4-sm md:text-h4-md xl:text-h4-lg" id="categoryresourcelist">
+                {t('images:used_by_categories')}
+              </h3>
+              <List aria-labelledby="categoryresourcelist" data-cy="image-category-list">
+                {formdata.categories.map((category: CategorySummary) => (
+                  <List.Item key={`image-category-${category.id}`}>
+                    <List.Text>
+                      <Link href={`/categories/${category.id}`}>
+                        {category.id} - {category.name}
                       </Link>
                     </List.Text>
                   </List.Item>

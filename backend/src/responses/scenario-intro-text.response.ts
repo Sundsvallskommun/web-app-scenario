@@ -14,7 +14,7 @@ export class PublicScenarioIntroText implements Pick<_ScenarioIntroText, 'id' | 
   sortOrder: number;
 }
 
-export class ScenarioIntroTextsApiResponse implements ApiResponse<PublicScenarioIntroText[]> {
+export class PublicScenarioIntroTextsApiResponse implements ApiResponse<PublicScenarioIntroText[]> {
   @ValidateNested({ each: true })
   @Type(() => PublicScenarioIntroText)
   data: PublicScenarioIntroText[];

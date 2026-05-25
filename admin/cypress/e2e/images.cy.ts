@@ -78,7 +78,7 @@ describe('Images', () => {
     cy.get('[data-cy="resource-table"]').eq(0).find('tbody').children().should('have.length', 4);
   });
 
-  it('edits an image', () => {
+  it('shows linked scenarios and categories for an image', () => {
     cy.intercept('GET', '**/api/admin/images/1', oneImage);
     cy.intercept('GET', '**/api/admin/scenarios/1', oneScenario);
     cy.intercept('PATCH', '**/api/admin/images/1', {
@@ -103,8 +103,31 @@ describe('Images', () => {
     cy.get('[data-cy="edit-toolbar-save"]').click();
     cy.get('[data-cy="edit-toolbar-save"]').should('be.disabled');
     cy.get('[data-cy="image-scenario-list"]').children().should('have.length', 2);
+    cy.get('[data-cy="image-category-list"]').children().should('have.length', 1);
+    cy.get('[data-cy="image-category-list"]').children().eq(0).contains('Category 1');
     cy.get('[data-cy="image-scenario-list"]').children().eq(0).find('a').click();
     cy.get('h1').should('have.text', 'Redigera scenario');
     cy.get('[data-cy="edit-name"]').should('have.value', 'Scenario 1');
+  });
+
+  it('keeps the image when delete is blocked by usage', () => {
+    cy.intercept('GET', '**/api/admin/images/1', oneImage);
+    cy.intercept('DELETE', '**/api/admin/images/1', {
+      statusCode: 409,
+      body: {
+        message: 'Image is in use',
+        data: false,
+      },
+    }).as('deleteImage');
+
+    cy.visit('/images/1');
+    cy.get('h1').should('have.text', 'Redigera bild');
+    cy.get('[data-cy="edit-toolbar-delete"]').click();
+    cy.get('article.sk-modal-dialog').within(() => {
+      cy.contains('button', 'Ta bort').click();
+    });
+    cy.wait('@deleteImage');
+    cy.url().should('include', '/images/1');
+    cy.get('h1').should('have.text', 'Redigera bild');
   });
 });

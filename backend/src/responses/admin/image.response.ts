@@ -2,7 +2,8 @@ import ApiResponse from '@/interfaces/api-service.interface';
 import { Image as _Image } from '@prisma/client';
 import { Type } from 'class-transformer';
 import { IsBoolean, IsDateString, IsInt, IsOptional, IsString, ValidateNested } from 'class-validator';
-import { Scenario } from './scenario.response';
+import { CategorySummary } from './category.response';
+import { ScenarioSummary } from './scenario.response';
 
 export class Image implements _Image {
   @IsString()
@@ -15,8 +16,12 @@ export class Image implements _Image {
   id: number;
   @IsOptional()
   @ValidateNested({ each: true })
-  @Type(() => Scenario)
-  scenarios?: Scenario[];
+  @Type(() => ScenarioSummary)
+  scenarios?: ScenarioSummary[];
+  @IsOptional()
+  @ValidateNested({ each: true })
+  @Type(() => CategorySummary)
+  categories?: CategorySummary[];
   @IsDateString()
   createdAt: Date;
   @IsDateString()

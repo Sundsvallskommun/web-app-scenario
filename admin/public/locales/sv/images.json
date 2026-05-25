@@ -17,5 +17,6 @@
   },
   "preview": "Granska",
   "save_and_select": "Spara och välj",
-  "used_by": "Används av"
+  "used_by": "Används av scenarier",
+  "used_by_categories": "Används av kategorier"
 }

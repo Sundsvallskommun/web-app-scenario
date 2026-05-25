@@ -1,10 +1,12 @@
 import { BackendImage } from '@components/backend-image/backend-image.component';
+import resources from '@config/resources';
 import { EditResourceTextarea } from '@components/edit-resource/edit-resource-textarea.component';
-import { Image } from '@data-contracts/backend/data-contracts';
+import { Image, Category } from '@data-contracts/backend/data-contracts';
 import { Resource } from '@interfaces/resource';
-import { Button, Icon } from '@sk-web-gui/react';
+import { Button, FormControl, FormLabel, Icon, Select } from '@sk-web-gui/react';
+import { useCrudHelper } from '@utils/use-crud-helpers';
 import { X } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FieldValues, useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { capitalize } from 'underscore.string';
@@ -18,7 +20,9 @@ interface EditScenarioProps {
 export const EditScenario: React.FC<EditScenarioProps> = () => {
   const [showAddImage, setShowAddImage] = useState<boolean>(false);
   const [pickedImage, setPickedImage] = useState<Image | null>(null);
+  const [categories, setCategories] = useState<Category[]>([]);
   const { t } = useTranslation();
+  const { handleGetMany } = useCrudHelper('categories');
   const resource = 'scenarios';
 
   type CreateType = Parameters<NonNullable<Resource<FieldValues>['create']>>[0];
@@ -27,6 +31,15 @@ export const EditScenario: React.FC<EditScenarioProps> = () => {
 
   const { watch, setValue } = useFormContext<DataType>();
   const formdata = watch();
+
+  useEffect(() => {
+    handleGetMany(() => resources.categories.getMany()).then((res) => {
+      if (res) {
+        setCategories(res);
+      }
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleCloseAddImage = (image?: Image) => {
     if (image) {
@@ -64,6 +77,24 @@ export const EditScenario: React.FC<EditScenarioProps> = () => {
           required
           label={capitalize(t(`${resource}:properties.assistantId`))}
         />
+        <FormControl>
+          <FormLabel>{capitalize(t(`${resource}:properties.category`))}</FormLabel>
+          <Select
+            data-cy="edit-categoryId"
+            value={typeof formdata?.categoryId === 'number' ? formdata.categoryId : ''}
+            onChange={(event) => {
+              const value = event.target.value;
+              setValue('categoryId', value ? Number(value) : null, { shouldDirty: true });
+            }}
+          >
+            <Select.Option value="">{capitalize(t(`${resource}:category_none`))}</Select.Option>
+            {categories.map((category) => (
+              <Select.Option key={category.id} value={category.id}>
+                {category.name}
+              </Select.Option>
+            ))}
+          </Select>
+        </FormControl>
         <EditResourceInput
           data-cy="edit-scenarios-published"
           property="published"
