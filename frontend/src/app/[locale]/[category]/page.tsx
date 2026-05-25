@@ -5,7 +5,14 @@ import { PickScenarioModal } from '@components/pick-scenario-modal/pick-scenario
 import { SettingsMenu } from '@components/settings-menu/settings-menu.component';
 import DefaultLayout from '@layouts/default-layout/default-layout.component';
 import { Card } from '@sk-web-gui/next';
-import { Button, cx, Icon, Spinner, useThemeQueries } from '@sk-web-gui/react';
+import {
+  Button,
+  cx,
+  Icon,
+  Spinner,
+  Tooltip,
+  useThemeQueries,
+} from '@sk-web-gui/react';
 import { useCategoryStore } from '@services/category-service/category.service';
 import { useScenarios } from '@services/scenario-service/use-scenario.hook';
 import { apiURL } from '@utils/api-url';
@@ -27,9 +34,10 @@ export default function CategoryPage() {
   const { isMaxMediumDevice, isMaxLargeDevice } = useThemeQueries();
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [scenarioId, setScenarioId] = useState<number>(0);
+  const [showBackTooltip, setShowBackTooltip] = useState<boolean>(false);
+
   const router = useRouter();
   useEffect(() => {
-    // setShowBackground(true);
     if (loaded) {
       const timeout = globalThis.setTimeout(() => {
         setOpacity(1);
@@ -73,20 +81,35 @@ export default function CategoryPage() {
       fadeIn={false}
     >
       {categories.length > 1 && (
-        <Button
-          rounded
-          size="sm"
-          iconButton
-          className="absolute m-24 top-0 left-12"
-          onClick={() => router.push('/start')}
-        >
-          <Icon icon={<X />} />
-        </Button>
+        <div className="absolute m-24 top-0 left-12">
+          <Button
+            rounded
+            size="sm"
+            iconButton
+            onClick={() => router.push('/start')}
+            onMouseEnter={() => setShowBackTooltip(true)}
+            onMouseLeave={() => setShowBackTooltip(false)}
+            onFocus={() => setShowBackTooltip(true)}
+            onBlur={() => setShowBackTooltip(false)}
+            aria-label={t('common:back')}
+          >
+            <Icon icon={<X />} />
+          </Button>
+          {showBackTooltip && (
+            <Tooltip
+              position="right"
+              className="absolute -top-4"
+              aria-hidden="true"
+            >
+              {t('common:back')}
+            </Tooltip>
+          )}
+        </div>
       )}
       <SettingsMenu />
       <div className="flex flex-col w-full gap-24 text-center justify-center items-center ">
         <h1
-          className="text-h-1-sm md:text-display-1-sm lg:text-display-1-md xl:text-display-1-lg m-0 transition-opacity"
+          className="text-h1-sm sm:text-display-3-sm md:text-display-3-md lg:text-display-2-lg xl:text-display-1-lg m-0 transition-opacity"
           style={{
             opacity: headerOpacity,
             transitionDuration: `${transitionDuration}ms`,

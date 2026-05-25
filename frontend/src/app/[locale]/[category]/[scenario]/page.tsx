@@ -48,7 +48,7 @@ export default function Scenario() {
 
   const handleRestart = () => {
     newSession();
-    router.push('/start');
+    router.push(`/${categoryId}`);
   };
 
   useEffect(() => {
@@ -57,7 +57,7 @@ export default function Scenario() {
 
   useEffect(() => {
     if (!loading && loaded && !data) {
-      router.replace('/start');
+      router.replace(`/${categoryId}`);
     }
   }, [data, loaded, loading, router]);
 

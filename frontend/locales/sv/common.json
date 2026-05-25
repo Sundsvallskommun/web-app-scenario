@@ -24,5 +24,6 @@
   "continue_on_web": "Fortsätt i webbläsare",
   "skip_intro": "Hoppa över intro",
   "login": "logga in",
-  "logout": "logga ut"
+  "logout": "logga ut",
+  "back": "Tillbaks"
 }
