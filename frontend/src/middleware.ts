@@ -6,12 +6,14 @@ import { envs } from '../middleware-envs';
 
 export async function middleware(req: NextRequest) {
   const { pathname, origin } = req.nextUrl;
+  const isTestMode = process.env.TEST === 'true';
 
   if (pathname === '/admin') {
     return NextResponse.redirect(new URL(envs.adminUrl));
   }
 
-  if (isProtectedRoute(pathname)) {
+  // Cypress tests stub auth in the browser; skip the server-side auth probe there.
+  if (!isTestMode && isProtectedRoute(pathname)) {
     const cookieName = 'connect.sid';
     const token = req.cookies.get(cookieName)?.value || '';
 

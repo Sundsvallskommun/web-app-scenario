@@ -6,6 +6,7 @@ import DefaultLayout from '@layouts/default-layout/default-layout.component';
 import { useCategoryStore } from '@services/category-service/category.service';
 import { cx } from '@sk-web-gui/react';
 import { apiURL } from '@utils/api-url';
+import { useLocalStorage } from '@utils/use-localstorage.hook';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { MouseEvent, useEffect, useMemo, useState } from 'react';
@@ -173,7 +174,7 @@ export default function Start() {
                   <Link
                     href={category.href}
                     className={cx(
-                      'group relative flex w-full items-center justify-center overflow-hidden text-center outline-none transition-[transform,filter] duration-500 ease-out focus-visible:z-20 focus-visible:ring-4 focus-visible:ring-white/90 focus-visible:ring-offset-0',
+                      'group rounded-0 relative flex w-full items-center justify-center overflow-hidden text-center outline-none transition-[transform,filter] duration-500 ease-out focus-visible:z-20 focus-visible:ring-4 focus-visible:ring-white/90 focus-visible:ring-offset-0',
                       {
                         ['brightness-75']: dimmed,
                         ['z-10']: active,
@@ -190,7 +191,11 @@ export default function Start() {
                       className="absolute inset-0 bg-cover bg-center transition-transform duration-500 ease-out"
                       style={{ backgroundImage: `url(${category.imageUrl})` }}
                     />
-                    <div className="absolute inset-0 bg-[rgba(0,0,0,0.3)] transition-colors duration-500 group-hover:bg-[rgba(0,0,0,0.22)]" />
+                    <div
+                      className={cx(
+                        'absolute inset-0  transition-colors duration-500 group-hover:bg-[rgba(0,0,0,0.22)]'
+                      )}
+                    />
                     <span className="relative z-10 text-center font-header text-h1-sm sm:text-display-3-sm md:text-display-3-md lg:text-display-2-lg xl:text-display-1-lg m-0 text-white">
                       {category.name}
                     </span>
