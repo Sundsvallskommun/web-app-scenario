@@ -3,7 +3,7 @@ import { IsArray, IsInt, IsOptional, IsString } from 'class-validator';
 
 export class CreateCategoryDto {
   @IsString()
-  name: string;
+  name!: string;
 
   @IsInt()
   @IsNullable()

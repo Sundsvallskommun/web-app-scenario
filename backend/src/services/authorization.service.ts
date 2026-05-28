@@ -16,44 +16,11 @@ enum RoleOrderEnum {
   'app_admin',
 }
 
-const roles = new Map<InternalRole, Partial<Permissions>>([
-  [
-    'app_admin',
-    {
-      canEditSystemMessages: true,
-    },
-  ],
-  ['app_read', {}],
-]);
-
 type RoleADMapping = {
   [ADRole: string]: InternalRole;
 };
 const roleADMapping: RoleADMapping = {
   sg_x_scenarioverktyg: 'app_read',
-};
-
-/**
- *
- * @param groups Array of groups/roles
- * @param internalGroups Whether to use internal groups or external group-mappings
- * @returns collected permissions for all matching role groups
- */
-export const getPermissions = (groups: InternalRole[] | string[], internalGroups = false): Permissions => {
-  const permissions: Permissions = defaultPermissions();
-  groups.forEach(group => {
-    const groupLower = group.toLowerCase();
-    const role = internalGroups ? (groupLower as InternalRole) : (roleADMapping[groupLower] as InternalRole);
-    if (roles.has(role)) {
-      const groupPermissions = roles.get(role);
-      Object.keys(groupPermissions).forEach(permission => {
-        if (groupPermissions[permission] === true) {
-          permissions[permission] = true;
-        }
-      });
-    }
-  });
-  return permissions;
 };
 
 /**

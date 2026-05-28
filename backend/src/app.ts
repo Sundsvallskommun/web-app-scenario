@@ -121,8 +121,7 @@ const samlStrategy = new Strategy(
       });
     }
 
-    const groupList: string[] =
-      groups !== undefined ? groups.split(',').map((group: string) => group.toLowerCase().trim()) : [];
+    const groupList: string[] = groups?.split(',').map((group: string) => group.toLowerCase().trim()) ?? [];
     const savedGroups = (await prisma.categoryAdGroup.findMany()).map(group => group.value?.toLowerCase().trim());
     const authenticatedGroups = AD_GROUPS?.split(',').map(group => group.toLowerCase().trim()) ?? [];
     const authenticated = groupList?.some(group => [...authenticatedGroups, ...savedGroups].includes(group));

@@ -8,7 +8,6 @@ config({ path: `.env.${process.env.NODE_ENV || 'development'}.local` });
 export const CREDENTIALS = process.env.CREDENTIALS === 'true';
 export const SWAGGER_ENABLED = process.env.SWAGGER_ENABLED === 'true';
 export const SESSION_MEMORY = process.env.SESSION_MEMORY === 'true';
-export const SAML_ACCEPTED_CLOCK_SKEW_MS = Number(process.env.SAML_ACCEPTED_CLOCK_SKEW_MS ?? '300000');
 export const AD_ADMINGROUP = process.env.AD_ADMINGROUP ?? '';
 export const SAML_LOGOUT_CALLBACK_URL = process.env.SAML_LOGOUT_CALLBACK_URL ?? '';
 

@@ -4,22 +4,15 @@ import { Carousel } from '@components/carousel/carousel.component';
 import { PickScenarioModal } from '@components/pick-scenario-modal/pick-scenario-modal.component';
 import { SettingsMenu } from '@components/settings-menu/settings-menu.component';
 import DefaultLayout from '@layouts/default-layout/default-layout.component';
-import { Card } from '@sk-web-gui/next';
-import {
-  Button,
-  cx,
-  Icon,
-  Spinner,
-  Tooltip,
-  useThemeQueries,
-} from '@sk-web-gui/react';
 import { useCategoryStore } from '@services/category-service/category.service';
 import { useScenarios } from '@services/scenario-service/use-scenario.hook';
+import { Card } from '@sk-web-gui/next';
+import { Button, cx, Icon, Tooltip, useThemeQueries } from '@sk-web-gui/react';
 import { apiURL } from '@utils/api-url';
+import { X } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { X } from 'lucide-react';
 
 export default function CategoryPage() {
   const [opacity, setOpacity] = useState<number>(0);
@@ -39,7 +32,7 @@ export default function CategoryPage() {
   const router = useRouter();
   useEffect(() => {
     if (loaded) {
-      const timeout = globalThis.setTimeout(() => {
+      globalThis.setTimeout(() => {
         setOpacity(1);
       }, transitionDuration);
     }

@@ -7,32 +7,33 @@ import { PublicImage } from './image.response';
 
 export class PublicScenario implements Partial<_Scenario> {
   @IsInt()
-  id: number;
+  id!: number;
   @IsString()
-  name: string;
+  name!: string;
   @IsString()
   @IsNullable()
   @IsOptional()
-  description: string | null;
+  description!: string | null;
   @IsString()
-  assistantId: string;
+  assistantId!: string;
   @IsOptional()
   @ValidateNested()
   @Type(() => PublicImage)
-  image?: PublicImage;
+  @IsNullable()
+  image?: PublicImage | null;
 }
 
 export class PublicScenariosApiResponse implements ApiResponse<PublicScenario[]> {
   @ValidateNested({ each: true })
   @Type(() => PublicScenario)
-  data: PublicScenario[];
+  data!: PublicScenario[];
   @IsString()
-  message: string;
+  message!: string;
 }
 export class PublicScenarioApiResponse implements ApiResponse<PublicScenario> {
   @ValidateNested()
   @Type(() => PublicScenario)
-  data: PublicScenario;
+  data!: PublicScenario;
   @IsString()
-  message: string;
+  message!: string;
 }

@@ -6,7 +6,7 @@ export class CreateScenarioDto implements Partial<
   Pick<Scenario, 'name' | 'description' | 'imageId' | 'assistantId' | 'categoryId'>
 > {
   @IsString()
-  name: string;
+  name!: string;
   @IsString()
   assistantId?: string;
   @IsString()

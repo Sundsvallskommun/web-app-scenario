@@ -28,16 +28,24 @@ export const generateMetadata = async ({ params }: LocalizationLayoutProps) => {
   const { t } = await initLocalization(locale, namespaces);
   const path = (await headers()).get('x-path');
   const normalizedPath = path?.replace(/^\/sv(?=\/|$)/, '') ?? null;
-  const metadataPath = normalizedPath && /^\/\d+(?:\/\d+)?$/.test(normalizedPath) ? '/start' : path;
+  const metadataPath =
+    normalizedPath && /^\/\d+(?:\/\d+)?$/.test(normalizedPath) ?
+      '/start'
+    : path;
 
   const pathName =
-    !metadataPath ? null : (
+    metadataPath ?
       metadataPath
         .replace(/^\/?/, '')
         .split('/')
-        .map((s) => `${s.substring(0, 1).toUpperCase()}${s.substring(1)}`.replace('-', ' '))
+        .map((s) =>
+          `${s.substring(0, 1).toUpperCase()}${s.substring(1)}`.replace(
+            '-',
+            ' '
+          )
+        )
         .join(', ')
-    );
+    : null;
 
   const getTitle = () => {
     if (metadataPath) {
@@ -46,7 +54,10 @@ export const generateMetadata = async ({ params }: LocalizationLayoutProps) => {
     return t('common:app_name');
   };
 
-  const description = metadataPath ? t(`paths:${metadataPath}.description`, { defaultValue: '' }) : '';
+  const description =
+    metadataPath ?
+      t(`paths:${metadataPath}.description`, { defaultValue: '' })
+    : '';
 
   return {
     title: getTitle(),

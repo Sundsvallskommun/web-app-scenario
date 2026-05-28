@@ -1,4 +1,4 @@
-import { APIS, ENEO_API_KEY } from '@/config';
+import { ENEO_API_KEY } from '@/config';
 import {
   AskResponse as AskResponseInterface,
   ConversationRequest,
@@ -11,13 +11,13 @@ import { Response } from 'express';
 import { Body, Controller, HttpError, Post, Res } from 'routing-controllers';
 import { OpenAPI, ResponseSchema } from 'routing-controllers-openapi';
 import { Stream } from 'node:stream';
+import { getApiBase } from '@/config/api-config';
 
 @Controller()
 export class ConversationController {
   private readonly apiService = new ApiService();
-  private readonly api = APIS.find(api => api.name === 'eneo-sundsvall');
-  private readonly basePath = `${this.api.name}/${this.api.version}`;
-  private readonly apikey = ENEO_API_KEY.replaceAll(/[\r\n]/g, '').trim();
+  private readonly basePath = getApiBase('eneo-sundsvall');
+  private readonly apikey = ENEO_API_KEY?.replaceAll(/[\r\n]/g, '').trim();
 
   @Post('/conversations')
   @OpenAPI({
@@ -63,7 +63,7 @@ export class ConversationController {
         });
         return res.data;
       }
-    } catch (e) {
+    } catch (e: any) {
       logger.error('Error sending question to conversation.', e);
       throw new HttpError(e?.httpCode ?? 500, e?.message ?? 'Error sending question to conversation.');
     }

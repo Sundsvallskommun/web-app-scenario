@@ -41,7 +41,7 @@ export class CategoryController {
       });
 
       return response.send({ data, message: 'success' });
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Error getting categories', error);
 
       throw new HttpException(error?.status ?? 500, error?.message ?? 'Internal Server Error');
