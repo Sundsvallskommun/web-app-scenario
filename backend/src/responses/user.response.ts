@@ -10,20 +10,15 @@ import { IsString, ValidateNested } from 'class-validator';
 
 export class User implements ClientUser {
   @IsString()
-  name: string;
+  name!: string;
   @IsString()
-  username: string;
-  // @IsEnum(InternalRoleEnum)
-  // role: InternalRole;
-  // @ValidateNested()
-  // @Type(() => Permissions)
-  // permissions: Permissions;
+  username!: string;
 }
 
 export class UserApiResponse implements ApiResponse<User> {
   @ValidateNested()
   @Type(() => User)
-  data: User;
+  data!: User;
   @IsString()
-  message: string;
+  message!: string;
 }

@@ -26,7 +26,7 @@ export const localApi = (...parts: string[]): string => {
 
 export const apiURL = (...parts: string[]): string => {
   const urlParts = [API_BASE_URL, ...parts];
-  const trailingSlash = urlParts.at(-1).endsWith('/') ? '/' : '';
+  const trailingSlash = urlParts?.at(-1)?.endsWith('/') ? '/' : '';
   return urlParts.map(pathPart => pathPart?.replace(/(^\/|\/$)/g, '')).join('/') + trailingSlash;
 };
 

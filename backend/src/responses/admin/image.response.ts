@@ -7,13 +7,13 @@ import { ScenarioSummary } from './scenario.response';
 
 export class Image implements _Image {
   @IsString()
-  name: string;
+  name!: string;
   @IsString()
-  filename: string;
+  filename!: string;
   @IsString()
-  url: string;
+  url!: string;
   @IsInt()
-  id: number;
+  id!: number;
   @IsOptional()
   @ValidateNested({ each: true })
   @Type(() => ScenarioSummary)
@@ -23,30 +23,30 @@ export class Image implements _Image {
   @Type(() => CategorySummary)
   categories?: CategorySummary[];
   @IsDateString()
-  createdAt: Date;
+  createdAt!: Date;
   @IsDateString()
-  updatedAt: Date;
+  updatedAt!: Date;
 }
 
 export class ImagesApiResponse implements ApiResponse<_Image[]> {
   @ValidateNested({ each: true })
   @Type(() => Image)
-  data: _Image[];
+  data!: _Image[];
   @IsString()
-  message: string;
+  message!: string;
 }
 
 export class ImageApiResponse implements ApiResponse<_Image> {
   @ValidateNested()
   @Type(() => Image)
-  data: _Image;
+  data!: _Image;
   @IsString()
-  message: string;
+  message!: string;
 }
 
 export class ImageDeleteApiResponse implements ApiResponse<boolean> {
   @IsBoolean()
-  data: boolean;
+  data!: boolean;
   @IsString()
-  message: string;
+  message!: string;
 }

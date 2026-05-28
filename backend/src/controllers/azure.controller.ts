@@ -18,7 +18,7 @@ export class AzureController {
   async getAzureToken(@Res() res: Response<ApiResponse<Token>>): Promise<Response<ApiResponse<Token>>> {
     try {
       const token: string = await getToken();
-      const region = AZURE_REGION;
+      const region = AZURE_REGION ?? '';
       return res.send({ data: { token, region }, message: 'success' });
     } catch (e) {
       logger.error('Error getting Azure token', e);

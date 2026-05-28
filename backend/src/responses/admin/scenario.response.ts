@@ -11,39 +11,39 @@ export class ScenarioSummary implements Pick<
   'id' | 'name' | 'assistantId' | 'description' | 'imageId' | 'published'
 > {
   @IsInt()
-  id: number;
+  id!: number;
   @IsString()
-  name: string;
+  name!: string;
   @IsString()
   @IsNullable()
   @IsOptional()
-  description: string | null;
+  description!: string | null;
   @IsString()
-  assistantId: string;
+  assistantId!: string;
   @IsNullable()
   @IsInt()
-  imageId: number | null;
+  imageId!: number | null;
   @IsBoolean()
-  published: boolean;
+  published!: boolean;
 }
 
 export class Scenario implements _Scenario {
   @IsInt()
-  id: number;
+  id!: number;
   @IsString()
-  name: string;
+  name!: string;
   @IsString()
   @IsNullable()
   @IsOptional()
-  description: string | null;
+  description!: string | null;
   @IsString()
-  assistantId: string;
+  assistantId!: string;
   @IsNullable()
   @IsInt()
-  imageId: number | null;
+  imageId!: number | null;
   @IsNullable()
   @IsInt()
-  categoryId: number | null;
+  categoryId!: number | null;
   @IsOptional()
   @ValidateNested()
   @Type(() => Image)
@@ -53,31 +53,31 @@ export class Scenario implements _Scenario {
   @Type(() => CategorySummary)
   category?: CategorySummary;
   @IsBoolean()
-  published: boolean;
+  published!: boolean;
   @IsDateString()
-  createdAt: Date;
+  createdAt!: Date;
   @IsDateString()
-  updatedAt: Date;
+  updatedAt!: Date;
 }
 
 export class ScenariosApiResponse implements ApiResponse<Scenario[]> {
   @ValidateNested({ each: true })
   @Type(() => Scenario)
-  data: Scenario[];
+  data!: Scenario[];
   @IsString()
-  message: string;
+  message!: string;
 }
 export class ScenarioApiResponse implements ApiResponse<Scenario> {
   @ValidateNested()
   @Type(() => Scenario)
-  data: Scenario;
+  data!: Scenario;
   @IsString()
-  message: string;
+  message!: string;
 }
 
 export class ScenarioDeleteApiResponse implements ApiResponse<boolean> {
   @IsBoolean()
-  data: boolean;
+  data!: boolean;
   @IsString()
-  message: string;
+  message!: string;
 }

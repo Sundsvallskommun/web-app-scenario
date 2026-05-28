@@ -12,22 +12,25 @@ import { apiURL } from '@utils/api-url';
 import { useSessionStorage } from '@utils/use-sessionstorage.hook';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { shallow, useShallow } from 'zustand/shallow';
+import { shallow } from 'zustand/shallow';
+import { useShallow } from 'zustand/react/shallow';
 
 interface Page {
   component: React.JSX.Element;
   showBackground: boolean;
 }
+
 export default function Scenario() {
   const [page, setPage] = useState<number>(0);
   const router = useRouter();
-  const { scenario } = useParams();
-  const { loaded, data } = useScenario(Number(scenario));
+  const params = useParams<{ category: string; scenario: string }>();
+  const categoryId = Number(params.category);
+  const scenarioId = Number(params.scenario);
+  const { loaded, loading, data } = useScenario(categoryId, scenarioId);
   const { loaded: introLoaded, data: introTexts } = useScenarioIntroTexts();
-  const [setScenario, setScenarioIntroTexts] = useSessionStorage((state) => [
-    state.setScenario,
-    state.setScenarioIntroTexts,
-  ]);
+  const [setScenario, setScenarioIntroTexts] = useSessionStorage(
+    useShallow((state) => [state.setScenario, state.setScenarioIntroTexts])
+  );
   const [settings, setSettings, setInfo] = useAssistantStore(
     useShallow((state) => [state.settings, state.setSettings, state.setInfo])
   );
@@ -45,12 +48,18 @@ export default function Scenario() {
 
   const handleRestart = () => {
     newSession();
-    router.push('/start');
+    router.push(`/${categoryId}`);
   };
 
   useEffect(() => {
     newSession();
   }, [newSession]);
+
+  useEffect(() => {
+    if (!loading && loaded && !data) {
+      router.replace(`/${categoryId}`);
+    }
+  }, [data, loaded, loading, router]);
 
   useEffect(() => {
     if (loaded && data) {

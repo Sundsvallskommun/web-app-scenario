@@ -13,6 +13,7 @@ interface DefaultLayoutProps extends React.ComponentPropsWithoutRef<'div'> {
    * @default 1000
    */
   transitionDuration?: number;
+  fadeIn?: boolean;
 }
 
 export const DefaultLayout: React.FC<DefaultLayoutProps> = (props) => {
@@ -21,6 +22,7 @@ export const DefaultLayout: React.FC<DefaultLayoutProps> = (props) => {
     showBackground,
     backgroundSrc: _backgroundSrc,
     transitionDuration = 1000,
+    fadeIn = true,
     ...rest
   } = props;
   const highcontrast = useLocalStorage((state) => state.highcontrast);
@@ -49,7 +51,9 @@ export const DefaultLayout: React.FC<DefaultLayoutProps> = (props) => {
       <div
         className={cx(
           'w-full h-full overflow-hidden bg-cover bg-center fixed top-0 left-0 right-0 bottom-0 z-0 transition-opacity',
-          { ['bg-background-100 bg-blend-multiply']: highcontrast }
+          {
+            ['bg-background-100 bg-blend-multiply']: highcontrast,
+          }
         )}
         style={{
           backgroundImage: backgroundSrc ? backgroundImage : undefined,

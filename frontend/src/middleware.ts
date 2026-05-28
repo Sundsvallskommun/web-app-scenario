@@ -1,16 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { i18nRouter } from 'next-i18n-router';
 import i18nConfig from '@app/i18nConfig';
+import { isProtectedRoute } from '@utils/protected-routes';
 import { envs } from '../middleware-envs';
 
 export async function middleware(req: NextRequest) {
   const { pathname, origin } = req.nextUrl;
+  const isTestMode = process.env.TEST === 'true';
 
   if (pathname === '/admin') {
     return NextResponse.redirect(new URL(envs.adminUrl));
   }
 
-  if (envs.protectedRoutes.includes(pathname)) {
+  // Cypress tests stub auth in the browser; skip the server-side auth probe there.
+  if (!isTestMode && isProtectedRoute(pathname)) {
     const cookieName = 'connect.sid';
     const token = req.cookies.get(cookieName)?.value || '';
 

@@ -3,9 +3,9 @@ import { IsString } from 'class-validator';
 
 export class AskResponse implements Partial<AskResponseInterface> {
   @IsString()
-  session_id: string;
+  session_id!: string;
   @IsString()
-  question: string;
+  question!: string;
   @IsString()
-  answer: string;
+  answer!: string;
 }

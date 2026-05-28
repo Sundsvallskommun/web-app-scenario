@@ -7,65 +7,66 @@ import { Image } from './image.response';
 
 export class CategorySummary implements Pick<_Category, 'id' | 'name' | 'imageId'> {
   @IsInt()
-  id: number;
+  id!: number;
 
   @IsString()
-  name: string;
+  name!: string;
 
   @IsNullable()
   @IsInt()
-  imageId: number | null;
+  imageId!: number | null;
 }
 
 export class Category implements _Category {
   @IsInt()
-  id: number;
+  id!: number;
 
   @IsString()
-  name: string;
+  name!: string;
 
   @IsNullable()
   @IsInt()
-  imageId: number | null;
+  imageId!: number | null;
 
   @IsOptional()
   @ValidateNested()
   @Type(() => Image)
-  image?: _Image;
+  @IsNullable()
+  image?: _Image | null;
 
   @IsArray()
   @IsString({ each: true })
-  adGroups: string[];
+  adGroups!: string[];
 
   @IsDateString()
-  createdAt: Date;
+  createdAt!: Date;
 
   @IsDateString()
-  updatedAt: Date;
+  updatedAt!: Date;
 }
 
 export class CategoriesApiResponse implements ApiResponse<Category[]> {
   @ValidateNested({ each: true })
   @Type(() => Category)
-  data: Category[];
+  data!: Category[];
 
   @IsString()
-  message: string;
+  message!: string;
 }
 
 export class CategoryApiResponse implements ApiResponse<Category> {
   @ValidateNested()
   @Type(() => Category)
-  data: Category;
+  data!: Category;
 
   @IsString()
-  message: string;
+  message!: string;
 }
 
 export class CategoryDeleteApiResponse implements ApiResponse<boolean> {
   @IsBoolean()
-  data: boolean;
+  data!: boolean;
 
   @IsString()
-  message: string;
+  message!: string;
 }

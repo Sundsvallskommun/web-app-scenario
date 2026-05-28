@@ -3,52 +3,66 @@ import {
   PublicScenarioIntroText,
 } from '@data-contracts/backend/data-contracts';
 import { useEffect, useState } from 'react';
-import { getScenario, getScenarioIntroTexts, getScenarios } from './scenario.service';
+import { getCategoryScenario, getCategoryScenarios, getScenarioIntroTexts } from './scenario.service';
 
-export const useScenario = (id: number) => {
+export const useScenario = (categoryId: number, id: number) => {
   const [data, setData] = useState<PublicScenario | null>(null);
   const [loading, setLoading] = useState(true);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
+    if (!categoryId || !id) {
+      setData(null);
+      setLoaded(true);
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
-    getScenario(id)
+    getCategoryScenario(categoryId, id)
       .then((res) => {
         setData(res.data);
         setLoaded(true);
       })
       .catch(() => {
-        setLoaded(false);
+        setLoaded(true);
         setData(null);
       })
       .finally(() => {
         setLoading(false);
       });
-  }, [id]);
+  }, [categoryId, id]);
 
   return { data, loading, loaded };
 };
 
-export const useScenarios = () => {
+export const useScenarios = (categoryId: number) => {
   const [data, setData] = useState<PublicScenario[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
+    if (!categoryId) {
+      setData(null);
+      setLoaded(true);
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
-    getScenarios()
+    getCategoryScenarios(categoryId)
       .then((res) => {
         setData(res.data);
         setLoaded(true);
       })
       .catch(() => {
-        setLoaded(false);
+        setLoaded(true);
         setData(null);
       })
       .finally(() => {
         setLoading(false);
       });
-  }, []);
+  }, [categoryId]);
 
   return { data, loading, loaded };
 };

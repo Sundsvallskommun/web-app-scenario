@@ -25,7 +25,7 @@ export interface AdminUser {
   username: string;
   givenName: string;
   surname: string;
-  role: 'app_read' | 'app_admin';
+  role: "app_read" | "app_admin";
 }
 
 export interface AdminUserApiResponse {
@@ -207,6 +207,17 @@ export interface UpdateImageDto {
 
 export interface PublicImage {
   url: string;
+}
+
+export interface PublicCategory {
+  id: number;
+  name: string;
+  image?: PublicImage;
+}
+
+export interface PublicCategoriesApiResponse {
+  data: PublicCategory[];
+  message: string;
 }
 
 export interface PublicScenario {

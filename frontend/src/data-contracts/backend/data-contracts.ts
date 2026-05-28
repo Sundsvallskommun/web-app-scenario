@@ -1,5 +1,6 @@
 /* eslint-disable */
 /* tslint:disable */
+// @ts-nocheck
 /*
  * ---------------------------------------------------------------
  * ## THIS FILE WAS GENERATED VIA SWAGGER-TYPESCRIPT-API        ##
@@ -38,6 +39,7 @@ export interface CreateScenarioDto {
   description?: string | null;
   published?: boolean;
   imageId?: number | null;
+  categoryId?: number | null;
 }
 
 export interface UpdateScenarioDto {
@@ -46,16 +48,7 @@ export interface UpdateScenarioDto {
   description?: string | null;
   published?: boolean;
   imageId?: number | null;
-}
-
-export interface CreateScenarioIntroTextDto {
-  text: string;
-  sortOrder: number;
-}
-
-export interface UpdateScenarioIntroTextDto {
-  text?: string;
-  sortOrder?: number;
+  categoryId?: number | null;
 }
 
 export interface Image {
@@ -63,7 +56,8 @@ export interface Image {
   filename: string;
   url: string;
   id: number;
-  scenarios?: Scenario[];
+  scenarios?: ScenarioSummary[];
+  categories?: CategorySummary[];
   /** @pattern \d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d.\d+Z? */
   createdAt: string;
   /** @pattern \d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d.\d+Z? */
@@ -85,13 +79,57 @@ export interface ImageDeleteApiResponse {
   message: string;
 }
 
+export interface CategorySummary {
+  id: number;
+  name: string;
+  imageId: number | null;
+}
+
+export interface Category {
+  id: number;
+  name: string;
+  imageId: number | null;
+  image?: Image;
+  adGroups: string[];
+  /** @pattern \d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d.\d+Z? */
+  createdAt: string;
+  /** @pattern \d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d.\d+Z? */
+  updatedAt: string;
+}
+
+export interface CategoriesApiResponse {
+  data: Category[];
+  message: string;
+}
+
+export interface CategoryApiResponse {
+  data: Category;
+  message: string;
+}
+
+export interface CategoryDeleteApiResponse {
+  data: boolean;
+  message: string;
+}
+
+export interface ScenarioSummary {
+  id: number;
+  name: string;
+  description?: string | null;
+  assistantId: string;
+  imageId: number | null;
+  published: boolean;
+}
+
 export interface Scenario {
   id: number;
   name: string;
   description?: string | null;
   assistantId: string;
   imageId: number | null;
+  categoryId: number | null;
   image?: Image;
+  category?: CategorySummary;
   published: boolean;
   /** @pattern \d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d.\d+Z? */
   createdAt: string;
@@ -114,6 +152,18 @@ export interface ScenarioDeleteApiResponse {
   message: string;
 }
 
+export interface CreateScenarioIntroTextDto {
+  text: string;
+  /** @min 1 */
+  sortOrder: number;
+}
+
+export interface UpdateScenarioIntroTextDto {
+  text?: string;
+  /** @min 1 */
+  sortOrder?: number;
+}
+
 export interface ScenarioIntroText {
   id: number;
   text: string;
@@ -122,12 +172,6 @@ export interface ScenarioIntroText {
   createdAt: string;
   /** @pattern \d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d.\d+Z? */
   updatedAt: string;
-}
-
-export interface PublicScenarioIntroText {
-  id: number;
-  text: string;
-  sortOrder: number;
 }
 
 export interface ScenarioIntroTextsApiResponse {
@@ -145,9 +189,16 @@ export interface ScenarioIntroTextDeleteApiResponse {
   message: string;
 }
 
-export interface PublicScenarioIntroTextsApiResponse {
-  data: PublicScenarioIntroText[];
-  message: string;
+export interface CreateCategoryDto {
+  name: string;
+  imageId?: number | null;
+  adGroups?: string[];
+}
+
+export interface UpdateCategoryDto {
+  name?: string;
+  imageId?: number | null;
+  adGroups?: string[];
 }
 
 export interface UpdateImageDto {
@@ -156,6 +207,17 @@ export interface UpdateImageDto {
 
 export interface PublicImage {
   url: string;
+}
+
+export interface PublicCategory {
+  id: number;
+  name: string;
+  image?: PublicImage;
+}
+
+export interface PublicCategoriesApiResponse {
+  data: PublicCategory[];
+  message: string;
 }
 
 export interface PublicScenario {
@@ -173,6 +235,17 @@ export interface PublicScenariosApiResponse {
 
 export interface PublicScenarioApiResponse {
   data: PublicScenario;
+  message: string;
+}
+
+export interface PublicScenarioIntroText {
+  id: number;
+  text: string;
+  sortOrder: number;
+}
+
+export interface PublicScenarioIntroTextsApiResponse {
+  data: PublicScenarioIntroText[];
   message: string;
 }
 
@@ -205,6 +278,7 @@ export interface ExternalUser {
   name: string;
   org?: string;
   personNumber: string;
+  categories?: CategorySummary[];
   /** @pattern \d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d.\d+Z? */
   createdAt: string;
   /** @pattern \d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d.\d+Z? */
@@ -230,13 +304,17 @@ export interface CreateExternalUserDto {
   name: string;
   org?: string;
   personNumber: string;
+  categoryIds?: number[];
 }
 
 export interface UpdateExternalUserDto {
+  name?: string;
+  personNumber?: string;
   org?: string;
+  categoryIds?: number[];
 }
 
 export enum AdminUserRoleEnum {
-  AppRead = 'app_read',
-  AppAdmin = 'app_admin',
+  AppRead = "app_read",
+  AppAdmin = "app_admin",
 }
