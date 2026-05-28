@@ -19,6 +19,7 @@ jobs:
   install:
     runs-on: ubuntu-latest
     env:
+      TEST: true
       NEXT_PUBLIC_APP_NAME: Scenarios
       NEXT_PUBLIC_API_URL: http://localhost:3001/api
       NEXT_PUBLIC_INTRIC_API_URL: http://localhost:3009/api
