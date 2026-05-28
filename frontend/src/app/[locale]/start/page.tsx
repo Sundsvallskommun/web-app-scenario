@@ -27,6 +27,7 @@ export default function Start() {
   const { t } = useTranslation();
   const router = useRouter();
   const transitionDuration = 500;
+  const highcontrast = useLocalStorage((state) => state.highcontrast);
   const [hoveredCategoryId, setHoveredCategoryId] = useState<number | null>(
     null
   );
@@ -138,7 +139,12 @@ export default function Start() {
   return (
     <DefaultLayout transitionDuration={transitionDuration}>
       <SettingsMenu />
-      <main className="flex w-full grow shrink min-h-0 overflow-hidden">
+      <main
+        className={cx(
+          'flex w-full grow shrink min-h-0 overflow-hidden bg-background-content',
+          { ['opacity-0']: expandingCategory }
+        )}
+      >
         {categories.length === 0 ?
           <div className="flex grow items-center justify-center px-24 text-center">
             <div className="flex max-w-[48rem] flex-col gap-16">
@@ -174,7 +180,7 @@ export default function Start() {
                   <Link
                     href={category.href}
                     className={cx(
-                      'group rounded-0 relative flex w-full items-center justify-center overflow-hidden text-center outline-none transition-[transform,filter] duration-500 ease-out focus-visible:z-20 focus-visible:ring-4 focus-visible:ring-white/90 focus-visible:ring-offset-0',
+                      'group rounded-0 bg-background-content relative flex w-full items-center justify-center overflow-hidden text-center outline-none transition-[transform,filter] duration-500 ease-out focus-visible:z-20 focus-visible:ring-4 focus-visible:ring-background-content focus-visible:ring-offset-0',
                       {
                         ['brightness-75']: dimmed,
                         ['z-10']: active,
@@ -188,15 +194,25 @@ export default function Start() {
                     onClick={(event) => handleCategoryClick(event, category)}
                   >
                     <div
-                      className="absolute inset-0 bg-cover bg-center transition-transform duration-500 ease-out"
+                      className={cx(
+                        'absolute inset-0 bg-cover bg-center transition-[transform,background] duration-500 ease-out',
+                        {
+                          ['opacity-65']: !active && !dimmed && !highcontrast,
+                          ['opacity-50']: !active && dimmed && !highcontrast,
+                          ['opacity-75']: active && !dimmed && !highcontrast,
+                          ['opacity-45']: highcontrast,
+                          ['opacity-25']: active && !dimmed && highcontrast,
+                          ['bg-background-100 bg-blend-multiply']: highcontrast,
+                        }
+                      )}
                       style={{ backgroundImage: `url(${category.imageUrl})` }}
                     />
                     <div
                       className={cx(
-                        'absolute inset-0  transition-colors duration-500 group-hover:bg-[rgba(0,0,0,0.22)]'
+                        'absolute inset-0 transition-colors duration-500'
                       )}
                     />
-                    <span className="relative z-10 text-center font-header text-h1-sm sm:text-display-3-sm md:text-display-3-md lg:text-display-2-lg xl:text-display-1-lg m-0 text-white">
+                    <span className="relative z-10 text-center font-header text-h1-sm sm:text-display-3-sm md:text-display-3-md lg:text-display-2-lg xl:text-display-1-lg m-0 text-dark-primary">
                       {category.name}
                     </span>
                   </Link>
@@ -220,12 +236,18 @@ export default function Start() {
           }}
         >
           <div
-            className="absolute inset-0 bg-cover bg-center"
+            className={cx('absolute inset-0 bg-cover bg-center', {
+              ['opacity-75']: !highcontrast,
+              ['opacity-25']: highcontrast,
+              ['bg-background-100 bg-blend-multiply']: highcontrast,
+            })}
             style={{ backgroundImage: `url(${expandingCategory.imageUrl})` }}
           />
-          <div className="absolute inset-0 bg-[rgba(0,0,0,0.22)]" />
+          <div
+            className={cx('absolute inset-0 transition-colors duration-500')}
+          />
           <div className="flex flex-col">
-            <div className="relative z-10 flex h-full items-center justify-center text-center font-header text-h1-sm sm:text-display-3-sm md:text-display-3-md lg:text-display-2-lg xl:text-display-1-lg m-0 text-white">
+            <div className="relative z-10 flex h-full items-center justify-center text-center font-header text-h1-sm sm:text-display-3-sm md:text-display-3-md lg:text-display-2-lg xl:text-display-1-lg m-0 text-dark-primary">
               {expandingCategory.name}
             </div>
             <div
