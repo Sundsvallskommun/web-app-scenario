@@ -43,12 +43,10 @@ import {
   UpdateScenarioDto,
   UpdateScenarioIntroTextDto,
   UserApiResponse,
-} from "./data-contracts";
-import { ContentType, HttpClient, RequestParams } from "./http-client";
+} from './data-contracts';
+import { ContentType, HttpClient, RequestParams } from './http-client';
 
-export class Api<
-  SecurityDataType = unknown,
-> extends HttpClient<SecurityDataType> {
+export class Api<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
   /**
    * No description
    *
@@ -60,7 +58,7 @@ export class Api<
   indexControllerIndex = (params: RequestParams = {}) =>
     this.request<void, any>({
       path: `/api/`,
-      method: "GET",
+      method: 'GET',
       ...params,
     });
   /**
@@ -74,7 +72,7 @@ export class Api<
   userControllerGetUser = (params: RequestParams = {}) =>
     this.request<UserApiResponse, any>({
       path: `/api/me`,
-      method: "GET",
+      method: 'GET',
       ...params,
     });
   /**
@@ -88,7 +86,7 @@ export class Api<
   healthControllerUp = (params: RequestParams = {}) =>
     this.request<void, any>({
       path: `/api/health/up`,
-      method: "GET",
+      method: 'GET',
       ...params,
     });
   /**
@@ -102,7 +100,7 @@ export class Api<
   adminUserControllerGetUser = (params: RequestParams = {}) =>
     this.request<AdminUserApiResponse, any>({
       path: `/api/admin/me`,
-      method: "GET",
+      method: 'GET',
       ...params,
     });
   /**
@@ -116,7 +114,7 @@ export class Api<
   adminScenarioControllerGetScenarios = (params: RequestParams = {}) =>
     this.request<ScenariosApiResponse, any>({
       path: `/api/admin/scenarios`,
-      method: "GET",
+      method: 'GET',
       ...params,
     });
   /**
@@ -127,13 +125,10 @@ export class Api<
    * @summary Create scenario
    * @request POST:/api/admin/scenarios
    */
-  adminScenarioControllerCreateScenario = (
-    data?: CreateScenarioDto,
-    params: RequestParams = {},
-  ) =>
+  adminScenarioControllerCreateScenario = (data?: CreateScenarioDto, params: RequestParams = {}) =>
     this.request<ScenarioApiResponse, any>({
       path: `/api/admin/scenarios`,
-      method: "POST",
+      method: 'POST',
       body: data,
       type: ContentType.Json,
       ...params,
@@ -146,13 +141,10 @@ export class Api<
    * @summary Get scenario
    * @request GET:/api/admin/scenarios/{id}
    */
-  adminScenarioControllerGetScenario = (
-    id: number,
-    params: RequestParams = {},
-  ) =>
+  adminScenarioControllerGetScenario = (id: number, params: RequestParams = {}) =>
     this.request<ScenarioApiResponse, any>({
       path: `/api/admin/scenarios/${id}`,
-      method: "GET",
+      method: 'GET',
       ...params,
     });
   /**
@@ -163,14 +155,10 @@ export class Api<
    * @summary Update scenario
    * @request PATCH:/api/admin/scenarios/{id}
    */
-  adminScenarioControllerUpdateScenario = (
-    id: number,
-    data?: UpdateScenarioDto,
-    params: RequestParams = {},
-  ) =>
+  adminScenarioControllerUpdateScenario = (id: number, data?: UpdateScenarioDto, params: RequestParams = {}) =>
     this.request<ScenarioApiResponse, any>({
       path: `/api/admin/scenarios/${id}`,
-      method: "PATCH",
+      method: 'PATCH',
       body: data,
       type: ContentType.Json,
       ...params,
@@ -183,13 +171,10 @@ export class Api<
    * @summary Delete scenario
    * @request DELETE:/api/admin/scenarios/{id}
    */
-  adminScenarioControllerDeleteScenario = (
-    id: number,
-    params: RequestParams = {},
-  ) =>
+  adminScenarioControllerDeleteScenario = (id: number, params: RequestParams = {}) =>
     this.request<ScenarioDeleteApiResponse, any>({
       path: `/api/admin/scenarios/${id}`,
-      method: "DELETE",
+      method: 'DELETE',
       ...params,
     });
   /**
@@ -200,12 +185,10 @@ export class Api<
    * @summary Get scenario intro texts
    * @request GET:/api/admin/scenario-intro-texts
    */
-  adminScenarioIntroTextControllerGetScenarioIntroTexts = (
-    params: RequestParams = {},
-  ) =>
+  adminScenarioIntroTextControllerGetScenarioIntroTexts = (params: RequestParams = {}) =>
     this.request<ScenarioIntroTextsApiResponse, any>({
       path: `/api/admin/scenario-intro-texts`,
-      method: "GET",
+      method: 'GET',
       ...params,
     });
   /**
@@ -218,11 +201,11 @@ export class Api<
    */
   adminScenarioIntroTextControllerCreateScenarioIntroText = (
     data?: CreateScenarioIntroTextDto,
-    params: RequestParams = {},
+    params: RequestParams = {}
   ) =>
     this.request<ScenarioIntroTextApiResponse, any>({
       path: `/api/admin/scenario-intro-texts`,
-      method: "POST",
+      method: 'POST',
       body: data,
       type: ContentType.Json,
       ...params,
@@ -235,13 +218,10 @@ export class Api<
    * @summary Get scenario intro text
    * @request GET:/api/admin/scenario-intro-texts/{id}
    */
-  adminScenarioIntroTextControllerGetScenarioIntroText = (
-    id: number,
-    params: RequestParams = {},
-  ) =>
+  adminScenarioIntroTextControllerGetScenarioIntroText = (id: number, params: RequestParams = {}) =>
     this.request<ScenarioIntroTextApiResponse, any>({
       path: `/api/admin/scenario-intro-texts/${id}`,
-      method: "GET",
+      method: 'GET',
       ...params,
     });
   /**
@@ -255,11 +235,11 @@ export class Api<
   adminScenarioIntroTextControllerUpdateScenarioIntroText = (
     id: number,
     data?: UpdateScenarioIntroTextDto,
-    params: RequestParams = {},
+    params: RequestParams = {}
   ) =>
     this.request<ScenarioIntroTextApiResponse, any>({
       path: `/api/admin/scenario-intro-texts/${id}`,
-      method: "PATCH",
+      method: 'PATCH',
       body: data,
       type: ContentType.Json,
       ...params,
@@ -272,13 +252,10 @@ export class Api<
    * @summary Delete scenario intro text
    * @request DELETE:/api/admin/scenario-intro-texts/{id}
    */
-  adminScenarioIntroTextControllerDeleteScenarioIntroText = (
-    id: number,
-    params: RequestParams = {},
-  ) =>
+  adminScenarioIntroTextControllerDeleteScenarioIntroText = (id: number, params: RequestParams = {}) =>
     this.request<ScenarioIntroTextDeleteApiResponse, any>({
       path: `/api/admin/scenario-intro-texts/${id}`,
-      method: "DELETE",
+      method: 'DELETE',
       ...params,
     });
   /**
@@ -292,7 +269,7 @@ export class Api<
   adminCategoryControllerGetCategories = (params: RequestParams = {}) =>
     this.request<CategoriesApiResponse, any>({
       path: `/api/admin/categories`,
-      method: "GET",
+      method: 'GET',
       ...params,
     });
   /**
@@ -303,13 +280,10 @@ export class Api<
    * @summary Create category
    * @request POST:/api/admin/categories
    */
-  adminCategoryControllerCreateCategory = (
-    data?: CreateCategoryDto,
-    params: RequestParams = {},
-  ) =>
+  adminCategoryControllerCreateCategory = (data?: CreateCategoryDto, params: RequestParams = {}) =>
     this.request<CategoryApiResponse, any>({
       path: `/api/admin/categories`,
-      method: "POST",
+      method: 'POST',
       body: data,
       type: ContentType.Json,
       ...params,
@@ -322,13 +296,10 @@ export class Api<
    * @summary Get category
    * @request GET:/api/admin/categories/{id}
    */
-  adminCategoryControllerGetCategory = (
-    id: number,
-    params: RequestParams = {},
-  ) =>
+  adminCategoryControllerGetCategory = (id: number, params: RequestParams = {}) =>
     this.request<CategoryApiResponse, any>({
       path: `/api/admin/categories/${id}`,
-      method: "GET",
+      method: 'GET',
       ...params,
     });
   /**
@@ -339,14 +310,10 @@ export class Api<
    * @summary Update category
    * @request PATCH:/api/admin/categories/{id}
    */
-  adminCategoryControllerUpdateCategory = (
-    id: number,
-    data?: UpdateCategoryDto,
-    params: RequestParams = {},
-  ) =>
+  adminCategoryControllerUpdateCategory = (id: number, data?: UpdateCategoryDto, params: RequestParams = {}) =>
     this.request<CategoryApiResponse, any>({
       path: `/api/admin/categories/${id}`,
-      method: "PATCH",
+      method: 'PATCH',
       body: data,
       type: ContentType.Json,
       ...params,
@@ -359,13 +326,10 @@ export class Api<
    * @summary Delete category
    * @request DELETE:/api/admin/categories/{id}
    */
-  adminCategoryControllerDeleteCategory = (
-    id: number,
-    params: RequestParams = {},
-  ) =>
+  adminCategoryControllerDeleteCategory = (id: number, params: RequestParams = {}) =>
     this.request<CategoryDeleteApiResponse, any>({
       path: `/api/admin/categories/${id}`,
-      method: "DELETE",
+      method: 'DELETE',
       ...params,
     });
   /**
@@ -379,7 +343,7 @@ export class Api<
   adminImageControllerGetImages = (params: RequestParams = {}) =>
     this.request<ImagesApiResponse, any>({
       path: `/api/admin/images`,
-      method: "GET",
+      method: 'GET',
       ...params,
     });
   /**
@@ -395,11 +359,11 @@ export class Api<
       /** @format binary */
       image: File;
     },
-    params: RequestParams = {},
+    params: RequestParams = {}
   ) =>
     this.request<ImageApiResponse, any>({
       path: `/api/admin/images`,
-      method: "POST",
+      method: 'POST',
       body: data,
       type: ContentType.FormData,
       ...params,
@@ -415,7 +379,7 @@ export class Api<
   adminImageControllerGetImage = (id: number, params: RequestParams = {}) =>
     this.request<ImageApiResponse, any>({
       path: `/api/admin/images/${id}`,
-      method: "GET",
+      method: 'GET',
       ...params,
     });
   /**
@@ -426,14 +390,10 @@ export class Api<
    * @summary Update image
    * @request PATCH:/api/admin/images/{id}
    */
-  adminImageControllerUpdateImage = (
-    id: number,
-    data?: UpdateImageDto,
-    params: RequestParams = {},
-  ) =>
+  adminImageControllerUpdateImage = (id: number, data?: UpdateImageDto, params: RequestParams = {}) =>
     this.request<ImageApiResponse, any>({
       path: `/api/admin/images/${id}`,
-      method: "PATCH",
+      method: 'PATCH',
       body: data,
       type: ContentType.Json,
       ...params,
@@ -449,7 +409,7 @@ export class Api<
   adminImageControllerDeleteImage = (id: number, params: RequestParams = {}) =>
     this.request<ImageDeleteApiResponse, any>({
       path: `/api/admin/images/${id}`,
-      method: "DELETE",
+      method: 'DELETE',
       ...params,
     });
   /**
@@ -463,7 +423,7 @@ export class Api<
   scenarioControllerGetScenarios = (params: RequestParams = {}) =>
     this.request<PublicScenariosApiResponse, any>({
       path: `/api/scenarios`,
-      method: "GET",
+      method: 'GET',
       ...params,
     });
   /**
@@ -477,7 +437,7 @@ export class Api<
   scenarioControllerGetScenario = (id: number, params: RequestParams = {}) =>
     this.request<PublicScenarioApiResponse, any>({
       path: `/api/scenarios/${id}`,
-      method: "GET",
+      method: 'GET',
       ...params,
     });
   /**
@@ -488,12 +448,10 @@ export class Api<
    * @summary Get scenario intro texts
    * @request GET:/api/scenario-intro-texts
    */
-  scenarioIntroTextControllerGetScenarioIntroTexts = (
-    params: RequestParams = {},
-  ) =>
+  scenarioIntroTextControllerGetScenarioIntroTexts = (params: RequestParams = {}) =>
     this.request<PublicScenarioIntroTextsApiResponse, any>({
       path: `/api/scenario-intro-texts`,
-      method: "GET",
+      method: 'GET',
       ...params,
     });
   /**
@@ -504,13 +462,10 @@ export class Api<
    * @summary Chat with an assistant or group chat
    * @request POST:/api/conversations
    */
-  conversationControllerConversation = (
-    data?: ConversationRequestDto,
-    params: RequestParams = {},
-  ) =>
+  conversationControllerConversation = (data?: ConversationRequestDto, params: RequestParams = {}) =>
     this.request<AskResponse, any>({
       path: `/api/conversations`,
-      method: "POST",
+      method: 'POST',
       body: data,
       type: ContentType.Json,
       ...params,
@@ -526,7 +481,7 @@ export class Api<
   azureControllerGetAzureToken = (params: RequestParams = {}) =>
     this.request<ApiResponseAzureToken, any>({
       path: `/api/azure/login`,
-      method: "GET",
+      method: 'GET',
       ...params,
     });
   /**
@@ -540,7 +495,7 @@ export class Api<
   adminExternalUserControllerGetExternalUsers = (params: RequestParams = {}) =>
     this.request<ExternalUsersApiResponse, any>({
       path: `/api/admin/external-users`,
-      method: "GET",
+      method: 'GET',
       ...params,
     });
   /**
@@ -551,13 +506,10 @@ export class Api<
    * @summary Get external user
    * @request GET:/api/admin/external-user/{id}
    */
-  adminExternalUserControllerGetExternalUser = (
-    id: number,
-    params: RequestParams = {},
-  ) =>
+  adminExternalUserControllerGetExternalUser = (id: number, params: RequestParams = {}) =>
     this.request<ExternalUserApiResponse, any>({
       path: `/api/admin/external-user/${id}`,
-      method: "GET",
+      method: 'GET',
       ...params,
     });
   /**
@@ -571,11 +523,11 @@ export class Api<
   adminExternalUserControllerUpdateExternalUser = (
     id: number,
     data?: UpdateExternalUserDto,
-    params: RequestParams = {},
+    params: RequestParams = {}
   ) =>
     this.request<ExternalUserApiResponse, any>({
       path: `/api/admin/external-user/${id}`,
-      method: "PATCH",
+      method: 'PATCH',
       body: data,
       type: ContentType.Json,
       ...params,
@@ -588,13 +540,10 @@ export class Api<
    * @summary Delete external user
    * @request DELETE:/api/admin/external-user/{id}
    */
-  adminExternalUserControllerDeleteExternalUser = (
-    id: number,
-    params: RequestParams = {},
-  ) =>
+  adminExternalUserControllerDeleteExternalUser = (id: number, params: RequestParams = {}) =>
     this.request<ExternalUserDeleteApiResponse, any>({
       path: `/api/admin/external-user/${id}`,
-      method: "DELETE",
+      method: 'DELETE',
       ...params,
     });
   /**
@@ -605,13 +554,10 @@ export class Api<
    * @summary Add external user
    * @request POST:/api/admin/external-user
    */
-  adminExternalUserControllerAddExternalUser = (
-    data?: CreateExternalUserDto,
-    params: RequestParams = {},
-  ) =>
+  adminExternalUserControllerAddExternalUser = (data?: CreateExternalUserDto, params: RequestParams = {}) =>
     this.request<ExternalUserApiResponse, any>({
       path: `/api/admin/external-user`,
-      method: "POST",
+      method: 'POST',
       body: data,
       type: ContentType.Json,
       ...params,

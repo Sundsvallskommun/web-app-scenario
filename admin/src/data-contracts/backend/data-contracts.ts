@@ -25,7 +25,7 @@ export interface AdminUser {
   username: string;
   givenName: string;
   surname: string;
-  role: "app_read" | "app_admin";
+  role: 'app_read' | 'app_admin';
 }
 
 export interface AdminUserApiResponse {
@@ -267,6 +267,7 @@ export interface ExternalUser {
   name: string;
   org?: string;
   personNumber: string;
+  categories?: CategorySummary[];
   /** @pattern \d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d.\d+Z? */
   createdAt: string;
   /** @pattern \d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d.\d+Z? */
@@ -292,10 +293,12 @@ export interface CreateExternalUserDto {
   name: string;
   org?: string;
   personNumber: string;
+  categoryIds?: number[];
 }
 
 export interface UpdateExternalUserDto {
   name?: string;
   personNumber?: string;
   org?: string;
+  categoryIds?: number[];
 }

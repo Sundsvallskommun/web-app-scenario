@@ -1,14 +1,17 @@
-import { EditResource } from '@components/edit-resource/edit-resource.component';
+import { EditExternalUser } from '@components/edit-external-user/edit-external-user.component';
 import { EditorToolbar } from '@components/editor-toolbar/editor-toolbar';
 import LoaderFullScreen from '@components/loader/loader-fullscreen';
 import { defaultInformationFields } from '@config/defaults';
 import resources from '@config/resources';
-import { Resource, ResourceResponse } from '@interfaces/resource';
-import { ResourceName } from '@interfaces/resource-name';
+import {
+  CategorySummary,
+  CreateExternalUserDto,
+  ExternalUser,
+  UpdateExternalUserDto,
+} from '@data-contracts/backend/data-contracts';
 import EditLayout from '@layouts/edit-layout/edit-layout.component';
 import { getFormattedFields } from '@utils/formatted-field';
 import { useRouteGuard } from '@utils/routeguard.hook';
-import { stringToResourceName } from '@utils/stringToResourceName';
 import { useCrudHelper } from '@utils/use-crud-helpers';
 import { useResource } from '@utils/use-resource';
 import { GetServerSideProps } from 'next';
@@ -17,30 +20,39 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useParams } from 'next/navigation';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { FieldValues, FormProvider, useForm } from 'react-hook-form';
+import { FormProvider, useForm } from 'react-hook-form';
 import { capitalize } from 'underscore.string';
 
-export const ResourcePage: React.FC = () => {
+type ExternalUserFormData = CreateExternalUserDto &
+  UpdateExternalUserDto & {
+    id?: number;
+    categories?: CategorySummary[];
+    createdAt?: string;
+    updatedAt?: string;
+  };
+
+const normalizeExternalUser = (externalUser?: Partial<ExternalUser>): ExternalUserFormData => ({
+  ...externalUser,
+  name: externalUser?.name ?? '',
+  org: externalUser?.org ?? '',
+  personNumber: externalUser?.personNumber ?? '',
+  categoryIds: externalUser?.categories?.map((category) => category.id) ?? [],
+  categories: externalUser?.categories ?? [],
+});
+
+export const ExternalUserPage: React.FC = () => {
   const { t } = useTranslation();
   const router = useRouter();
 
-  const { resource: _resource, id: _id } = useParams();
-  const resource = stringToResourceName(typeof _resource === 'object' ? _resource[0] : (_resource ?? ''));
-  if (!resource) {
-    router.push('/');
-  }
+  const { id: _id } = useParams();
+  const resource = 'externalUsers';
 
-  const { create, update, getOne, defaultValues } = resources[resource as ResourceName];
-  const { refresh } = useResource(resource as ResourceName);
+  const { create, update, getOne, defaultValues } = resources[resource];
+  const { refresh } = useResource(resource);
+  const { handleGetOne, handleCreate, handleUpdate } = useCrudHelper(resource);
 
-  const { handleGetOne, handleCreate, handleUpdate } = useCrudHelper(resource as ResourceName);
-
-  type CreateType = Parameters<NonNullable<Resource<FieldValues>['create']>>[0];
-  type UpdateType = Parameters<NonNullable<Resource<FieldValues>['update']>>[1];
-  type DataType = CreateType | UpdateType;
-
-  const form = useForm<DataType>({
-    defaultValues: defaultValues,
+  const form = useForm<ExternalUserFormData>({
+    defaultValues: normalizeExternalUser(defaultValues),
   });
   const {
     handleSubmit,
@@ -49,7 +61,7 @@ export const ResourcePage: React.FC = () => {
     formState: { isDirty },
   } = form;
 
-  const id = _id === 'new' ? undefined : parseInt(_id as string, 10);
+  const id = _id === 'new' ? undefined : Number.parseInt(_id as string, 10);
 
   const [loaded, setLoaded] = useState<boolean>(false);
   const [isNew, setIsNew] = useState<boolean>(!id);
@@ -68,13 +80,13 @@ export const ResourcePage: React.FC = () => {
 
   useEffect(() => {
     if (id) {
-      handleGetOne(() => getOne(id) as unknown as ResourceResponse<FieldValues>).then((res) => {
-        reset(res);
+      handleGetOne<ExternalUser>(() => getOne(id)).then((res) => {
+        reset(normalizeExternalUser(res));
         setIsNew(false);
         setLoaded(true);
       });
     } else {
-      reset(defaultValues);
+      reset(normalizeExternalUser(defaultValues));
       setIsNew(true);
       setLoaded(true);
     }
@@ -94,31 +106,47 @@ export const ResourcePage: React.FC = () => {
     }
   }, [formdata?.id, isNew, isDirty]);
 
-  const onSubmit = (data: DataType) => {
-    const createFunc: (data: DataType) => ReturnType<NonNullable<Resource<FieldValues>['create']>> =
-      create as unknown as NonNullable<Resource<FieldValues>['create']>;
+  const normalizePayload = (data: ExternalUserFormData): CreateExternalUserDto | UpdateExternalUserDto => ({
+    name: data.name,
+    org: data.org?.trim() ? data.org.trim() : '',
+    personNumber: data.personNumber.trim(),
+    categoryIds:
+      Array.isArray(data.categoryIds) ?
+        Array.from(new Set(data.categoryIds.filter((value): value is number => typeof value === 'number'))).sort(
+          (left, right) => left - right
+        )
+      : [],
+  });
+
+  const onSubmit = (data: ExternalUserFormData) => {
+    const payload = normalizePayload(data);
+
     switch (isNew) {
       case true:
-        handleCreate(() => createFunc(data as CreateType)).then((res) => {
-          if (res) {
-            reset(res);
-            refresh();
-          }
-        });
-
+        if (create) {
+          handleCreate(() => create(payload as CreateExternalUserDto)).then((res) => {
+            if (res) {
+              reset(normalizeExternalUser(res as ExternalUser));
+              setIsNew(false);
+              refresh();
+            }
+          });
+        }
         break;
       case false:
-        if (id) {
-          handleUpdate(() => update?.(id, data) as ResourceResponse<Partial<FieldValues>>).then((res) => {
-            reset(res);
-            refresh();
+        if (id && update) {
+          handleUpdate(() => update(id, payload)).then((res) => {
+            if (res) {
+              reset(normalizeExternalUser(res as ExternalUser));
+              refresh();
+            }
           });
         }
         break;
     }
   };
 
-  return !loaded || !resource ?
+  return !loaded ?
       <LoaderFullScreen />
     : <EditLayout
         headerInfo={
@@ -138,12 +166,12 @@ export const ResourcePage: React.FC = () => {
             capitalize(t('common:create_new', { resource: t(`${resource}:name`, { count: 1 }) }))
           : capitalize(t('common:edit', { resource: t(`${resource}:name_one`) }))
         }
-        backLink={`/${resource}`}
+        backLink="/external-users"
       >
         <FormProvider {...form}>
           <form className="flex flex-row gap-32 justify-between grow flex-wrap" onSubmit={handleSubmit(onSubmit)}>
             <EditorToolbar resource={resource} isDirty={isDirty} id={id} />
-            <EditResource resource={resource} isNew={isNew} />
+            <EditExternalUser />
           </form>
         </FormProvider>
       </EditLayout>;
@@ -155,4 +183,4 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => ({
   },
 });
 
-export default ResourcePage;
+export default ExternalUserPage;
