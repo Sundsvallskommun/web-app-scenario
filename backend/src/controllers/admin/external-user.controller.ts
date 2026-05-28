@@ -70,7 +70,7 @@ export class AdminExternalUserController {
       });
 
       return response.send({ data: data.map(formatExternalUserResponse), message: 'success' });
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Error getting external users', error);
 
       throw new HttpException(error?.status ?? 500, error?.message ?? 'Internal Server Error');
@@ -97,7 +97,7 @@ export class AdminExternalUserController {
       const formattedData = data ? formatExternalUserResponse(data) : data;
 
       return response.send({ data: formattedData as unknown as ExternalUser, message: 'success' });
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Error getting external user', error);
 
       throw new HttpException(error?.status ?? 500, error?.message ?? 'Internal Server Error');
@@ -132,7 +132,7 @@ export class AdminExternalUserController {
         include: externalUserInclude,
       });
       return response.send({ message: 'success', data: formatExternalUserResponse(externalUserResponse) });
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Error saving external user', error);
       throw new HttpException(error?.status ?? 500, error?.message ?? 'Internal Server Error');
     }
@@ -173,7 +173,7 @@ export class AdminExternalUserController {
       });
 
       return response.send({ message: 'success', data: formatExternalUserResponse(data) });
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Error updating external user', error);
       throw new HttpException(error?.status ?? 500, error?.message ?? 'Internal Server Error');
     }
@@ -205,7 +205,7 @@ export class AdminExternalUserController {
       });
 
       return response.send({ data: true, message: 'success' });
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Error deleting external user', error);
       throw new HttpException(error?.status ?? 500, error?.message ?? 'Internal Server Error');
     }

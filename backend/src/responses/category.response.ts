@@ -3,25 +3,27 @@ import { Category as _Category } from '@prisma/client';
 import { Type } from 'class-transformer';
 import { IsInt, IsOptional, IsString, ValidateNested } from 'class-validator';
 import { PublicImage } from './image.response';
+import { IsNullable } from '@/utils/custom-validation-classes';
 
 export class PublicCategory implements Pick<_Category, 'id' | 'name'> {
   @IsInt()
-  id: number;
+  id!: number;
 
   @IsString()
-  name: string;
+  name!: string;
 
   @IsOptional()
   @ValidateNested()
   @Type(() => PublicImage)
-  image?: PublicImage;
+  @IsNullable()
+  image?: PublicImage | null;
 }
 
 export class PublicCategoriesApiResponse implements ApiResponse<PublicCategory[]> {
   @ValidateNested({ each: true })
   @Type(() => PublicCategory)
-  data: PublicCategory[];
+  data!: PublicCategory[];
 
   @IsString()
-  message: string;
+  message!: string;
 }

@@ -36,7 +36,7 @@ export class AdminScenarioController {
       });
 
       return response.send({ data, message: 'success' });
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Error getting scenarios', error);
 
       throw new HttpException(error?.status ?? 500, error?.message ?? 'Internal Server Error');
@@ -60,8 +60,12 @@ export class AdminScenarioController {
         include: { image: true, category: true },
       });
 
+      if (!data) {
+        throw new HttpException(404, 'No scenario found');
+      }
+
       return response.send({ data, message: 'success' });
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Error getting scenario', error);
 
       throw new HttpException(error?.status ?? 500, error?.message ?? 'Internal Server Error');
@@ -85,7 +89,7 @@ export class AdminScenarioController {
           name: body.name,
           description: body.description ?? null,
           published: body.published ?? false,
-          assistantId: body.assistantId,
+          assistantId: body.assistantId ?? '',
           image:
             typeof body?.imageId === 'number'
               ? {
@@ -106,7 +110,7 @@ export class AdminScenarioController {
       });
 
       return response.send({ message: 'success', data: scenarioResponse });
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Error creating scenario', error);
       throw new HttpException(error?.status ?? 500, error?.message ?? 'Internal Server Error');
     }
@@ -151,7 +155,7 @@ export class AdminScenarioController {
       });
 
       return response.send({ message: 'success', data: scenarioResponse });
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Error updating scenario', error);
       throw new HttpException(error?.status ?? 500, error?.message ?? 'Internal Server Error');
     }
@@ -174,7 +178,7 @@ export class AdminScenarioController {
       });
 
       return response.send({ data: true, message: 'success' });
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Error deleting scenario', error);
 
       throw new HttpException(error?.status ?? 500, error?.message ?? 'Internal Server Error');

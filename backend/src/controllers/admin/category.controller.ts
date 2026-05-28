@@ -61,7 +61,7 @@ export class AdminCategoryController {
       });
 
       return response.send({ data: data.map(formatCategoryResponse), message: 'success' });
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Error getting categories', error);
 
       throw new HttpException(error?.status ?? 500, error?.message ?? 'Internal Server Error');
@@ -97,7 +97,7 @@ export class AdminCategoryController {
         throw new HttpException(404, 'Could not find category');
       }
       return response.send({ data: formattedData as unknown as Category, message: 'success' });
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Error getting category', error);
 
       throw new HttpException(error?.status ?? 500, error?.message ?? 'Internal Server Error');
@@ -145,7 +145,7 @@ export class AdminCategoryController {
       });
 
       return response.send({ message: 'success', data: formatCategoryResponse(categoryResponse) });
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Error creating category', error);
 
       if (isUniqueNameError(error)) {
@@ -203,7 +203,7 @@ export class AdminCategoryController {
       });
 
       return response.send({ message: 'success', data: formatCategoryResponse(categoryResponse) });
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Error updating category', error);
 
       if (isUniqueNameError(error)) {
@@ -242,7 +242,7 @@ export class AdminCategoryController {
       });
 
       return response.send({ data: true, message: 'success' });
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Error deleting category', error);
 
       throw new HttpException(error?.status ?? 500, error?.message ?? 'Internal Server Error');

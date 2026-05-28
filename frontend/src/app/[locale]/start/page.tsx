@@ -102,6 +102,38 @@ export default function Start() {
     );
   }
 
+  const getHeightClass = (catLength: number, status?: 'dimmed' | 'active') => {
+    switch (catLength) {
+      case 2:
+        switch (status) {
+          case 'dimmed':
+            return '33dvh';
+          case 'active':
+            return '67dvh';
+          default:
+            return '50dvh';
+        }
+      case 3:
+        switch (status) {
+          case 'dimmed':
+            return '25dvh';
+          case 'active':
+            return '50dvh';
+          default:
+            return '33dvh';
+        }
+      default:
+        switch (status) {
+          case 'dimmed':
+            return '22dvh';
+          case 'active':
+            return '34dvh';
+          default:
+            return '25dvh';
+        }
+    }
+  };
+
   return (
     <DefaultLayout transitionDuration={transitionDuration}>
       <SettingsMenu />
@@ -122,33 +154,21 @@ export default function Start() {
                 hoveredCategoryId !== null && hoveredCategoryId !== category.id;
               const active = hoveredCategoryId === category.id;
               const catLength = categories.length;
-              const height =
-                catLength === 2 ? '50dvh'
-                : catLength === 3 ? '33dvh'
-                : '25dvh';
-              const heightDimmed =
-                catLength === 2 ? '33dvh'
-                : catLength === 3 ? '25dvh'
-                : '22dvh';
-              const heightActive =
-                catLength === 2 ? '67dvh'
-                : catLength === 3 ? '50dvh'
-                : '34dvh';
+
               return (
                 <div
                   key={category.id}
                   className={cx(
                     'flex shrink-0 transition-[height] duration-500 ease-out ',
-                    dimmed ? `h-[max(${heightDimmed},180px)]` : '',
-                    active ?
-                      `h-[max(${heightActive},250px)]`
-                    : `h-[max(${height},200px)]`
-  
+                    {
+                      [`h-[max(${getHeightClass(catLength, 'dimmed')},180px)]`]:
+                        dimmed,
+                      [`h-[max(${getHeightClass(catLength, 'active')},250px)]`]:
+                        active,
+                      [`h-[max(${getHeightClass(catLength)},200px)]`]:
+                        !dimmed && !active,
+                    }
                   )}
-                  onMouseEnter={() => setHoveredCategoryId(category.id)}
-                  onMouseLeave={() => setHoveredCategoryId(null)}
-                  onFocus={() => setHoveredCategoryId(category.id)}
-                  onBlur={() => setHoveredCategoryId(null)}
                 >
                   <Link
                     href={category.href}
@@ -159,6 +179,10 @@ export default function Start() {
                         ['z-10']: active,
                       }
                     )}
+                    onMouseEnter={() => setHoveredCategoryId(category.id)}
+                    onMouseLeave={() => setHoveredCategoryId(null)}
+                    onFocus={() => setHoveredCategoryId(category.id)}
+                    onBlur={() => setHoveredCategoryId(null)}
                     data-cy={`category-card-${category.id}`}
                     onClick={(event) => handleCategoryClick(event, category)}
                   >

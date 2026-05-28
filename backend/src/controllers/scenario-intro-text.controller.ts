@@ -28,7 +28,7 @@ export class ScenarioIntroTextController {
       });
 
       return response.send({ data, message: 'success' });
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Error getting scenario intro texts', error);
 
       throw new HttpException(error?.status ?? 500, error?.message ?? 'Internal Server Error');

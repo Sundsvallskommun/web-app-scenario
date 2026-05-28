@@ -30,7 +30,7 @@ export class ScenarioController {
       });
 
       return response.send({ data, message: 'success' });
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Error getting scenarios', error);
 
       throw new HttpException(error?.status ?? 500, error?.message ?? 'Internal Server Error');
@@ -60,7 +60,7 @@ export class ScenarioController {
       }
 
       return response.send({ data, message: 'success' });
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Error getting scenario', error);
 
       throw new HttpException(error?.status ?? 500, error?.message ?? 'Internal Server Error');
@@ -86,7 +86,7 @@ export class ScenarioController {
       });
 
       return response.send({ data, message: 'success' });
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Error getting scenarios by category', error);
 
       throw new HttpException(error?.status ?? 500, error?.message ?? 'Internal Server Error');
@@ -117,7 +117,7 @@ export class ScenarioController {
       }
 
       return response.send({ data, message: 'success' });
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Error getting scenario by category', error);
 
       throw new HttpException(error?.status ?? 500, error?.message ?? 'Internal Server Error');

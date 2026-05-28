@@ -5,15 +5,15 @@ import { IsString, ValidateNested } from 'class-validator';
 
 class AzureToken implements Token {
   @IsString()
-  token: string;
+  token!: string;
   @IsString()
-  region: string;
+  region!: string;
 }
 
 export class ApiResponseAzureToken implements ApiResponse<Token> {
   @ValidateNested()
   @Type(() => AzureToken)
-  data: AzureToken;
+  data!: AzureToken;
   @IsString()
-  message: string;
+  message!: string;
 }

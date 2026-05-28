@@ -3,12 +3,12 @@ import { IsArray, IsInt, IsOptional, IsString } from 'class-validator';
 
 export class CreateExternalUserDto implements Partial<Pick<ExternalUser, 'name' | 'org' | 'personNumber'>> {
   @IsString()
-  name: string;
+  name!: string;
   @IsOptional()
   @IsString()
   org?: string;
   @IsString()
-  personNumber: string;
+  personNumber!: string;
   @IsOptional()
   @IsArray()
   @IsInt({ each: true })
