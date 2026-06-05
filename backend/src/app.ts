@@ -155,7 +155,6 @@ const samlStrategy = new Strategy(
         isExternal: !authenticated,
         externalUserId,
       };
-      console.log('🚀 ~ findUser:', findUser);
 
       done(null, findUser);
     } catch (err) {
