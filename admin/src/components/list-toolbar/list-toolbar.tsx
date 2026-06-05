@@ -49,6 +49,18 @@ export const ListToolbar: React.FC<ListToolbarProps> = ({ resource, properties }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedHeaders, properties, setHeaders]);
 
+  const getPropertyLabel = (prop: string) => {
+    if (defaultInformationFields.includes(prop)) {
+      return capitalize(t(`common:${prop}`));
+    }
+
+    const translatedProperty = t(`${resource}:properties.${prop}`, { returnObjects: true });
+
+    return typeof translatedProperty === 'string' ?
+        capitalize(translatedProperty)
+      : capitalize(t(`${resource}:properties.${prop}.DEFAULT_many`));
+  };
+
   return (
     <Button.Group className="absolute top-16 right-0 w-fit z-10">
       {!!create && (
@@ -83,9 +95,7 @@ export const ListToolbar: React.FC<ListToolbarProps> = ({ resource, properties }
                 {properties.map((prop, index) => (
                   <PopupMenu.Item key={`tab-prop-${index}`}>
                     <Checkbox labelPosition="left" value={prop} {...register('headers')}>
-                      {capitalize(
-                        t(`${defaultInformationFields.includes(prop) ? 'common:' : `${resource}:properties.`}${prop}`)
-                      )}
+                      {getPropertyLabel(prop)}
                     </Checkbox>
                   </PopupMenu.Item>
                 ))}

@@ -16,8 +16,11 @@ describe('Scenarios', () => {
       .eq(0)
       .within(() => {
         cy.get('tbody').children().eq(0).contains('Scenario 1');
+        cy.get('tbody').children().eq(0).contains('Category 1');
         cy.get('tbody').children().eq(1).contains('Scenario 2');
+        cy.get('tbody').children().eq(1).contains('Category 2');
         cy.get('tbody').children().eq(2).contains('Scenario 3');
+        cy.get('tbody').children().eq(2).contains('-');
 
         cy.get('thead>tr').children().eq(0).find('button.sk-table-sortbutton').click();
 
@@ -39,11 +42,11 @@ describe('Scenarios', () => {
       });
 
     cy.get('[data-cy="table-settings-button"]').click();
-    cy.get('[data-cy="table-settings-panel"]').children().should('have.length', 5);
+    cy.get('[data-cy="table-settings-panel"]').children().should('have.length', 6);
     cy.get('[data-cy="table-settings-panel"]').children().eq(0).click();
     cy.get('[data-cy="resource-table"]>thead>tr').children().eq(0).should('include.text', 'Namn');
     cy.get('[data-cy="table-settings-panel"]').children().eq(1).click();
-    cy.get('[data-cy="resource-table"]>thead>tr').children().eq(0).should('include.text', 'Skapad');
+    cy.get('[data-cy="resource-table"]>thead>tr').children().eq(0).should('include.text', 'Kategori');
   });
 
   it('creates a new scenario with a category', () => {
