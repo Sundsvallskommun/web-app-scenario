@@ -11,26 +11,46 @@ export const useScenario = (categoryId: number, id: number) => {
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
+    let cancelled = false;
+
+    setData(null);
+    setLoaded(false);
+    setLoading(true);
+
     if (!categoryId || !id) {
-      setData(null);
       setLoaded(true);
       setLoading(false);
       return;
     }
 
-    setLoading(true);
     getCategoryScenario(categoryId, id)
       .then((res) => {
+        if (cancelled) {
+          return;
+        }
+
         setData(res.data);
         setLoaded(true);
       })
       .catch(() => {
+        if (cancelled) {
+          return;
+        }
+
         setLoaded(true);
         setData(null);
       })
       .finally(() => {
+        if (cancelled) {
+          return;
+        }
+
         setLoading(false);
       });
+
+    return () => {
+      cancelled = true;
+    };
   }, [categoryId, id]);
 
   return { data, loading, loaded };
@@ -42,26 +62,46 @@ export const useScenarios = (categoryId: number) => {
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
+    let cancelled = false;
+
+    setData(null);
+    setLoaded(false);
+    setLoading(true);
+
     if (!categoryId) {
-      setData(null);
       setLoaded(true);
       setLoading(false);
       return;
     }
 
-    setLoading(true);
     getCategoryScenarios(categoryId)
       .then((res) => {
+        if (cancelled) {
+          return;
+        }
+
         setData(res.data);
         setLoaded(true);
       })
       .catch(() => {
+        if (cancelled) {
+          return;
+        }
+
         setLoaded(true);
         setData(null);
       })
       .finally(() => {
+        if (cancelled) {
+          return;
+        }
+
         setLoading(false);
       });
+
+    return () => {
+      cancelled = true;
+    };
   }, [categoryId]);
 
   return { data, loading, loaded };
