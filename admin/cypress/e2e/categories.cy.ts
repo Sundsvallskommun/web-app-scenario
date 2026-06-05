@@ -28,6 +28,17 @@ describe('Categories', () => {
     cy.get('[data-cy="edit-category-adGroup-chip-0"]').should('contain.text', 'group-d');
   });
 
+  it('lists category ad groups', () => {
+    cy.get('[data-cy="resource-card-categories"]').click();
+    cy.get('[data-cy="resource-table"]')
+      .eq(0)
+      .within(() => {
+        cy.get('tbody').children().eq(0).contains('group-a, group-b');
+        cy.get('tbody').children().eq(1).contains('group-c');
+        cy.get('tbody').children().eq(2).contains('-');
+      });
+  });
+
   it('edits a category', () => {
     cy.intercept('GET', '**/api/admin/categories/1', oneCategory);
     cy.intercept('PATCH', '**/api/admin/categories/1', {

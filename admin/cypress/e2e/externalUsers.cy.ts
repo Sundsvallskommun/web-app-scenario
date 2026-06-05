@@ -15,8 +15,11 @@ describe('External users', () => {
       .eq(0)
       .within(() => {
         cy.get('tbody').children().eq(0).contains('Test Testsson 1');
+        cy.get('tbody').children().eq(0).contains('Category 1');
         cy.get('tbody').children().eq(1).contains('Test Testsson 2');
+        cy.get('tbody').children().eq(1).contains('-');
         cy.get('tbody').children().eq(2).contains('Test Testsson 3');
+        cy.get('tbody').children().eq(2).contains('Category 2');
 
         cy.get('thead>tr').children().eq(0).find('button.sk-table-sortbutton').click();
 
@@ -38,12 +41,12 @@ describe('External users', () => {
       });
 
     cy.get('[data-cy="table-settings-button"]').click();
-    cy.get('[data-cy="table-settings-panel"]').children().should('have.length', 6);
+    cy.get('[data-cy="table-settings-panel"]').children().should('have.length', 7);
     cy.get('[data-cy="table-settings-panel"]').children().eq(0).click();
     cy.get('[data-cy="resource-table"]>thead>tr').children().eq(0).should('include.text', 'Namn');
     cy.get('[data-cy="table-settings-panel"]').children().eq(1).click();
     cy.get('[data-cy="resource-table"]>thead>tr').children().eq(0).should('include.text', 'Organisation');
-    cy.get('[data-cy="resource-table"]>thead>tr').children().eq(1).should('include.text', 'Personnummer');
+    cy.get('[data-cy="resource-table"]>thead>tr').children().eq(1).should('include.text', 'Kategorier');
   });
 
   it('creates a new external user with categories', () => {
