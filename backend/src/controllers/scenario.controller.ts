@@ -81,7 +81,10 @@ export class ScenarioController {
     try {
       const accessWhere = await getAllowedScenarioWhere(req.user);
       const data = await prisma.scenario.findMany({
-        where: { published: true, categoryId, ...accessWhere },
+        where: {
+          published: true,
+          AND: [accessWhere, { categoryId }],
+        },
         select: { id: true, name: true, description: true, assistantId: true, image: { select: { url: true } } },
       });
 
@@ -108,7 +111,11 @@ export class ScenarioController {
     try {
       const accessWhere = await getAllowedScenarioWhere(req.user);
       const data = await prisma.scenario.findFirst({
-        where: { id, categoryId, published: true, ...accessWhere },
+        where: {
+          id,
+          published: true,
+          AND: [accessWhere, { categoryId }],
+        },
         select: { id: true, name: true, description: true, assistantId: true, image: { select: { url: true } } },
       });
 
