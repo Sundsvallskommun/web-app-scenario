@@ -166,7 +166,7 @@ export const ExternalUserPage: React.FC = () => {
             capitalize(t('common:create_new', { resource: t(`${resource}:name`, { count: 1 }) }))
           : capitalize(t('common:edit', { resource: t(`${resource}:name_one`) }))
         }
-        backLink="/external-users"
+        backLink="/externalUsers"
       >
         <FormProvider {...form}>
           <form className="flex flex-row gap-32 justify-between grow flex-wrap" onSubmit={handleSubmit(onSubmit)}>
