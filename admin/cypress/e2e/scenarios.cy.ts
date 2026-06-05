@@ -28,13 +28,13 @@ describe('Scenarios', () => {
         cy.get('tbody').children().eq(1).contains('Scenario 2');
         cy.get('tbody').children().eq(2).contains('Scenario 1');
 
-        cy.get('thead>tr').children().eq(3).find('button.sk-table-sortbutton').click();
+        cy.get('thead>tr').children().eq(4).find('button.sk-table-sortbutton').click();
 
         cy.get('tbody').children().eq(0).contains('Scenario 2');
         cy.get('tbody').children().eq(1).contains('Scenario 1');
         cy.get('tbody').children().eq(2).contains('Scenario 3');
 
-        cy.get('thead>tr').children().eq(3).find('button.sk-table-sortbutton').click();
+        cy.get('thead>tr').children().eq(4).find('button.sk-table-sortbutton').click();
 
         cy.get('tbody').children().eq(0).contains('Scenario 1');
         cy.get('tbody').children().eq(1).contains('Scenario 3');
