@@ -5,20 +5,20 @@ import { IsInt, IsString, ValidateNested } from 'class-validator';
 
 export class PublicScenarioIntroText implements Pick<_ScenarioIntroText, 'id' | 'text' | 'sortOrder'> {
   @IsInt()
-  id: number;
+  id!: number;
 
   @IsString()
-  text: string;
+  text!: string;
 
   @IsInt()
-  sortOrder: number;
+  sortOrder!: number;
 }
 
 export class PublicScenarioIntroTextsApiResponse implements ApiResponse<PublicScenarioIntroText[]> {
   @ValidateNested({ each: true })
   @Type(() => PublicScenarioIntroText)
-  data: PublicScenarioIntroText[];
+  data!: PublicScenarioIntroText[];
 
   @IsString()
-  message: string;
+  message!: string;
 }

@@ -46,7 +46,7 @@ export class AdminImageController {
       const data = await prisma.image.findMany();
 
       return response.send({ data, message: 'success' });
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Error getting images', error);
 
       throw new HttpException(error?.status ?? 500, error?.message ?? 'Internal Server Error');
@@ -70,8 +70,12 @@ export class AdminImageController {
         include: { scenarios: true, categories: true },
       });
 
+      if (!data) {
+        throw new HttpException(404, 'No image found');
+      }
+
       return response.send({ data, message: 'success' });
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Error getting image', error);
 
       throw new HttpException(error?.status ?? 500, error?.message ?? 'Internal Server Error');
@@ -98,7 +102,7 @@ export class AdminImageController {
         },
       });
       return response.send({ message: 'success', data: imageResponse });
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Error saving image', error);
       throw new HttpException(error?.status ?? 500, error?.message ?? 'Internal Server Error');
     }
@@ -125,7 +129,7 @@ export class AdminImageController {
       });
 
       return response.send({ message: 'success', data });
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Error updating image', error);
       throw new HttpException(error?.status ?? 500, error?.message ?? 'Internal Server Error');
     }
@@ -164,7 +168,7 @@ export class AdminImageController {
       });
 
       return response.send({ data: true, message: 'success' });
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Error deleting image', error);
       throw new HttpException(error?.status ?? 500, error?.message ?? 'Internal Server Error');
     }

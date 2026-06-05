@@ -3,11 +3,11 @@ import { IsInt, IsOptional, IsString, Min } from 'class-validator';
 
 export class CreateScenarioIntroTextDto implements Partial<Pick<ScenarioIntroText, 'text' | 'sortOrder'>> {
   @IsString()
-  text: string;
+  text!: string;
 
   @IsInt()
   @Min(1)
-  sortOrder: number;
+  sortOrder!: number;
 }
 
 export class UpdateScenarioIntroTextDto implements Partial<Pick<ScenarioIntroText, 'text' | 'sortOrder'>> {

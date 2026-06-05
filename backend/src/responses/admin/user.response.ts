@@ -6,21 +6,21 @@ import { User } from '@/interfaces/users.interface';
 
 export class AdminUser implements User {
   @IsString()
-  name: string;
+  name!: string;
   @IsString()
-  username: string;
+  username!: string;
   @IsString()
-  givenName: string;
+  givenName!: string;
   @IsString()
-  surname: string;
+  surname!: string;
   @IsEnum(InternalRoleEnum)
-  role: InternalRoleEnum;
+  role!: InternalRoleEnum;
 }
 
 export class AdminUserApiResponse implements ApiResponse<AdminUser> {
   @ValidateNested()
   @Type(() => AdminUser)
-  data: AdminUser;
+  data!: AdminUser;
   @IsString()
-  message: string;
+  message!: string;
 }

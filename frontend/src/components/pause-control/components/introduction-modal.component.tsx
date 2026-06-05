@@ -3,6 +3,7 @@
 import { Button, Modal } from '@sk-web-gui/react';
 import { useSessionStorage } from '@utils/use-sessionstorage.hook';
 import { useTranslation } from 'react-i18next';
+import { useShallow } from 'zustand/react/shallow';
 
 interface IntroductionModalProps {
   onClose: () => void;
@@ -11,7 +12,9 @@ interface IntroductionModalProps {
 
 export const IntroductionModal: React.FC<IntroductionModalProps> = ({ onClose, open }) => {
   const { t } = useTranslation('common');
-  const [scenario, scenarioIntroTexts] = useSessionStorage((state) => [state.scenario, state.scenarioIntroTexts]);
+  const [scenario, scenarioIntroTexts] = useSessionStorage(
+    useShallow((state) => [state.scenario, state.scenarioIntroTexts])
+  );
 
   return (
     <Modal

@@ -5,43 +5,43 @@ import { IsBoolean, IsDateString, IsInt, IsString, ValidateNested } from 'class-
 
 export class ScenarioIntroText implements _ScenarioIntroText {
   @IsInt()
-  id: number;
+  id!: number;
 
   @IsString()
-  text: string;
+  text!: string;
 
   @IsInt()
-  sortOrder: number;
+  sortOrder!: number;
 
   @IsDateString()
-  createdAt: Date;
+  createdAt!: Date;
 
   @IsDateString()
-  updatedAt: Date;
+  updatedAt!: Date;
 }
 
 export class ScenarioIntroTextsApiResponse implements ApiResponse<ScenarioIntroText[]> {
   @ValidateNested({ each: true })
   @Type(() => ScenarioIntroText)
-  data: ScenarioIntroText[];
+  data!: ScenarioIntroText[];
 
   @IsString()
-  message: string;
+  message!: string;
 }
 
 export class ScenarioIntroTextApiResponse implements ApiResponse<ScenarioIntroText> {
   @ValidateNested()
   @Type(() => ScenarioIntroText)
-  data: ScenarioIntroText;
+  data!: ScenarioIntroText;
 
   @IsString()
-  message: string;
+  message!: string;
 }
 
 export class ScenarioIntroTextDeleteApiResponse implements ApiResponse<boolean> {
   @IsBoolean()
-  data: boolean;
+  data!: boolean;
 
   @IsString()
-  message: string;
+  message!: string;
 }
