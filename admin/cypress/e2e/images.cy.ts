@@ -64,6 +64,7 @@ describe('Images', () => {
       { force: true }
     );
 
+    cy.get('img[src^="blob:"]').should('be.visible');
     cy.get('[data-cy="edit-toolbar-save"]').should('not.be.disabled');
     cy.get('[data-cy="edit-toolbar-delete"]').click();
     cy.get('article.sk-modal-dialog').within(() => {

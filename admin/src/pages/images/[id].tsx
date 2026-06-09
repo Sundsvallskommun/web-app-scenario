@@ -27,7 +27,7 @@ export const ImagePage: React.FC = () => {
   const { resource: _resource, id: _id } = useParams();
   const resource = 'images';
 
-  const { create, update, getOne, defaultValues } = resources[resource];
+  const { create, update, getOne } = resources[resource];
   const { refresh } = useResource(resource);
 
   const { handleGetOne, handleCreate, handleUpdate } = useCrudHelper(resource);
@@ -36,8 +36,8 @@ export const ImagePage: React.FC = () => {
   type UpdateType = UpdateImageDto;
   type DataType = CreateType | UpdateType;
 
-  const form = useForm<DataType & Image>({
-    defaultValues: defaultValues,
+  const form = useForm<Partial<DataType & Image>>({
+    defaultValues: {},
   });
   const {
     handleSubmit,
@@ -71,7 +71,7 @@ export const ImagePage: React.FC = () => {
         setLoaded(true);
       });
     } else {
-      reset(defaultValues);
+      reset({});
       setIsNew(true);
       setLoaded(true);
     }
@@ -91,16 +91,19 @@ export const ImagePage: React.FC = () => {
     }
   }, [formdata?.id, isNew, isDirty]);
 
-  const onSubmit = (data: DataType) => {
+  const onSubmit = (data: Partial<DataType>) => {
     switch (isNew) {
       case true:
         if (create) {
-          handleCreate(() => create(data as CreateType)).then((res) => {
-            if (res) {
-              reset(res);
-              refresh();
-            }
-          });
+          const image = (data as Partial<CreateType>).image;
+          if (image) {
+            handleCreate(() => create({ image })).then((res) => {
+              if (res) {
+                reset(res);
+                refresh();
+              }
+            });
+          }
         }
 
         break;
