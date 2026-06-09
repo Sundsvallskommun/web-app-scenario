@@ -133,6 +133,8 @@ export default function CategoryPage() {
                     data-cy={`card-${scenario.id}`}
                     role="button"
                     tabIndex={0}
+                    aria-haspopup="dialog"
+                    aria-expanded={isOpen && scenarioId === scenario.id}
                   >
                     <Card.Image
                       {...getImageSize()}
