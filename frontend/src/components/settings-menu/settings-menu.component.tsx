@@ -74,6 +74,7 @@ export const SettingsMenu: React.FC = () => {
           iconButton
           leftIcon={<Icon icon={<Settings2 />} />}
           data-cy="settings-button"
+          aria-label={t('common:settings')}
         />
         <PopupMenu.Panel data-cy="settings-menu">
           <PopupMenu.Items>
