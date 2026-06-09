@@ -28,6 +28,7 @@ export default function Start() {
   const router = useRouter();
   const transitionDuration = 500;
   const highcontrast = useLocalStorage((state) => state.highcontrast);
+  const reducedMotion = useLocalStorage((state) => state.reducedMotion);
   const [hoveredCategoryId, setHoveredCategoryId] = useState<number | null>(
     null
   );
@@ -71,6 +72,8 @@ export default function Start() {
     event: MouseEvent<HTMLAnchorElement>,
     category: { id: number; name: string; imageUrl: string; href: string }
   ) => {
+    if (reducedMotion) return;
+
     event.preventDefault();
 
     const bounds = event.currentTarget.getBoundingClientRect();
@@ -104,35 +107,16 @@ export default function Start() {
     );
   }
 
-  const getHeightClass = (catLength: number, status?: 'dimmed' | 'active') => {
+  const getHeightClass = (catLength: number, last?: boolean) => {
     switch (catLength) {
       case 2:
-        switch (status) {
-          case 'dimmed':
-            return '33dvh';
-          case 'active':
-            return '67dvh';
-          default:
-            return '50dvh';
-        }
+        return '50dvh';
+
       case 3:
-        switch (status) {
-          case 'dimmed':
-            return '25dvh';
-          case 'active':
-            return '50dvh';
-          default:
-            return '33dvh';
-        }
+        return last ? '34dvh' : '33dvh';
+
       default:
-        switch (status) {
-          case 'dimmed':
-            return '22dvh';
-          case 'active':
-            return '34dvh';
-          default:
-            return '25dvh';
-        }
+        return '25dvh';
     }
   };
 
@@ -156,33 +140,27 @@ export default function Start() {
           </div>
         : <div className="flex min-h-0 grow flex-col overflow-y-auto px-0">
             <h1 className="sr-only">{t('scenario:categories')}</h1>
-            {categoryCards.map((category) => {
+            {categoryCards.map((category, index) => {
               const dimmed =
                 hoveredCategoryId !== null && hoveredCategoryId !== category.id;
               const active = hoveredCategoryId === category.id;
               const catLength = categories.length;
+              const last = index === catLength - 1;
 
               return (
                 <div
                   key={category.id}
                   className={cx(
-                    'flex shrink-0 transition-[height] duration-500 ease-out ',
-                    {
-                      [`h-[max(${getHeightClass(catLength, 'dimmed')},180px)]`]:
-                        dimmed,
-                      [`h-[max(${getHeightClass(catLength, 'active')},250px)]`]:
-                        active,
-                      [`h-[max(${getHeightClass(catLength)},200px)]`]:
-                        !dimmed && !active,
-                    }
+                    'flex shrink-0',
+                    `h-[max(${getHeightClass(catLength, last)},200px)]`
                   )}
                 >
                   <Link
                     href={category.href}
                     className={cx(
-                      'group rounded-0 bg-background-content relative flex w-full items-center justify-center overflow-hidden text-center outline-none transition-[transform,filter] duration-500 ease-out focus-visible:z-20 focus-visible:ring-4 focus-visible:ring-background-content focus-visible:ring-offset-0',
+                      'group brightness-100 rounded-0 bg-background-content relative flex w-full items-center justify-center overflow-hidden text-center outline-none transition-[transform,filter] duration-500 ease-out focus-visible:z-20 focus-visible:ring-4 focus-visible:ring-background-content focus-visible:ring-offset-0',
                       {
-                        ['brightness-75']: dimmed,
+                        ['brightness-80']: dimmed && !reducedMotion,
                         ['z-10']: active,
                       }
                     )}
@@ -195,10 +173,16 @@ export default function Start() {
                   >
                     <div
                       className={cx(
-                        'absolute inset-0 bg-cover bg-center transition-[transform,background] duration-500 ease-out',
+                        'absolute inset-0 bg-cover bg-center transition-[transform,background,opacity] duration-500 ease-out',
                         {
-                          ['opacity-65']: !active && !dimmed && !highcontrast,
-                          ['opacity-50']: !active && dimmed && !highcontrast,
+                          ['opacity-65']:
+                            ((!active && !dimmed) || reducedMotion) &&
+                            !highcontrast,
+                          ['opacity-50']:
+                            !active &&
+                            dimmed &&
+                            !highcontrast &&
+                            !reducedMotion,
                           ['opacity-75']: active && !dimmed && !highcontrast,
                           ['opacity-45']: highcontrast,
                           ['opacity-25']: active && !dimmed && highcontrast,
@@ -226,7 +210,10 @@ export default function Start() {
       {expandingCategory ?
         <div
           aria-hidden="true"
-          className="flex justify-center items-center pointer-events-none fixed inset-x-0 z-50 overflow-hidden transition-[top,height] duration-500 ease-out"
+          className={cx(
+            'flex justify-center items-center pointer-events-none fixed inset-x-0 z-50 overflow-hidden transition-[top,height] ease-out',
+            reducedMotion ? 'duration-0' : 'duration-500'
+          )}
           style={{
             top: expandingCategory.expanded ? 0 : `${expandingCategory.top}px`,
             height:

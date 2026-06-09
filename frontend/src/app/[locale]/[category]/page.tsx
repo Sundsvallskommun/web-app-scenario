@@ -157,7 +157,7 @@ export default function CategoryPage() {
               ))}
             </Carousel>
           </div>
-        : <p className="m-0 text-large">
+        : <p className="m-0 p-0 text-large h-[261px] md:h-[348px] lg:h-[432px]">
             {t('scenario:categoryScenariosEmpty')}
           </p>
         }

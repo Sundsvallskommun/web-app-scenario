@@ -11,6 +11,8 @@ export const useLocalStorage = create(
       setColorScheme: (colorScheme) => set(() => ({ colorScheme })),
       highcontrast: false,
       setHighContrast: (highcontrast) => set(() => ({ highcontrast })),
+      reducedMotion: false,
+      setReducedMotion: (reducedMotion) => set(() => ({ reducedMotion })),
     }),
     {
       name: `${process.env.NEXT_PUBLIC_APP_NAME}-store`,
