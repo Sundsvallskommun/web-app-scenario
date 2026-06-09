@@ -28,6 +28,7 @@ import { Strategy, VerifiedCallback } from '@node-saml/passport-saml';
 import { logger, stream } from '@utils/logger';
 import prisma from '@utils/prisma';
 import bodyParser from 'body-parser';
+// @ts-expect-error no-types
 import { defaultMetadataStorage } from 'class-transformer/cjs/storage';
 import { validationMetadatasToSchemas } from 'class-validator-jsonschema';
 import compression from 'compression';
@@ -55,6 +56,8 @@ import { User } from './interfaces/users.interface';
 import { additionalConverters } from './utils/custom-validation-classes';
 import { isValidOrigin } from './utils/isValidOrigin';
 import { dataDir, dataPath, isValidUrl } from './utils/util';
+
+type ControllerClass = new (...args: never[]) => unknown;
 
 const corsWhitelist = ORIGIN?.split(',');
 const defaultRedirect = SAML_SUCCESS_REDIRECT ?? '/';
@@ -92,7 +95,7 @@ const samlStrategy = new Strategy(
     issuer: SAML_ISSUER ?? '',
     wantAssertionsSigned: false,
     wantAuthnResponseSigned: false,
-    acceptedClockSkewMs: 1000,
+    acceptedClockSkewMs: -1,
     audience: false,
     logoutUrl: SAML_LOGOUT_URL,
     logoutCallbackUrl: SAML_LOGOUT_CALLBACK_URL ?? '',
@@ -118,10 +121,13 @@ const samlStrategy = new Strategy(
       });
     }
 
-    const groupList: string[] = groups !== undefined ? groups.split(',').map(group => group.toLowerCase().trim()) : [];
-    const authenticatedGroups = AD_GROUPS.split(',').map(group => group.toLowerCase().trim());
-    const authenticated = groupList?.some(group => authenticatedGroups.includes(group));
-    const admin = groupList?.includes(AD_ADMINGROUP);
+    const groupList: string[] = groups?.split(',').map((group: string) => group.toLowerCase().trim()) ?? [];
+    const savedGroups = (await prisma.categoryAdGroup.findMany()).map(group => group.value?.toLowerCase().trim());
+    const authenticatedGroups = AD_GROUPS?.split(',').map(group => group.toLowerCase().trim()) ?? [];
+    const authenticated = groupList?.some(group => [...authenticatedGroups, ...savedGroups].includes(group));
+    const admin = groupList?.includes(AD_ADMINGROUP.toLowerCase());
+
+    let externalUserId: number | undefined;
 
     if (!authenticated) {
       const externalUser = await prisma.externalUser.findFirst({
@@ -134,6 +140,8 @@ const samlStrategy = new Strategy(
           message: 'Missing permissions',
         });
       }
+
+      externalUserId = externalUser.id;
     }
 
     try {
@@ -142,7 +150,10 @@ const samlStrategy = new Strategy(
         name: `${givenName} ${surname}`,
         givenName: givenName,
         surname: surname,
+        groups: groupList,
         role: admin ? InternalRoleEnum.Admin : InternalRoleEnum.Read,
+        isExternal: !authenticated,
+        externalUserId,
       };
 
       done(null, findUser);
@@ -156,10 +167,10 @@ const samlStrategy = new Strategy(
         done(null);
       }
     }
-  },
+  } as any,
   async function (_profile: Profile, done: VerifiedCallback) {
     return done(null, {});
-  },
+  } as any,
 );
 
 class App {
@@ -168,7 +179,7 @@ class App {
   public port: string | number;
   public swaggerEnabled: boolean;
 
-  constructor(Controllers: Function[]) {
+  constructor(Controllers: ControllerClass[]) {
     this.app = express();
     this.env = NODE_ENV || 'development';
     this.port = PORT || 3000;
@@ -207,6 +218,7 @@ class App {
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(cookieParser());
+    this.app.set('trust proxy', 1);
 
     this.app.use(`${BASE_URL_PREFIX}${dataPath()}`, express.static(dataDir('uploads'), {}));
 
@@ -216,6 +228,7 @@ class App {
         resave: false,
         saveUninitialized: false,
         store: sessionStore,
+        proxy: true,
       }),
     );
 
@@ -242,7 +255,7 @@ class App {
 
     this.app.get(
       `${BASE_URL_PREFIX}/saml/login`,
-      (req, res, next) => {
+      (req, _res, next) => {
         let relayState = defaultRedirect;
         if (req.session.returnTo) {
           relayState = req.session.returnTo;
@@ -263,13 +276,13 @@ class App {
       },
     );
 
-    this.app.get(`${BASE_URL_PREFIX}/saml/metadata`, (req, res) => {
+    this.app.get(`${BASE_URL_PREFIX}/saml/metadata`, (_req, res) => {
       res.type('application/xml');
       const metadata = samlStrategy.generateServiceProviderMetadata(SAML_PUBLIC_KEY ?? '', SAML_PUBLIC_KEY);
       res.status(200).send(metadata);
     });
 
-    this.app.get(`${BASE_URL_PREFIX}/saml/logout`, (req, res, next) => {
+    this.app.get(`${BASE_URL_PREFIX}/saml/logout`, (req, res) => {
       let successRedirect = SAML_LOGOUT_REDIRECT ?? '/';
       const providedRedirect = req?.query?.successRedirect;
       if (typeof providedRedirect === 'string' && isValidUrl(providedRedirect) && isValidOrigin(providedRedirect)) {
@@ -292,40 +305,36 @@ class App {
       });
     });
 
-    this.app.get(
-      `${BASE_URL_PREFIX}/saml/logout/callback`,
-      bodyParser.urlencoded({ extended: false }),
-      (req, res, next) => {
-        req.logout(err => {
-          if (err) {
-            return next(err);
-          }
+    this.app.get(`${BASE_URL_PREFIX}/saml/logout/callback`, bodyParser.urlencoded({ extended: false }), (req, res) => {
+      req.logout(err => {
+        if (err) {
+          throw err;
+        }
 
-          let successRedirect: URL, failureRedirect: URL;
-          const url = req?.body?.RelayState;
+        let successRedirect: URL, failureRedirect: URL;
+        const url = req?.body?.RelayState;
 
-          if (isValidUrl(url) && isValidOrigin(url)) {
-            successRedirect = new URL(url);
-          } else {
-            successRedirect = new URL(SAML_LOGOUT_REDIRECT ?? '/');
-          }
+        if (isValidUrl(url) && isValidOrigin(url)) {
+          successRedirect = new URL(url);
+        } else {
+          successRedirect = new URL(SAML_LOGOUT_REDIRECT ?? '/');
+        }
 
-          failureRedirect = successRedirect;
+        failureRedirect = successRedirect;
 
-          if (req.session.messages?.length > 0) {
-            failureRedirect.searchParams.append('failMessage', req.session.messages[0]);
-          } else {
-            failureRedirect.searchParams.append('failMessage', 'SAML_UNKNOWN_ERROR');
-          }
+        if (req.session.messages?.length > 0) {
+          failureRedirect.searchParams.append('failMessage', req.session.messages[0]);
+        } else {
+          failureRedirect.searchParams.append('failMessage', 'SAML_UNKNOWN_ERROR');
+        }
 
-          if (failureRedirect) {
-            res.redirect(failureRedirect.toString());
-          } else {
-            res.redirect(successRedirect.toString());
-          }
-        });
-      },
-    );
+        if (failureRedirect) {
+          res.redirect(failureRedirect.toString());
+        } else {
+          res.redirect(successRedirect.toString());
+        }
+      });
+    });
 
     this.app.post(
       `${BASE_URL_PREFIX}/saml/login/callback`,
@@ -336,12 +345,12 @@ class App {
 
         let urls = req?.body?.RelayState.split(',');
 
-        if (isValidUrl(urls[0]) && isValidOrigin(urls[0])) {
+        if (isValidUrl(urls?.[0]) && isValidOrigin(urls?.[0])) {
           successRedirect = new URL(urls[0]);
         } else {
           successRedirect = new URL(defaultRedirect);
         }
-        if (isValidUrl(urls[1]) && isValidOrigin(urls[1])) {
+        if (isValidUrl(urls?.[1]) && isValidOrigin(urls?.[1])) {
           failureRedirect = new URL(urls[1]);
         } else {
           failureRedirect = new URL(urls[0]);
@@ -349,7 +358,11 @@ class App {
 
         passport.authenticate('saml', (err: Error, user: Express.User) => {
           if (err) {
-            const queries = new URLSearchParams(failureRedirect.searchParams);
+            logger.error('SAML login callback failed', {
+              errorName: err.name,
+              errorMessage: err.message,
+            });
+            const queries = new URLSearchParams(failureRedirect?.searchParams);
             if (err?.name) {
               queries.append('failMessage', err.name);
             } else {
@@ -378,7 +391,7 @@ class App {
     );
   }
 
-  private initializeRoutes(controllers: Function[]) {
+  private initializeRoutes(controllers: ControllerClass[]) {
     useExpressServer(this.app, {
       routePrefix: BASE_URL_PREFIX,
       controllers: controllers,
@@ -386,7 +399,7 @@ class App {
     });
   }
 
-  private initializeSwagger(controllers: Function[]) {
+  private initializeSwagger(controllers: ControllerClass[]) {
     const schemas = validationMetadatasToSchemas({
       classTransformerMetadataStorage: defaultMetadataStorage,
       refPointerPrefix: '#/components/schemas/',

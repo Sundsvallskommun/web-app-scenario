@@ -36,7 +36,7 @@ export class AdminScenarioIntroTextController {
       });
 
       return response.send({ data, message: 'success' });
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Error getting scenario intro texts', error);
 
       throw new HttpException(error?.status ?? 500, error?.message ?? 'Internal Server Error');
@@ -59,8 +59,12 @@ export class AdminScenarioIntroTextController {
         where: { id },
       });
 
+      if (!data) {
+        throw new HttpException(404, 'No intro text found');
+      }
+
       return response.send({ data, message: 'success' });
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Error getting scenario intro text', error);
 
       throw new HttpException(error?.status ?? 500, error?.message ?? 'Internal Server Error');
@@ -87,7 +91,7 @@ export class AdminScenarioIntroTextController {
       });
 
       return response.send({ message: 'success', data });
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Error creating scenario intro text', error);
 
       throw new HttpException(error?.status ?? 500, error?.message ?? 'Internal Server Error');
@@ -116,7 +120,7 @@ export class AdminScenarioIntroTextController {
       });
 
       return response.send({ message: 'success', data });
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Error updating scenario intro text', error);
 
       throw new HttpException(error?.status ?? 500, error?.message ?? 'Internal Server Error');
@@ -140,7 +144,7 @@ export class AdminScenarioIntroTextController {
       });
 
       return response.send({ data: true, message: 'success' });
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Error deleting scenario intro text', error);
 
       throw new HttpException(error?.status ?? 500, error?.message ?? 'Internal Server Error');

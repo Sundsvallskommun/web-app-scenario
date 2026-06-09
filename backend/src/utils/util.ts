@@ -26,7 +26,7 @@ export const localApi = (...parts: string[]): string => {
 
 export const apiURL = (...parts: string[]): string => {
   const urlParts = [API_BASE_URL, ...parts];
-  const trailingSlash = urlParts.at(-1).endsWith('/') ? '/' : '';
+  const trailingSlash = urlParts?.at(-1)?.endsWith('/') ? '/' : '';
   return urlParts.map(pathPart => pathPart?.replace(/(^\/|\/$)/g, '')).join('/') + trailingSlash;
 };
 
@@ -62,7 +62,7 @@ export const isValidUrl = (string: string) => {
   let url;
   try {
     url = new URL(string);
-  } catch (_) {
+  } catch {
     return false;
   }
   return url.protocol === 'http:' || url.protocol === 'https:';

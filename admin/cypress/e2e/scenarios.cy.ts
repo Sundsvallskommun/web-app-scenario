@@ -9,14 +9,18 @@ describe('Scenarios', () => {
       cy.get('[data-cy="resource-card-subtitle"]').should('have.text', '3 scenarion');
     });
   });
+
   it('lists and sorts scenarios', () => {
     cy.get('[data-cy="resource-card-scenarios"]').click();
     cy.get('[data-cy="resource-table"]')
       .eq(0)
       .within(() => {
         cy.get('tbody').children().eq(0).contains('Scenario 1');
+        cy.get('tbody').children().eq(0).contains('Category 1');
         cy.get('tbody').children().eq(1).contains('Scenario 2');
+        cy.get('tbody').children().eq(1).contains('Category 2');
         cy.get('tbody').children().eq(2).contains('Scenario 3');
+        cy.get('tbody').children().eq(2).contains('-');
 
         cy.get('thead>tr').children().eq(0).find('button.sk-table-sortbutton').click();
 
@@ -24,13 +28,13 @@ describe('Scenarios', () => {
         cy.get('tbody').children().eq(1).contains('Scenario 2');
         cy.get('tbody').children().eq(2).contains('Scenario 1');
 
-        cy.get('thead>tr').children().eq(3).find('button.sk-table-sortbutton').click();
+        cy.get('thead>tr').children().eq(4).find('button.sk-table-sortbutton').click();
 
         cy.get('tbody').children().eq(0).contains('Scenario 2');
         cy.get('tbody').children().eq(1).contains('Scenario 1');
         cy.get('tbody').children().eq(2).contains('Scenario 3');
 
-        cy.get('thead>tr').children().eq(3).find('button.sk-table-sortbutton').click();
+        cy.get('thead>tr').children().eq(4).find('button.sk-table-sortbutton').click();
 
         cy.get('tbody').children().eq(0).contains('Scenario 1');
         cy.get('tbody').children().eq(1).contains('Scenario 3');
@@ -38,17 +42,22 @@ describe('Scenarios', () => {
       });
 
     cy.get('[data-cy="table-settings-button"]').click();
-    cy.get('[data-cy="table-settings-panel"]').children().should('have.length', 5);
+    cy.get('[data-cy="table-settings-panel"]').children().should('have.length', 6);
     cy.get('[data-cy="table-settings-panel"]').children().eq(0).click();
     cy.get('[data-cy="resource-table"]>thead>tr').children().eq(0).should('include.text', 'Namn');
     cy.get('[data-cy="table-settings-panel"]').children().eq(1).click();
-    cy.get('[data-cy="resource-table"]>thead>tr').children().eq(0).should('include.text', 'Skapad');
+    cy.get('[data-cy="resource-table"]>thead>tr').children().eq(0).should('include.text', 'Kategori');
   });
 
-  it('creates a new scenario', () => {
+  it('creates a new scenario with a category', () => {
+    const createdScenario = {
+      ...newScenario,
+      data: { ...newScenario.data, categoryId: 2, category: { id: 2, name: 'Category 2', imageId: 2 } },
+    };
+
     cy.intercept('GET', '**/api/admin/scenarios', scenariosWithNew);
-    cy.intercept('GET', '**/api/admin/scenarios/4', newScenario);
-    cy.intercept('POST', '**/api/admin/scenarios', newScenario).as('save');
+    cy.intercept('GET', '**/api/admin/scenarios/4', createdScenario);
+    cy.intercept('POST', '**/api/admin/scenarios', createdScenario).as('save');
     cy.get('[data-cy="mainmenu-resource-scenarios"]>span>button').click();
     cy.contains('Lägg till scenario').click();
     cy.get('h1').should('have.text', 'Lägg till scenario');
@@ -56,6 +65,7 @@ describe('Scenarios', () => {
     cy.get('[data-cy="edit-name"]').type('Scenario 4');
     cy.get('[data-cy="edit-description"]').type('Detta är en beskrivning');
     cy.get('[data-cy="edit-assistantId"]').type('fff4-2345-3456-4567');
+    cy.get('[data-cy="edit-categoryId"]').select('Category 2');
     cy.get('[data-cy="edit-published"]').parent().click();
     cy.get('[data-cy="edit-toolbar-save"]').should('not.be.disabled');
     cy.get('[data-cy="edit-toolbar-delete"]').click();
@@ -67,15 +77,21 @@ describe('Scenarios', () => {
     cy.wait('@save');
     cy.get('h1').should('have.text', 'Redigera scenario');
     cy.get('header').should('include.text', 'Id: 4');
+    cy.get('[data-cy="edit-categoryId"]').should('have.value', '2');
     cy.get('[data-cy="goback"]').click();
     cy.get('[data-cy="resource-table"]').eq(0).find('tbody').children().should('have.length', 4);
   });
 
-  it('edits a scenario', () => {
+  it('edits a scenario category', () => {
     cy.intercept('GET', '**/api/admin/scenarios/1', oneScenario);
     cy.intercept('PATCH', '**/api/admin/scenarios/1', {
       ...oneScenario,
-      data: { ...oneScenario.data, description: 'En beskrivning' },
+      data: {
+        ...oneScenario.data,
+        description: 'En beskrivning',
+        categoryId: 2,
+        category: { id: 2, name: 'Category 2', imageId: 2 },
+      },
     });
     cy.get('[data-cy="mainmenu-resource-scenarios"]>span>a').click();
     cy.get('[data-cy="resource-table"]')
@@ -91,10 +107,13 @@ describe('Scenarios', () => {
     cy.get('[data-cy="edit-name"]').should('have.value', 'Scenario 1');
     cy.get('[data-cy="edit-assistantId"]').should('have.value', '1234-2345-3456-4567');
     cy.get('[data-cy="edit-description"]').should('have.value', '');
+    cy.get('[data-cy="edit-categoryId"]').should('have.value', '1');
     cy.get('[data-cy="edit-description"]').type('En beskrivning');
+    cy.get('[data-cy="edit-categoryId"]').select('Category 2');
     cy.get('[data-cy="edit-toolbar-save"]').should('not.be.disabled');
     cy.get('[data-cy="edit-toolbar-save"]').click();
     cy.get('[data-cy="edit-toolbar-save"]').should('be.disabled');
+    cy.get('[data-cy="edit-categoryId"]').should('have.value', '2');
     cy.get('[data-cy="resource-image"]').should('have.attr', 'src').should('include', '/files/image1.png');
     cy.get('[data-cy="resource-image-remove-button"]').click();
     cy.get('[data-cy="resource-image"]').should('not.exist');

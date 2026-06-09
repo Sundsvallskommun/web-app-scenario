@@ -1,11 +1,5 @@
 describe('PWA screen', () => {
   beforeEach(() => {
-    cy.intercept('GET', '**/api/scenarios', { fixture: 'scenarios' }).as(
-      'Scenarios'
-    );
-    cy.intercept('GET', '**/api/scenarios/**', { fixture: 'scenario-1' }).as(
-      'Scenario'
-    );
     cy.visit('/', { timeout: 20000 });
   });
 
@@ -27,5 +21,17 @@ describe('PWA screen', () => {
 
     cy.location('pathname').should('include', '/start');
     cy.contains(/Installera programmet/).should('not.exist');
+    cy.get('[data-cy="category-card-1"]').should('contain.text', 'Kategori 1');
+  });
+
+  it('redirects directly to the single category when only one is available', () => {
+    cy.intercept('GET', '**/api/categories', {
+      data: [{ id: 1, name: 'Kategori 1' }],
+      message: 'success',
+    }).as('SingleCategory');
+
+    cy.visit('/start', { timeout: 20000 });
+    cy.wait('@SingleCategory');
+    cy.location('pathname').should('include', '/1');
   });
 });

@@ -7,11 +7,13 @@
   "the_name_one": "scenariot",
   "the_name_many": "scenariona",
   "the_name_other": "scenariona",
+  "category_none": "ingen kategori",
   "properties": {
     "id": "Id",
     "name": "Namn",
     "description": "Beskrivning",
     "assistantId": "Assistant-id",
+    "category": "Kategori",
     "published": "Publicerad",
     "image": "Bakgrundsbild",
     "createdAt": "Skapad",

@@ -1,0 +1,17 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node-terminal",
+      "request": "launch",
+      "name": "Backend: Dev",
+      "command": "npm --prefix backend run dev"
+    },
+    {
+      "type": "node-terminal",
+      "request": "launch",
+      "name": "Backend: Start",
+      "command": "npm --prefix backend run start"
+    }
+  ]
+}

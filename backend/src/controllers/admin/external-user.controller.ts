@@ -16,6 +16,40 @@ import { Body, Controller, Delete, Get, Param, Patch, Post, Req, Res, UseBefore 
 import { ResponseSchema } from 'routing-controllers-openapi';
 import { CreateExternalUserDto, UpdateExternalUserDto } from '@dtos/external-user.dto';
 
+const externalUserInclude = {
+  categories: {
+    select: {
+      category: {
+        select: {
+          id: true,
+          name: true,
+          imageId: true,
+        },
+      },
+    },
+    orderBy: {
+      categoryId: 'asc' as const,
+    },
+  },
+};
+
+const formatExternalUserResponse = <
+  T extends {
+    categories?: Array<{
+      category: {
+        id: number;
+        name: string;
+        imageId: number | null;
+      };
+    }>;
+  },
+>(
+  externalUser: T,
+) => ({
+  ...externalUser,
+  categories: externalUser.categories?.map(({ category }) => category) ?? [],
+});
+
 @Controller()
 @UseBefore(authMiddleware)
 @UseBefore(adminMiddleware)
@@ -31,10 +65,12 @@ export class AdminExternalUserController {
     }
 
     try {
-      const data = await prisma.externalUser.findMany();
+      const data = await prisma.externalUser.findMany({
+        include: externalUserInclude,
+      });
 
-      return response.send({ data, message: 'success' });
-    } catch (error) {
+      return response.send({ data: data.map(formatExternalUserResponse), message: 'success' });
+    } catch (error: any) {
       logger.error('Error getting external users', error);
 
       throw new HttpException(error?.status ?? 500, error?.message ?? 'Internal Server Error');
@@ -55,10 +91,13 @@ export class AdminExternalUserController {
     try {
       const data = await prisma.externalUser.findFirst({
         where: { id: id },
+        include: externalUserInclude,
       });
 
-      return response.send({ data, message: 'success' });
-    } catch (error) {
+      const formattedData = data ? formatExternalUserResponse(data) : data;
+
+      return response.send({ data: formattedData as unknown as ExternalUser, message: 'success' });
+    } catch (error: any) {
       logger.error('Error getting external user', error);
 
       throw new HttpException(error?.status ?? 500, error?.message ?? 'Internal Server Error');
@@ -76,15 +115,24 @@ export class AdminExternalUserController {
       throw new HttpException(400, 'Bad Request');
     }
     try {
+      const categoryIds = body.categoryIds ?? [];
       const externalUserResponse = await prisma.externalUser.create({
         data: {
           name: body.name,
           org: body.org,
           personNumber: body.personNumber,
+          categories: {
+            create: categoryIds.map(categoryId => ({
+              category: {
+                connect: { id: categoryId },
+              },
+            })),
+          },
         },
+        include: externalUserInclude,
       });
-      return response.send({ message: 'success', data: externalUserResponse });
-    } catch (error) {
+      return response.send({ message: 'success', data: formatExternalUserResponse(externalUserResponse) });
+    } catch (error: any) {
       logger.error('Error saving external user', error);
       throw new HttpException(error?.status ?? 500, error?.message ?? 'Internal Server Error');
     }
@@ -109,11 +157,23 @@ export class AdminExternalUserController {
           name: body.name,
           personNumber: body.personNumber,
           org: body.org,
+          categories:
+            body.categoryIds !== undefined
+              ? {
+                  deleteMany: {},
+                  create: body.categoryIds.map(categoryId => ({
+                    category: {
+                      connect: { id: categoryId },
+                    },
+                  })),
+                }
+              : undefined,
         },
+        include: externalUserInclude,
       });
 
-      return response.send({ message: 'success', data });
-    } catch (error) {
+      return response.send({ message: 'success', data: formatExternalUserResponse(data) });
+    } catch (error: any) {
       logger.error('Error updating external user', error);
       throw new HttpException(error?.status ?? 500, error?.message ?? 'Internal Server Error');
     }
@@ -145,7 +205,7 @@ export class AdminExternalUserController {
       });
 
       return response.send({ data: true, message: 'success' });
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Error deleting external user', error);
       throw new HttpException(error?.status ?? 500, error?.message ?? 'Internal Server Error');
     }

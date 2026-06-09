@@ -65,7 +65,7 @@ export function useRouteGuard(
       window.removeEventListener('beforeunload', handleWindowClose);
       router.events.off('routeChangeStart', handleBrowseAway);
     };
-  }, [active, showConfirmation, text, title, confirmLabel, dismissLabel]);
+  }, [active, showConfirmation, text, title, confirmLabel, dismissLabel, basePath]);
 
   async function confirmer(
     options: {

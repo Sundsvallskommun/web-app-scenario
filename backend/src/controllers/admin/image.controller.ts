@@ -46,7 +46,7 @@ export class AdminImageController {
       const data = await prisma.image.findMany();
 
       return response.send({ data, message: 'success' });
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Error getting images', error);
 
       throw new HttpException(error?.status ?? 500, error?.message ?? 'Internal Server Error');
@@ -67,11 +67,15 @@ export class AdminImageController {
     try {
       const data = await prisma.image.findFirst({
         where: { id },
-        include: { scenarios: true },
+        include: { scenarios: true, categories: true },
       });
 
+      if (!data) {
+        throw new HttpException(404, 'No image found');
+      }
+
       return response.send({ data, message: 'success' });
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Error getting image', error);
 
       throw new HttpException(error?.status ?? 500, error?.message ?? 'Internal Server Error');
@@ -98,7 +102,7 @@ export class AdminImageController {
         },
       });
       return response.send({ message: 'success', data: imageResponse });
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Error saving image', error);
       throw new HttpException(error?.status ?? 500, error?.message ?? 'Internal Server Error');
     }
@@ -125,7 +129,7 @@ export class AdminImageController {
       });
 
       return response.send({ message: 'success', data });
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Error updating image', error);
       throw new HttpException(error?.status ?? 500, error?.message ?? 'Internal Server Error');
     }
@@ -145,14 +149,14 @@ export class AdminImageController {
     try {
       const image = await prisma.image.findFirst({
         where: { id },
-        include: { scenarios: true },
+        include: { scenarios: true, categories: true },
       });
 
-      if (image.scenarios && image.scenarios.length > 0) {
+      if ((image?.scenarios && image.scenarios.length > 0) || (image?.categories && image.categories.length > 0)) {
         throw new HttpException(409, 'Image is in use');
       }
 
-      unlink(`${dataDir('uploads')}/${image.filename}`, err => {
+      unlink(`${dataDir('uploads')}/${image?.filename}`, err => {
         if (err) {
           logger.error('Error deleting image', err);
           throw new HttpException(500, 'Internal Server Error');
@@ -164,10 +168,9 @@ export class AdminImageController {
       });
 
       return response.send({ data: true, message: 'success' });
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Error deleting image', error);
       throw new HttpException(error?.status ?? 500, error?.message ?? 'Internal Server Error');
     }
   }
 }
-

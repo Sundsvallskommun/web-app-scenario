@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { apiURL } from '@utils/api-url';
 
 interface PickScenarioModalProps {
+  categoryId: number;
   scenarioId: number;
   isOpen: boolean;
   handleClose: () => void;
@@ -15,6 +16,7 @@ interface PickScenarioModalProps {
 }
 
 export const PickScenarioModal: React.FC<PickScenarioModalProps> = ({
+  categoryId,
   scenarioId,
   isOpen,
   handleClose,
@@ -25,7 +27,7 @@ export const PickScenarioModal: React.FC<PickScenarioModalProps> = ({
   const router = useRouter();
   const { t } = useTranslation();
 
-  const { data } = useScenario(scenarioId);
+  const { data } = useScenario(categoryId, scenarioId);
 
   const handleScenarioPick = () => {
     handleClose();
@@ -33,7 +35,7 @@ export const PickScenarioModal: React.FC<PickScenarioModalProps> = ({
     setTimeout(() => {
       setShowBackground(false);
       setTimeout(() => {
-        router.push(`/${scenarioId}`);
+        router.push(`/${categoryId}/${scenarioId}`);
       }, transitionDuration);
     }, transitionDuration);
   };

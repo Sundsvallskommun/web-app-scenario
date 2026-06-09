@@ -3,52 +3,106 @@ import {
   PublicScenarioIntroText,
 } from '@data-contracts/backend/data-contracts';
 import { useEffect, useState } from 'react';
-import { getScenario, getScenarioIntroTexts, getScenarios } from './scenario.service';
+import { getCategoryScenario, getCategoryScenarios, getScenarioIntroTexts } from './scenario.service';
 
-export const useScenario = (id: number) => {
+export const useScenario = (categoryId: number, id: number) => {
   const [data, setData] = useState<PublicScenario | null>(null);
   const [loading, setLoading] = useState(true);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
+    let cancelled = false;
+
+    setData(null);
+    setLoaded(false);
     setLoading(true);
-    getScenario(id)
+
+    if (!categoryId || !id) {
+      setLoaded(true);
+      setLoading(false);
+      return;
+    }
+
+    getCategoryScenario(categoryId, id)
       .then((res) => {
+        if (cancelled) {
+          return;
+        }
+
         setData(res.data);
         setLoaded(true);
       })
       .catch(() => {
-        setLoaded(false);
+        if (cancelled) {
+          return;
+        }
+
+        setLoaded(true);
         setData(null);
       })
       .finally(() => {
+        if (cancelled) {
+          return;
+        }
+
         setLoading(false);
       });
-  }, [id]);
+
+    return () => {
+      cancelled = true;
+    };
+  }, [categoryId, id]);
 
   return { data, loading, loaded };
 };
 
-export const useScenarios = () => {
+export const useScenarios = (categoryId: number) => {
   const [data, setData] = useState<PublicScenario[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
+    let cancelled = false;
+
+    setData(null);
+    setLoaded(false);
     setLoading(true);
-    getScenarios()
+
+    if (!categoryId) {
+      setLoaded(true);
+      setLoading(false);
+      return;
+    }
+
+    getCategoryScenarios(categoryId)
       .then((res) => {
+        if (cancelled) {
+          return;
+        }
+
         setData(res.data);
         setLoaded(true);
       })
       .catch(() => {
-        setLoaded(false);
+        if (cancelled) {
+          return;
+        }
+
+        setLoaded(true);
         setData(null);
       })
       .finally(() => {
+        if (cancelled) {
+          return;
+        }
+
         setLoading(false);
       });
-  }, []);
+
+    return () => {
+      cancelled = true;
+    };
+  }, [categoryId]);
 
   return { data, loading, loaded };
 };

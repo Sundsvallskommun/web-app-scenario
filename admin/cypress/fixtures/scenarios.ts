@@ -1,5 +1,6 @@
 import { Scenario, ScenarioApiResponse, ScenariosApiResponse } from '../../src/data-contracts/backend/data-contracts';
 import { image1, image2 } from './images';
+import { category1, category2 } from './categories';
 
 export const scenario1: Scenario = {
   id: 1,
@@ -8,9 +9,11 @@ export const scenario1: Scenario = {
   description: '',
   published: true,
   imageId: 1,
+  categoryId: 1,
   createdAt: '2025-09-10T14:33:13.035Z',
   updatedAt: '2025-09-18T07:32:02.619Z',
   image: image1,
+  category: category1,
 };
 
 export const scenario2: Scenario = {
@@ -20,9 +23,11 @@ export const scenario2: Scenario = {
   description: '',
   published: true,
   imageId: 1,
+  categoryId: 2,
   createdAt: '2025-09-11T14:33:13.035Z',
   updatedAt: '2025-09-16T07:32:02.619Z',
   image: image1,
+  category: category2,
 };
 
 export const scenario3: Scenario = {
@@ -32,6 +37,7 @@ export const scenario3: Scenario = {
   description: '',
   published: true,
   imageId: 2,
+  categoryId: null,
   createdAt: '2025-09-12T14:33:13.035Z',
   updatedAt: '2025-09-18T07:32:02.619Z',
   image: image2,
@@ -44,6 +50,7 @@ export const scenario4: Scenario = {
   description: 'Detta är en beskrivning',
   published: true,
   imageId: null,
+  categoryId: null,
   createdAt: '2025-09-20T14:33:13.035Z',
   updatedAt: '2025-09-20T14:33:13.035Z',
 };

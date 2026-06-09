@@ -60,6 +60,7 @@ const image1WithScenarions = {
       image: image1,
     },
   ],
+  categories: [{ id: 1, name: 'Category 1', imageId: 1 }],
 };
 export const oneImage: ImageApiResponse = {
   message: 'success',
