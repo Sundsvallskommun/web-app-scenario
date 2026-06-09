@@ -212,7 +212,7 @@ export default function Start() {
                         'absolute inset-0 transition-colors duration-500'
                       )}
                     />
-                    <span className="relative z-10 text-center font-header text-h1-sm sm:text-display-3-sm md:text-display-3-md lg:text-display-2-lg xl:text-display-1-lg m-0 text-dark-primary">
+                    <span className="rounded-groups group-focus-visible:ring ring-ring relative z-10 text-center font-header text-h1-sm sm:text-display-3-sm md:text-display-3-md lg:text-display-2-lg xl:text-display-1-lg m-0 text-dark-primary">
                       {category.name}
                     </span>
                   </Link>
