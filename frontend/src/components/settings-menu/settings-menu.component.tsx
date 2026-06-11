@@ -22,15 +22,23 @@ export const SettingsMenu: React.FC = () => {
   const { t } = useTranslation();
   const router = useRouter();
 
-  const [highcontrast, setHighcontrast, colorScheme, setColorScheme] =
-    useLocalStorage(
-      useShallow((state) => [
-        state.highcontrast,
-        state.setHighContrast,
-        state.colorScheme,
-        state.setColorScheme,
-      ])
-    );
+  const [
+    highcontrast,
+    setHighcontrast,
+    colorScheme,
+    setColorScheme,
+    reducedMotion,
+    setReducedMotion,
+  ] = useLocalStorage(
+    useShallow((state) => [
+      state.highcontrast,
+      state.setHighContrast,
+      state.colorScheme,
+      state.setColorScheme,
+      state.reducedMotion,
+      state.setReducedMotion,
+    ])
+  );
 
   const [canInstall, setCanInstall] = useState<boolean>(false);
   const [standalone, setStandalone] = useState<boolean>(false);
@@ -102,6 +110,16 @@ export const SettingsMenu: React.FC = () => {
                 data-cy="settings-highcontrastmed"
               >
                 {t('common:highcontrast')}
+              </Switch>
+            </PopupMenu.Item>
+            <PopupMenu.Item>
+              <Switch
+                color="gronsta"
+                checked={reducedMotion}
+                onChange={() => setReducedMotion(!reducedMotion)}
+                data-cy="settings-reducedmotion"
+              >
+                {t('common:reducedmotion')}
               </Switch>
             </PopupMenu.Item>
             {canInstall && !pwa && !standalone && (

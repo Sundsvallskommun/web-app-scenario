@@ -5,4 +5,8 @@ export interface LocalStorage {
   setColorScheme: (color: ColorSchemeMode) => void;
   highcontrast: boolean;
   setHighContrast: (highcontrast: boolean) => void;
+  hasManuallySetHighContrast: boolean;
+  reducedMotion: boolean;
+  setReducedMotion: (reducedMotion: boolean) => void;
+  hasManuallySetReducedMotion: boolean;
 }
