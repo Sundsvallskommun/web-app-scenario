@@ -18,7 +18,7 @@ import { Body, Controller, Delete, Get, Param, Patch, Post, Req, Res, UseBefore 
 import { ResponseSchema } from 'routing-controllers-openapi';
 
 const sanitizeAdGroups = (adGroups?: string[]) =>
-  (adGroups ?? []).map(group => group.trim()).filter(group => group.length > 0);
+  (adGroups ?? []).map(group => group.trim().toLowerCase()).filter(group => group.length > 0);
 
 const formatCategoryResponse = <
   T extends {
