@@ -26,7 +26,7 @@ module.exports = withBundleAnalyzer({
   output: 'standalone',
   i18n,
   images: {
-    domains: [process.env.DOMAIN_NAME],
+    remotePatterns: process.env.DOMAIN_NAME ? [{ hostname: process.env.DOMAIN_NAME }] : [],
     formats: ['image/avif', 'image/webp'],
   },
   basePath: process.env.BASE_PATH,
