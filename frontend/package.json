@@ -13,7 +13,7 @@
     "start": "dotenv next start",
     "generate:middleware-envs": "node middleware-envs-generator.mjs",
     "generate:contracts": "cross-env NODE_ENV=development npx tsx ./src/swagger-typescript-api.ts",
-    "lint": "next lint --no-cache",
+    "lint": "eslint src",
     "analyze": "cross-env ANALYZE=true next build",
     "analyze:server": "cross-env BUNDLE_ANALYZE=server next build",
     "analyze:browser": "cross-env BUNDLE_ANALYZE=browser next build",
@@ -23,10 +23,11 @@
     "type-check": "tsc --pretty --noEmit"
   },
   "resolutions": {
-    "postcss": "^8.5.29"
+    "postcss": "^8.5.29",
+    "sharp": "^0.35.5"
   },
   "dependencies": {
-    "@next/bundle-analyzer": "^16.2.6",
+    "@next/bundle-analyzer": "16.2.12",
     "@sk-web-gui/ai": "^4.4.2",
     "@sk-web-gui/core": "^4.5.1",
     "@sk-web-gui/next": "^1.2.2",
@@ -36,7 +37,7 @@
     "i18next": "^26.3.0",
     "i18next-resources-to-backend": "^1.2.1",
     "lucide-react": "^1.17.0",
-    "next": "15.5.27",
+    "next": "16.2.12",
     "next-i18n-router": "^5.5.8",
     "react": "19.2.6",
     "react-dom": "19.2.6",
@@ -52,7 +53,7 @@
     "@babel/preset-react": "^7.29.7",
     "@babel/preset-typescript": "^7.29.7",
     "@cypress/code-coverage": "^4.0.3",
-    "@eslint/js": "^10.0.1",
+    "@eslint/js": "^9.39.5",
     "@istanbuljs/nyc-config-typescript": "^1.0.2",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
@@ -67,8 +68,8 @@
     "dotenv": "^17.4.2",
     "dotenv-cli": "^11.0.0",
     "envalid": "^8.1.1",
-    "eslint": "^10.4.0",
-    "eslint-config-next": "^16.2.6",
+    "eslint": "^9.39.5",
+    "eslint-config-next": "16.2.12",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-react-refresh": "^0.5.2",
     "identity-obj-proxy": "^3.0.0",
