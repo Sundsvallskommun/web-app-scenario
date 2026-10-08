@@ -1,5 +1,4 @@
 import { defineConfig } from 'cypress';
-import codeCoverageTask from '@cypress/code-coverage/task';
 import 'dotenv';
 
 export default defineConfig({
@@ -13,7 +12,6 @@ export default defineConfig({
       runMode: 3,
     },
     setupNodeEvents(on, config) {
-      codeCoverageTask(on, config);
       return {
         ...config,
         baseUrl: `http://localhost:${process.env.PORT ?? '3000'}${process.env.NEXT_PUBLIC_BASEPATH || ''}`,
