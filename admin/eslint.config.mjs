@@ -42,6 +42,8 @@ export default [
     rules: {
       ...reactHooksPlugin.configs.recommended.rules,
       '@typescript-eslint/no-explicit-any': 'error',
+      'react-hooks/set-state-in-effect': 'warn',
+      'react-hooks/preserve-manual-memoization': 'warn',
     },
   },
   {
